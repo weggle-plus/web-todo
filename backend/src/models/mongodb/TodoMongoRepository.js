@@ -1,5 +1,5 @@
 const TodoRepository = require('../interfaces/TodoRepository');
-const Todo = require('./Todo');
+const Todo = require('./TodoMongo');
 
 class TodoMongoRepository extends TodoRepository {
   async create(todoData) {
