@@ -17,6 +17,16 @@
 - 로그인 /회원가입을 진행한다.
 
 
+# API 명세
+| HTTP 메서드 | 엔드포인트 | 기능 |
+|-------------|-------------|--------|
+| POST | /todos | TODO 생성 |
+| GET | /todos | 모든 TODO 조회 |
+| GET | /todos/:id| 특정 TODO 조회 |
+| PUT | /todos/:id| TODO 수정 |
+| PATCH | /todos/:id/status | TODO 상태 변경 (진행중/완료) |
+| DELETE | /todos/:id| TODO 제거 |
+
 # 설치 및 실행 방법
 
 
