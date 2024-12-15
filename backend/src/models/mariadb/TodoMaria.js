@@ -2,28 +2,21 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/mariadb');
 const TodoSchema = require('../interfaces/TodoSchema');
 
-// Sequelize 스키마 변환 함수
 const convertToSequelizeSchema = (schema) => {
   const sequelizeSchema = {};
   
   Object.entries(schema).forEach(([key, value]) => {
     if (key === 'timestamps') return;
 
-    if (value.type === String) {
+    if (value.type.toLowerCase() === 'string') {
       sequelizeSchema[key] = {
-        type: DataTypes.STRING,
-        allowNull: !value.required
-      };
-    } else if (value.enum) {
-      sequelizeSchema[key] = {
-        type: DataTypes.ENUM(...value.enum),
-        defaultValue: value.default,
-        allowNull: !value.required
+        type: value.values ? DataTypes.ENUM(...value.values) : DataTypes.STRING,
+        allowNull: !value.required,
+        defaultValue: value.default
       };
     }
   });
 
-  // Sequelize 필수 필드 추가
   sequelizeSchema.id = {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -38,7 +31,9 @@ const Todo = sequelize.define(
   convertToSequelizeSchema(TodoSchema),
   {
     tableName: 'todos',
-    timestamps: TodoSchema.timestamps
+    timestamps: true,
+    createdAt: true,
+    updatedAt: true
   }
 );
 

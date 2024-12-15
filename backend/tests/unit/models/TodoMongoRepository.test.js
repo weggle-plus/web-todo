@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
-const TodoMongoRepository = require('../TodoMongoRepository');
-const Todo = require('../TodoMongo');
+const TodoMongoRepository = require('../../../src/models/mongodb/TodoMongoRepository');
+const Todo = require('../../../src/models/mongodb/TodoMongo');
 
 let mongoServer;
 let todoRepository;

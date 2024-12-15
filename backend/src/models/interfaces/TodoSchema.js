@@ -4,16 +4,16 @@
  */
 const TodoSchema = {
   title: {
-    type: String,
+    type: 'string',
     required: true,
     trim: true
   },
   status: {
-    type: String,
-    enum: ['진행중', '완료'],
+    type: 'string',
+    values: ['진행중', '완료'],
     default: '진행중'
   },
-  timestamps: true  // createdAt, updatedAt 자동 관리
+  timestamps: true
 };
 
 module.exports = TodoSchema; 
