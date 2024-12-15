@@ -36,7 +36,7 @@ describe('Todo API 통합 테스트', () => {
       expect(response.body).toHaveProperty('id');
       expect(response.body.title).toBe(newTodo.title);
       expect(response.body.content).toBe(newTodo.content);
-      expect(response.body.status).toBe('진행중'); // 기본 상태 검증
+      expect(response.body.status).toBe('in-progress'); // 기본 상태 검증
 
       createdTodoId = response.body.id; // 다른 테스트에서 사용하기 위해 저장
     });
@@ -81,10 +81,10 @@ describe('Todo API 통합 테스트', () => {
     it('TODO의 상태를 변경할 수 있다', async () => {
       const response = await request(app)
         .patch(`/todos/${createdTodoId}/status`)
-        .send({ status: '완료' })
+        .send({ status: 'done' })
         .expect(200);
 
-      expect(response.body.status).toBe('완료');
+      expect(response.body.status).toBe('done');
     });
   });
 

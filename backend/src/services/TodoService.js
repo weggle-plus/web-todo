@@ -1,24 +1,51 @@
+const { TODO_STATUS } = require('../models/interfaces/TodoSchema');
+
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = "ValidationError";
+  }
+
+  static titleRequired() {
+    return new ValidationError("할 일의 제목은 필수입니다");
+  }
+
+  static statusInvalid() {
+    return new ValidationError(
+      `잘못된 상태값입니다. "${TODO_STATUS.IN_PROGRESS}" 또는 "${TODO_STATUS.DONE}"만 가능합니다`
+    );
+  }
+
+  static todoNotFound() {
+    return new ValidationError("해당 할 일을 찾을 수 없습니다");
+  }
+}
+
 class TodoService {
   constructor(todoRepository) {
     this.todoRepository = todoRepository;
   }
 
-  async createTodo(todoData) {
-    // 기본적인 유효성 검사
-    if (!todoData.title) {
-      throw new Error('할 일의 제목은 필수입니다');
+  validateStatus(status) {
+    if (status && !Object.values(TODO_STATUS).includes(status)) {
+      throw ValidationError.statusInvalid();
     }
+  }
 
-    // 새로운 할 일 데이터 생성
-    const newTodo = {
-      ...todoData,
-      status: todoData.status || '진행중',
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
+  async validateTodoExists(id) {
+    const todo = await this.todoRepository.findById(id);
+    if (!todo) {
+      throw ValidationError.todoNotFound();
+    }
+    return todo;
+  }
 
-    // 저장소에 저장
-    return await this.todoRepository.create(newTodo);
+  async createTodo(todoData) {
+    if (!todoData.title) {
+      throw new ValidationError.titleRequired();
+    }
+    this.validateStatus(todoData.status);
+    return await this.todoRepository.create(todoData);
   }
 
   async getAllTodos() {
@@ -26,36 +53,53 @@ class TodoService {
   }
 
   async getTodoById(id) {
-    const todo = await this.todoRepository.findById(id);
-    if (!todo) {
-      throw new Error('해당 할 일을 찾을 수 없습니다');
-    }
-    return todo;
+    return await this.validateTodoExists(id);
   }
 
   async updateTodo(id, updateData) {
-    const todo = await this.todoRepository.findById(id);
-    if (!todo) {
-      throw new Error('해당 할 일을 찾을 수 없습니다');
+    const todo = await this.validateTodoExists(id);
+    this.validateStatus(updateData.status);
+    
+    return this._processUpdate(todo, updateData);
+  }
+
+  async updateTodoStatus(id, status) {
+    const todo = await this.validateTodoExists(id);
+    this.validateStatus(status);
+    
+    return this._processUpdate(todo, { status });
+  }
+
+  async _processUpdate(todo, updates) {
+    const hasChanges = Object.keys(updates).some(key => 
+      updates[key] !== todo[key]
+    );
+
+    if (!hasChanges) {
+      return todo;
     }
 
     const updatedTodo = {
       ...todo,
-      ...updateData,
+      ...updates,
       updatedAt: new Date()
     };
 
-    return await this.todoRepository.update(id, updatedTodo);
+    const newStatus = updates.status || todo.status;
+    if (newStatus === TODO_STATUS.DONE) {
+      if (!todo.completedAt) {
+        updatedTodo.completedAt = new Date();
+      }
+    } else {
+      updatedTodo.completedAt = null;
+    }
+
+    return await this.todoRepository.update(todo.id, updatedTodo);
   }
 
   async deleteTodo(id) {
-    const todo = await this.todoRepository.findById(id);
-    if (!todo) {
-      throw new Error('해당 할 일을 찾을 수 없습니다');
-    }
-
-    await this.todoRepository.delete(id);
-    return { message: '할 일이 성공적으로 삭제되었습니다' };
+    await this.validateTodoExists(id);
+    return await this.todoRepository.delete(id);
   }
 }
 

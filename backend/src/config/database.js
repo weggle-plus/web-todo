@@ -1,12 +1,7 @@
-/**
- * 데이터베이스 설정 및 초기화 모듈
- */
-
 // 환경변수 설정 로드
 const dotenv = require('dotenv');
 dotenv.config();
 
-// 데이터베이스 설정
 const config = {
   type: process.env.DB_TYPE || 'mongodb',
   mongodb: {

@@ -15,10 +15,6 @@ class TodoRepository {
     throw new Error('Method not implemented');
   }
 
-  async updateStatus(id, status) {
-    throw new Error('Method not implemented');
-  }
-
   async delete(id) {
     throw new Error('Method not implemented');
   }

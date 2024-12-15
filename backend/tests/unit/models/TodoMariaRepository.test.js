@@ -21,7 +21,7 @@ beforeEach(async () => {
 describe('TodoMariaRepository', () => {
   const sampleTodo = {
     title: '테스트 할일',
-    status: '진행중'
+    status: 'in-progress'
   };
 
   test('create: 새로운 할일을 생성할 수 있다', async () => {
@@ -60,14 +60,6 @@ describe('TodoMariaRepository', () => {
     expect(updated.status).toBe(sampleTodo.status);
   });
 
-  test('updateStatus: 할일의 상태를 변경할 수 있다', async () => {
-    const created = await todoRepository.create(sampleTodo);
-    
-    const updated = await todoRepository.updateStatus(created.id, '완료');
-    
-    expect(updated.status).toBe('완료');
-  });
-
   test('delete: 할일을 삭제할 수 있다', async () => {
     const created = await todoRepository.create(sampleTodo);
     
@@ -83,15 +75,9 @@ describe('TodoMariaRepository', () => {
   });
 
   test('create: 필수 필드가 없으면 에러가 발생한다', async () => {
-    await expect(todoRepository.create({ status: '진행중' }))
+    await expect(todoRepository.create({ status: 'in-progress' }))
       .rejects
       .toThrow();
   });
 
-  test('updateStatus: 유효하지 않은 상태값으로 변경시 에러가 발생한다', async () => {
-    const created = await todoRepository.create(sampleTodo);
-    await expect(todoRepository.updateStatus(created.id, '잘못된상태'))
-      .rejects
-      .toThrow();
-  });
 }); 

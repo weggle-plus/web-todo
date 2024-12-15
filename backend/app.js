@@ -44,17 +44,24 @@ app.use(function(req, res, next) {
 
 // 에러 처리 미들웨어
 app.use(function(err, req, res, next) {
-  // 개발 환경에서만 에러 상세 정보 제공
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // 에러 페이지 렌더링
-  res.status(err.status || 500);
-  res.render('error');
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  const statusCode = err.status || 500;
+  
+  if (req.accepts('html')) {
+    // HTML 요청인 경우 에러 페이지 렌더링
+    res.status(statusCode).render('error', {
+      message: err.message,
+      error: isDevelopment ? err : {},
+      status: statusCode
+    });
+  } else {
+    // API 요청인 경우 JSON 응답
+    res.status(statusCode).json({
+      message: err.message,
+      ...(isDevelopment && { stack: err.stack })
+    });
+  }
 });
 
-// 서버 실행
-app.listen(3000, () => {
-  console.log('Server is running on port 3000');
-});
-
+module.exports = app;

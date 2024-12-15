@@ -1,19 +1,20 @@
+const { config } = require('../config/database');
 const TodoMongoRepository = require('./mongodb/TodoMongoRepository');
 const TodoMariaRepository = require('./mariadb/TodoMariaRepository');
 
 class TodoRepositoryFactory {
-  static getRepository() {
-    const dbType = process.env.DB_TYPE || 'mongodb';
+  static createRepository() {
+    const type = config.type;
     
-    switch (dbType) {
+    switch(type) {
       case 'mongodb':
         return new TodoMongoRepository();
       case 'mariadb':
         return new TodoMariaRepository();
       default:
-        throw new Error(`Unsupported database type: ${dbType}`);
+        throw new Error(`지원하지 않는 데이터베이스 타입입니다: ${type}`);
     }
   }
 }
 
-module.exports = TodoRepositoryFactory; 
+module.exports = TodoRepositoryFactory;

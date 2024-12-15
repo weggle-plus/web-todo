@@ -23,14 +23,6 @@ class TodoMongoRepository extends TodoRepository {
     );
   }
 
-  async updateStatus(id, status) {
-    return await Todo.findByIdAndUpdate(
-      id,
-      { status, updatedAt: Date.now() },
-      { new: true }
-    );
-  }
-
   async delete(id) {
     return await Todo.findByIdAndDelete(id);
   }
