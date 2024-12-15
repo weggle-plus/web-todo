@@ -22,12 +22,29 @@ const createTodo = (req, res) => {
 
 const updateTodo = (req, res) => {
   const { id } = req.params;
-  const { content } = req.body;
+  const { content, isDone } = req.body;
 
   if (id && content) {
     conn.query("UPDATE todos SET content =? WHERE id = ?", [content, id], (err, results) => {
       if (err) {
         console.error("에러발생", err);
+        return res.status(StatusCodes.BAD_REQUEST).end();
+      }
+
+      if (results.affectedRows == 0) {
+        return res.status(StatusCodes.BAD_REQUEST).end();
+      }
+
+      return res.status(StatusCodes.OK).end();
+    });
+  } else if (id && isDone !== undefined) {
+    conn.query("UPDATE todos SET is_done = ? WHERE id = ?", [isDone, id], (err, results) => {
+      if (err) {
+        console.error("에러발생", err);
+        return res.status(StatusCodes.BAD_REQUEST).end();
+      }
+
+      if (results.affectedRows == 0) {
         return res.status(StatusCodes.BAD_REQUEST).end();
       }
 
@@ -38,17 +55,20 @@ const updateTodo = (req, res) => {
 
 const deleteTodo = (req, res) => {
   const { id } = req.params;
-  if (id) {
-    conn.query("DELETE FROM todos WHERE id = ?", id, (err, results) => {
-      if (err) {
-        console.error("에러발생", err);
-        return res.status(StatusCodes.BAD_REQUEST).end();
-      }
 
-      return res.status(StatusCodes.OK).end();
-    });
-  }
-  res.status(StatusCodes.BAD_REQUEST).send("id 파라미터 필요");
+  conn.query("DELETE FROM todos WHERE id = ?", id, (err, results) => {
+    if (err) {
+      console.error("에러발생", err);
+      return res.status(StatusCodes.BAD_REQUEST).end();
+    }
+
+    if (results.affectedRows == 0) {
+      return res.status(StatusCodes.BAD_REQUEST).end();
+    }
+
+    console.log("성공!");
+    return res.status(StatusCodes.OK).end();
+  });
 };
 
 module.exports = { getTodo, createTodo, updateTodo, deleteTodo };
