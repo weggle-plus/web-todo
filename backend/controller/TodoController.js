@@ -21,7 +21,19 @@ const createTodo = (req, res) => {
 };
 
 const updateTodo = (req, res) => {
-  res.json("todo 수정");
+  const { id } = req.params;
+  const { content } = req.body;
+
+  if (id && content) {
+    conn.query("UPDATE todos SET content =? WHERE id = ?", [content, id], (err, results) => {
+      if (err) {
+        console.error("에러발생", err);
+        return res.status(StatusCodes.BAD_REQUEST).end();
+      }
+
+      return res.status(StatusCodes.OK).end();
+    });
+  }
 };
 
 const deleteTodo = (req, res) => {

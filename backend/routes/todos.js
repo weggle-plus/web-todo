@@ -17,7 +17,11 @@ router.use(express.json());
 
 router.get("/", getTodo);
 router.post("/", [body("content").notEmpty().withMessage("todo 내용 필요"), validator], createTodo);
-router.patch("/:id", updateTodo);
+router.patch(
+  "/:id",
+  [param("id").notEmpty().withMessage("id 파라미터 필요"), validator],
+  updateTodo
+);
 router.delete(
   "/:id",
   [param("id").notEmpty().withMessage("id 파라미터 필요"), validator],
