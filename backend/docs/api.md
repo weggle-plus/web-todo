@@ -3,17 +3,7 @@
 ## 스키마
 
 ### TODO 스키마
-```json
-{
-  "id": "string",
-  "title": "string",  // 할 일 제목
-  "status": "pending" | "in-progress" | "done", // 할 일 상태, 기본값: "in-progress"
-  "content": "string", // 할 일 내용 (선택사항)
-  "createdAt": "string", // 할 일 생성 시간
-  "updatedAt": "string", // 할 일 수정 시간
-  "completedAt": "string" // 할 일 완료 시간 (할 일 상태가 "done"인 경우에만 존재)
-}
-```
+src/models/interfaces/TodoSchema.js 참조
 
 ## API 엔드포인트
 

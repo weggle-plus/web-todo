@@ -43,9 +43,9 @@ const TodoSchema = {
     required: true,
     default: Date.now
   },
-  completedAt: {
+  completedAt: {  
     type: Date,
-    required: false
+    required: false  // 할 일 상태가 "done"인 경우에만 존재
   },
   // TODO: is_deleted
 };
