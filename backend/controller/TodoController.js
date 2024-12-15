@@ -2,7 +2,9 @@ const conn = require("../mariadb");
 const { StatusCodes } = require("http-status-codes");
 
 const getTodo = (req, res) => {
-  res.json("todo 조회");
+  conn.query("SELECT * FROM todos", (err, results) => {
+    res.status(StatusCodes.OK).json(results);
+  });
 };
 
 const createTodo = (req, res) => {
