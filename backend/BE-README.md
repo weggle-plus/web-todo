@@ -18,9 +18,11 @@
 5. TO DO 항목 삭제 | DELETE | /todos/:id | 해당 TO DO를 삭제
 
 ## 구현 환경
-Node.js와 Express.js 사용
+Node.js와 Express.js, SQLite 사용
+
 ```
-npm install express mysql2
+cd backend 경로에 설치
+npm install express sqlite3
 ```
 ## 디렉토리 구조
 web-todo 파일 -> backend 폴더안에 app.js
@@ -32,7 +34,3 @@ backend 폴더 -> routes 폴더 -> index.js와 users.js
 ## 해야할 일(임시) 
 1. index.js를 라우터로 만든다.
 2. app.js를 라우터와 연결한다.
-3. SQLite를 쓴다?
-```
-npm install sqlite3
-```
