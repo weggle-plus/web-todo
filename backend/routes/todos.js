@@ -1,6 +1,6 @@
 const express = require("express");
 const { getTodo, createTodo, updateTodo, deleteTodo } = require("../controller/TodoController");
-const { body, validationResult } = require("express-validator");
+const { body, param, validationResult } = require("express-validator");
 const { StatusCodes } = require("http-status-codes");
 
 const router = express.Router();
@@ -18,6 +18,10 @@ router.use(express.json());
 router.get("/", getTodo);
 router.post("/", [body("content").notEmpty().withMessage("todo 내용 필요"), validator], createTodo);
 router.patch("/:id", updateTodo);
-router.delete("/:id", deleteTodo);
+router.delete(
+  "/:id",
+  [param("id").notEmpty().withMessage("id 파라미터 필요"), validator],
+  deleteTodo
+);
 
 module.exports = router;

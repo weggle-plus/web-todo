@@ -10,7 +10,7 @@ const getTodo = (req, res) => {
 const createTodo = (req, res) => {
   const { content } = req.body;
 
-  conn.query(`INSERT INTO todos (content) VALUES("${content}")`, (err, results) => {
+  conn.query(`INSERT INTO todos (content) VALUES(?)`, content, (err, results) => {
     if (err) {
       console.error("에러발생", err);
       return res.status(StatusCodes.BAD_REQUEST).end();
@@ -25,7 +25,18 @@ const updateTodo = (req, res) => {
 };
 
 const deleteTodo = (req, res) => {
-  res.json("todo 삭제");
+  const { id } = req.params;
+  if (id) {
+    conn.query("DELETE FROM todos WHERE id = ?", id, (err, results) => {
+      if (err) {
+        console.error("에러발생", err);
+        return res.status(StatusCodes.BAD_REQUEST).end();
+      }
+
+      return res.status(StatusCodes.OK).end();
+    });
+  }
+  res.status(StatusCodes.BAD_REQUEST).send("id 파라미터 필요");
 };
 
 module.exports = { getTodo, createTodo, updateTodo, deleteTodo };
