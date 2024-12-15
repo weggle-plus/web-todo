@@ -1,11 +1,21 @@
 const conn = require("../mariadb");
+const { StatusCodes } = require("http-status-codes");
 
 const getTodo = (req, res) => {
   res.json("todo 조회");
 };
 
 const createTodo = (req, res) => {
-  res.json("todo 생성");
+  const { content } = req.body;
+
+  conn.query(`INSERT INTO todos (content) VALUES("${content}")`, (err, results) => {
+    if (err) {
+      console.error("에러발생", err);
+      return res.status(StatusCodes.BAD_REQUEST).end();
+    }
+
+    res.status(StatusCodes.CREATED).end();
+  });
 };
 
 const updateTodo = (req, res) => {
