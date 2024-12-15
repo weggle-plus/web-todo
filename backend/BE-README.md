@@ -32,3 +32,7 @@ backend 폴더 -> routes 폴더 -> index.js와 users.js
 ## 해야할 일(임시) 
 1. index.js를 라우터로 만든다.
 2. app.js를 라우터와 연결한다.
+3. SQLite를 쓴다?
+```
+npm install sqlite3
+```
