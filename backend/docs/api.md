@@ -274,7 +274,6 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 {
   "message": "회원가입이 완료되었습니다.",
   "user": {
-    "id": "user_id",
     "email": "user@example.com",
     "username": "user_name"
   }
@@ -648,7 +647,10 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
     ]
   }
 }
+```
+
 - **실패 응답 (400 Bad Request):**  
+
 ```json
 {
   "message": "팀 멤버 역할 업데이트 중 오류가 발생했습니다.",
