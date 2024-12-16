@@ -1,81 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>TO-DO LIST</title>
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./reset.css">
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
-</head>
-<body>
-    <section id="wrap">   
-        <div class="left_wrap">
-            <h2 class="left_title">할 일 목록</h2>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./reset.css" />
+  </head>
+  <body>
+    <section id="wrap">
+      <div class="left_wrap">
+        <h2 class="left_title">할 일 목록</h2>
+      </div>
+      <div class="right_wrap">
+        <div class="top_input">
+          <input type="text" value="" id="newTodo" placeholder="할 일을 입력하세요." />
+          <button class="btn_0f" id="register">등록하기</button>
         </div>
-        <div class="right_wrap">
-            <div class="top_input">
-                <input type="text">
-                <button class="btn_0f">등록하기</button>
-            </div>
-            <div class="contents_wrap">
-                <div class="todo_wrap">
-                    <h2 class="contents_title">TO DO</h2>
-                    <ul>
-                        <!-- <li>할 일 항목이 없습니다</li> -->
-                        <li class="contents_list">
-                            <div>
-                                <input type="checkbox">
-                                <label for="">데브코스 강의 수강하기</label>
-                            </div>
-                            <span>
-                                <button class="btn_gray_line">수정</button>
-                                <button class="btn_red_line">삭제</button>
-                            </span>
-                        </li>
-                    </ul>
+        <div class="contents_wrap">
+          <div class="todo_wrap">
+            <h2 class="contents_title">TO DO</h2>
+            <ul>
+              <!-- <li>할 일 항목이 없습니다</li> -->
+              <li class="contents_list">
+                <div>
+                  <input type="checkbox" />
+                  <label for="">데브코스 강의 수강하기</label>
                 </div>
-                <div class="done_wrap">
-                    <h2 class="contents_title">DONE</h2>
-                    <ul>
-                        <li class="none_list">완료 항목이 없습니다</li>
-                    </ul>
-                </div>
-            </div>
+                <span>
+                  <button class="btn_gray_line">수정</button>
+                  <button class="btn_red_line">삭제</button>
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="done_wrap">
+            <h2 class="contents_title">DONE</h2>
+            <ul>
+              <li class="none_list">완료 항목이 없습니다</li>
+            </ul>
+          </div>
         </div>
-
+      </div>
     </section>
 
-    <div class="delete_popup">
-        <div class="bk"></div>
-        <div class="pop_contents">
-            <div>
-                <h3>정말 삭제하시겠습니까?</h3>
-            </div>
-            <div>
-                <button class="btn_0f">확인</button>
-                <button class="btn_gray_line">취소</button>
-            </div>
+    <div class="delete_popup" style="display: none">
+      <div class="bk"></div>
+      <div class="pop_contents">
+        <div>
+          <h3>정말 삭제하시겠습니까?</h3>
         </div>
+        <div>
+          <button class="btn_0f">확인</button>
+          <button class="btn_gray_line">취소</button>
+        </div>
+      </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script>
-document.querySelectorAll('.btn_red_line').forEach(function(button) {
-    button.addEventListener('click', function() {
-        document.querySelectorAll('.delete_popup').forEach(function(popup) {
-            popup.style.display = 'grid';
-        });
-    });
-});
-
-document.querySelectorAll('.btn_0f, .btn_gray_line').forEach(function(button) {
-    button.addEventListener('click', function() {
-        document.querySelectorAll('.delete_popup').forEach(function(popup) {
-            popup.style.display = 'none';
-        });
-    });
-});
-    </script>
-</body>
+    <script type="module" src="./index.js"></script>
+  </body>
 </html>
