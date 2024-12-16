@@ -1,41 +1,67 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// 필요한 외부 모듈 불러오기
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const { initializeDatabase } = require('./src/config/database');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// 환경변수 설정 로드
+const dotenv = require('dotenv');
+dotenv.config();
 
-var app = express();
+// 라우터 모듈 불러오기
+const indexRouter = require('./src/routes/index');
+const usersRouter = require('./src/routes/users');
+const todosRouter = require('./src/routes/todos');
 
-// view engine setup
+// Express 애플리케이션 생성
+const app = express();
+
+// 뷰 엔진 설정
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// 미들웨어 설정
+app.use(logger('dev'));                                  // 로깅 미들웨어
+app.use(express.json());                                 // JSON 파싱 미들웨어
+app.use(express.urlencoded({ extended: false }));        // URL 인코딩 미들웨어
+app.use(cookieParser());                                 // 쿠키 파싱 미들웨어
+app.use(express.static(path.join(__dirname, 'public'))); // 정적 파일 제공
 
+// 데이터베이스 초기화
+initializeDatabase().catch(console.error);
+
+// 라우터 설정
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/todos', todosRouter);
 
-// catch 404 and forward to error handler
+// 404 에러 처리 미들웨어
 app.use(function(req, res, next) {
   next(createError(404));
 });
 
-// error handler
+// 에러 처리 미들웨어
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  const statusCode = err.status || 500;
+  
+  if (req.accepts('html')) {
+    // HTML 요청인 경우 에러 페이지 렌더링
+    res.status(statusCode).render('error', {
+      message: err.message,
+      error: isDevelopment ? err : {},
+      status: statusCode
+    });
+  } else {
+    // API 요청인 경우 JSON 응답
+    res.status(statusCode).json({
+      message: err.message,
+      ...(isDevelopment && { stack: err.stack })
+    });
+  }
 });
 
 module.exports = app;
