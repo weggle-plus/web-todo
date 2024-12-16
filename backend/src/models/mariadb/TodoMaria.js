@@ -3,34 +3,41 @@ const sequelize = require('../../config/mariadb');
 const { TodoSchema } = require('../interfaces/TodoSchema');
 
 const convertToSequelizeSchema = (schema) => {
-  const sequelizeSchema = {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true
-    }
-  };
+  const sequelizeSchema = {};
   
   Object.entries(schema).forEach(([key, value]) => {
     if (key === 'timestamps') return;
 
-    if (value.type === String) {
-      sequelizeSchema[key] = {
-        type: value.values ? DataTypes.ENUM(...value.values) : DataTypes.STRING,
-        allowNull: !value.required,
-        defaultValue: value.default
-      };
-    } else if (value.type === Date) {
-      sequelizeSchema[key] = {
-        type: DataTypes.DATE,  // DATE 타입 사용
-        allowNull: !value.required,
-        defaultValue: value.default,
-        get() {  // getter 추가
-          return this.getDataValue(key) 
-            ? new Date(this.getDataValue(key)).toISOString()
-            : null;
-        }
-      };
+    sequelizeSchema[key] = {
+      allowNull: !value.required,
+      defaultValue: value.default
+    };
+
+    switch (key) {
+      case 'integer':
+        sequelizeSchema[key].type = DataTypes.INTEGER;
+        break;
+      case 'string':
+        sequelizeSchema[key].type = DataTypes.STRING;
+        break;
+      case 'text':
+        sequelizeSchema[key].type = DataTypes.TEXT;
+        break;
+      case 'date':
+        sequelizeSchema[key].type = DataTypes.DATE;
+        break;
+      case 'enum':
+        sequelizeSchema[key].type = DataTypes.ENUM;
+        sequelizeSchema[key].values = value.enum;
+        break;
+    }
+    
+    if (value.primaryKey) {
+      sequelizeSchema[key].primaryKey = true;
+    }
+
+    if (value.autoIncrement) {
+      sequelizeSchema[key].autoIncrement = true;
     }
   });
 

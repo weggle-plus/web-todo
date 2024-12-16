@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const config = {
-  type: process.env.DB_TYPE || 'mongodb',
+  type: process.env.DB_TYPE || 'mariadb',
   mongodb: {
     url: process.env.MONGODB_URL || 'mongodb://localhost:27017/todo-app'
   },
@@ -22,21 +22,24 @@ const config = {
  * @returns {Promise<void>}
  */
 async function initializeDatabase() {
-  // 환경 변수에서 DB_TYPE을 가져옴. 기본값은 'mongodb'
+  // 환경 변수에서 DB_TYPE을 가져옴. 기본값은 'mariadb'
   const dbType = config.type;
 
   try {
-    // MongoDB 연결 설정
     if (dbType === 'mongodb') {
       const mongoose = require('mongoose');
       await mongoose.connect(config.mongodb.url);
       console.log('MongoDB 연결 성공');
     } 
-    // MariaDB 연결 설정
     else if (dbType === 'mariadb') {
       const sequelize = require('./mariadb');
       await sequelize.authenticate(); // DB 연결 확인
-      await sequelize.sync();        // 테이블 자동 생성
+
+      if (process.env.NODE_ENV === 'development') {
+        await sequelize.sync({ alter: true }); // 개발 환경: 컬럼 변경 반영
+      } else {
+        await sequelize.sync(); // 운영 환경
+      }
       console.log('MariaDB 연결 성공');
     }
   } catch (error) {

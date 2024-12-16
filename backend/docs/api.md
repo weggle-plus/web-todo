@@ -2,7 +2,7 @@
 
 ## 스키마
 
-### TODO 스키마
+https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 src/models/interfaces/TodoSchema.js 참조
 
 ## API 엔드포인트
