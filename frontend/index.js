@@ -9,7 +9,6 @@ function getTodos() {
   })
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
       const ul = document.getElementById("getData");
       data.map((item) => {
         ul.insertAdjacentHTML(
@@ -31,9 +30,8 @@ function getTodos() {
     });
 }
 
-function registerData() {
+function postTodo() {
   const inputData = document.getElementById("newTodo").value;
-
   fetch("http://localhost:8080/todo", {
     method: "POST",
     headers: {
@@ -43,7 +41,10 @@ function registerData() {
       content: inputData,
     }),
   });
+}
 
+function registerData() {
+  postTodo();
   location.reload();
 }
 
