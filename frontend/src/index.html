@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TO DO</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <!-- sidebar -->
+    <aside class="sidebar">
+      <h2>할 일 목록</h2>
+    </aside>
+
+    <!-- main content -->
+    <main class="main-content">
+      <!-- input -->
+      <div class="input-area">
+        <input type="text" placeholder="할 일을 입력해주세요."
+        />
+        <button id="add-button">등록하기</button>
+      </div>
+
+      <!-- todo list -->
+      <section>
+        <h3>TO DO</h3>
+        <p id="emptyMessage">할 일 항목이 없습니다.</p>
+        <ul id="todoList"></ul>
+
+      </section>
+
+      <!-- done list -->
+      <section>
+        <h3>DONE</h3>
+        <p id="emptyMessage">완료 항목이 없습니다.</p>
+        <ul id="doneList"></ul>
+      </section>
+    </main>
+  </body>
+</html>
