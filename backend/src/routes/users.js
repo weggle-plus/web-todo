@@ -1,9 +1,22 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+const UserController = require('../controllers/UserController');
+const { authenticate } = require('../middleware/auth.middleware');
 
-/* GET users listing. */
-router.get('/', function(req, res, next) {
-  res.send('respond with a resource');
+router.post('/register', async (req, res, next) => {
+  await UserController.register(req, res, next);
+});
+
+router.post('/login', async (req, res, next) => {
+  await UserController.login(req, res, next);
+});
+
+router.get('/profile', authenticate, async (req, res, next) => {
+  await UserController.getProfile(req, res, next);
+});
+
+router.put('/profile', authenticate, async (req, res, next) => {
+  await UserController.updateProfile(req, res, next);
 });
 
 module.exports = router;

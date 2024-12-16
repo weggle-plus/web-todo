@@ -31,12 +31,12 @@ const TodoSchema = {
   createdAt: {
     type: 'date',
     required: true,
-    default: Date.now
+    default: new Date()
   },
   updatedAt: {
     type: 'date',
     required: true,
-    default: Date.now
+    default: new Date()
   },
   completedAt: {  
     type: 'date',

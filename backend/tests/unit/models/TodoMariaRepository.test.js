@@ -1,4 +1,5 @@
-const sequelize = require('../../../src/config/mariadb');
+const { Sequelize } = require('sequelize');
+const sequelize = new Sequelize('sqlite::memory:');
 const TodoMariaRepository = require('../../../src/models/mariadb/TodoMariaRepository');
 const Todo = require('../../../src/models/mariadb/TodoMaria');
 
