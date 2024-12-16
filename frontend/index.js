@@ -1,5 +1,16 @@
 const addBtn = document.getElementById("register");
 
+const textInput = document.getElementById("onlyInput");
+const updateBtn = document.getElementById("updateBtn");
+
+updateBtn.addEventListener("click", function () {
+  textInput.removeAttribute("readonly");
+  textInput.focus();
+  updateBtn.innerHTML = "확인";
+
+  console.log("수정클릭");
+});
+
 function getTodos() {
   fetch("http://localhost:8080/todo", {
     method: "GET",
@@ -17,11 +28,12 @@ function getTodos() {
                 <li id=${item.id} class="contents_list">
                     <div>
                       <input type="checkbox" />
-                      <label for="">${item.content}</label>
+                    
+                      <input for="" value="${item.content}"  readonly  class="readonly">
                     </div>
                     <span>
                       <button class="btn_gray_line">수정</button>
-                      <button class="btn_red_line">삭제</button>
+                      <button data-delete=${item.id} class="btn_red_line">삭제</button>
                     </span>
                 </li>
                 `
