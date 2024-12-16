@@ -5,9 +5,17 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var dotenv = require("dotenv");
 var connection = require("./mariadb");
+const cors = require("cors");
 
 var todosRouter = require("./routes/todos");
 var app = express();
+
+// 특정 도메인만 허용하려면 이렇게 설정:
+app.use(
+  cors({
+    origin: "http://127.0.0.1:5500", // 허용할 도메인
+  })
+);
 
 //env setup
 dotenv.config();
