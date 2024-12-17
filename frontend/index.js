@@ -3,6 +3,22 @@ import { postTodo, patchContent, getTodos, deleteTodo, patchStatus } from "./api
 const addBtn = document.getElementById("register");
 const todoList = document.getElementById("getTodoData");
 const doneList = document.getElementById("getDoneData");
+const popup = document.querySelector(".delete_popup");
+const confirm = popup.querySelector(".delete-confirm");
+const cancel = popup.querySelector(".delete-cancel");
+let deleteId = 0;
+
+function registerData() {
+  const inputData = document.getElementById("newTodo").value;
+  postTodo(inputData);
+  reset();
+}
+
+function reset() {
+  todoList.innerHTML = "";
+  doneList.innerHTML = "";
+  getTodos();
+}
 
 todoList.addEventListener("click", (event) => {
   const target = event.target;
@@ -35,25 +51,18 @@ todoList.addEventListener("click", (event) => {
     btnWrap.style.display = "block";
     confirmWrap.style.display = "none";
     patchContent(id, input.value);
-    location.reload();
+    reset();
   }
 
   if (target.classList.contains("delete")) {
-    document.querySelectorAll(".delete_popup").forEach((popup) => {
-      popup.style.display = "grid";
+    popup.style.display = "grid";
 
-      document.addEventListener("click", (event) => {
-        if (event.target.classList.contains("delete-confirm")) {
-          deleteTodo(id);
-          location.reload();
-        }
-      });
-    });
+    deleteId = id;
   }
 
   if (target.classList.contains("checkBox")) {
     patchStatus(id, checkBox.checked);
-    location.reload();
+    reset();
   }
 });
 
@@ -64,37 +73,26 @@ doneList.addEventListener("click", (event) => {
   const checkBox = group.querySelector(".checkBox");
 
   if (target.classList.contains("delete")) {
-    document.querySelectorAll(".delete_popup").forEach((popup) => {
-      popup.style.display = "grid";
-
-      document.addEventListener("click", (event) => {
-        if (event.target.classList.contains("delete-confirm")) {
-          deleteTodo(id);
-          location.reload();
-        }
-      });
-    });
+    popup.style.display = "grid";
+    deleteId = id;
   }
 
   if (target.classList.contains("checkBox")) {
     patchStatus(id, checkBox.checked);
-    location.reload();
+    reset();
   }
 });
 
-function registerData() {
-  postTodo();
-  location.reload();
-}
+confirm.addEventListener("click", () => {
+  deleteTodo(deleteId);
+  reset();
+  popup.style.display = "none";
+});
+
+cancel.addEventListener("click", () => {
+  popup.style.display = "none";
+});
 
 document.addEventListener("DOMContentLoaded", () => getTodos());
 
 addBtn.addEventListener("click", () => registerData());
-
-// document.querySelectorAll(".btn_0f, .btn_gray_line").forEach(function (button) {
-//   button.addEventListener("click", function () {
-//     document.querySelectorAll(".delete_popup").forEach(function (popup) {
-//       popup.style.display = "none";
-//     });
-//   });
-// });
