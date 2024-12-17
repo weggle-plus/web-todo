@@ -1,40 +1,52 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TO DO</title>
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TO DO</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div class="page">
     <!-- sidebar -->
     <aside class="sidebar">
       <h2>할 일 목록</h2>
+      <div class="menu">
+        
+      </div>
     </aside>
 
     <!-- main content -->
     <main class="main-content">
       <!-- input -->
       <div class="input-area">
-        <input type="text" placeholder="할 일을 입력해주세요."
-        />
+        <input type="text" id="todo-input" placeholder="할 일을 입력해주세요." />
         <button id="add-button">등록하기</button>
       </div>
 
       <!-- todo list -->
       <section>
         <h3>TO DO</h3>
-        <p id="emptyMessage">할 일 항목이 없습니다.</p>
-        <ul id="todoList"></ul>
-
+        <p id="empty-message-todo">할 일 항목이 없습니다.</p>
+        <ul id="todo-list"></ul>
       </section>
 
       <!-- done list -->
       <section>
         <h3>DONE</h3>
-        <p id="emptyMessage">완료 항목이 없습니다.</p>
-        <ul id="doneList"></ul>
+        <p id="empty-message-done">완료 항목이 없습니다.</p>
+        <ul id="done-list"></ul>
       </section>
     </main>
-  </body>
+  </div>
+  <div id="modal" style="display: none;">
+    <p>정말 삭제하시겠습니까?</p>
+    <button id="confirm-delete">확인</button>
+    <button id="cancel-delete">취소</button>
+  </div>
+  <script type="module" src="../dist/bundle.js"></script>
+</body>
+
 </html>
