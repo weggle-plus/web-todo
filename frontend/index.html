@@ -12,26 +12,40 @@
         <div class="nav_todo">할 일 목록</div>
       </nav>
       <section>
-        <input
-          type="text"
-          class="input_todo"
-          placeholder="할 일을 입력해주세요."
-        />
-        <button class="btn_default">등록하기</button>
+        <div class="input_wrap">
+          <input
+            type="text"
+            id="input_todo"
+            placeholder="할 일을 입력해주세요."
+          />
+          <button class="btn_default" id="add_todo_btn">등록하기</button>
+        </div>
         <div class="todo_wrap">
           <div>TO DO</div>
-          <div class="todo_list">
-            <span>할 일 항목이 없습니다.</span>
+          <div id="todo_list">
+            <span id="todo_none">할 일 항목이 없습니다.</span>
           </div>
         </div>
         <div class="done_wrap">
           <div>DONE</div>
-          <div class="done_list">
-            <span>완료 항목이 없습니다.</span>
+          <div id="done_list">
+            <span id="done_none">완료 항목이 없습니다.</span>
+          </div>
+        </div>
+        <div id="modal_container" class="hidden">
+          <div class="modal_wrap">
+            <span>정말 삭제하시겠습니까?</span>
+            <div>
+              <button onclick="modalClose(true)">확인</button>
+              <button class="btn_modify" onclick="modalClose(false)">
+                취소
+              </button>
+            </div>
           </div>
         </div>
       </section>
-      <script src="index.js"></script>
     </div>
+    <script src="./node_modules/axios/dist/axios.min.js"></script>
+    <script src="./index.js" type="module"></script>
   </body>
 </html>
