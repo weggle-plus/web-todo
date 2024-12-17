@@ -1,3 +1,18 @@
+function deleteTodo(id) {
+  fetch(`http://localhost:8080/todo/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((data) => {
+      console.log("성공", data);
+    })
+    .catch((error) => {
+      console.error("에러", error);
+    });
+}
+
 function patchContent(id, value) {
   fetch(`http://localhost:8080/todo/${id}`, {
     method: "PATCH",
@@ -92,4 +107,4 @@ function postTodo() {
     });
 }
 
-export { patchContent, getTodos, postTodo };
+export { patchContent, getTodos, postTodo, deleteTodo };
