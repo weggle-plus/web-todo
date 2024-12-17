@@ -1,10 +1,9 @@
-import { postTodo, patchContent, getTodos } from "./api.js";
+import { postTodo, patchContent, getTodos, deleteTodo } from "./api.js";
 
 const addBtn = document.getElementById("register");
-
 const inputContainer = document.getElementById("getData");
 
-inputContainer.addEventListener("click", function (event) {
+inputContainer.addEventListener("click", (event) => {
   const target = event.target;
 
   const group = target.closest(".contents_list");
@@ -37,6 +36,19 @@ inputContainer.addEventListener("click", function (event) {
     patchContent(id, input.value);
     location.reload();
   }
+
+  if (target.classList.contains("delete")) {
+    document.querySelectorAll(".delete_popup").forEach((popup) => {
+      popup.style.display = "grid";
+
+      document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("delete-confirm")) {
+          deleteTodo(id);
+          location.reload();
+        }
+      });
+    });
+  }
 });
 
 function registerData() {
@@ -44,28 +56,14 @@ function registerData() {
   location.reload();
 }
 
-document.addEventListener("DOMContentLoaded", function () {
-  getTodos();
-});
+document.addEventListener("DOMContentLoaded", () => getTodos());
 
-addBtn.addEventListener("click", function () {
-  registerData();
-  console.log("클릭");
-});
+addBtn.addEventListener("click", () => registerData());
 
-// 팝업 클릭
-document.querySelectorAll(".btn_red_line").forEach(function (button) {
-  button.addEventListener("click", function () {
-    document.querySelectorAll(".delete_popup").forEach(function (popup) {
-      popup.style.display = "grid";
-    });
-  });
-});
-
-document.querySelectorAll(".btn_0f, .btn_gray_line").forEach(function (button) {
-  button.addEventListener("click", function () {
-    document.querySelectorAll(".delete_popup").forEach(function (popup) {
-      popup.style.display = "none";
-    });
-  });
-});
+// document.querySelectorAll(".btn_0f, .btn_gray_line").forEach(function (button) {
+//   button.addEventListener("click", function () {
+//     document.querySelectorAll(".delete_popup").forEach(function (popup) {
+//       popup.style.display = "none";
+//     });
+//   });
+// });
