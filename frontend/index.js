@@ -102,7 +102,11 @@ const addTodoItem = async () => {
   } catch (error) {
     inputTodoElement.value = "";
     console.log("error : ", error);
-    alert("할 일을 저장할 수 없습니다.");
+    if (error.status === 400) {
+      alert("입력값이 필요합니다.");
+    } else {
+      alert("할 일을 저장할 수 없습니다.");
+    }
   }
 };
 
@@ -143,9 +147,12 @@ const finishEditing = async (todoItem, isEdited) => {
   if (isEdited) {
     try {
       let todoInput = document.getElementById(`title_input_${todoItem.id}`);
-      const response = axios.put(`http://localhost:4040/todos/${todoItem.id}`, {
-        title: todoInput.value,
-      });
+      const response = await axios.put(
+        `http://localhost:4040/todos/${todoItem.id}`,
+        {
+          title: todoInput.value,
+        }
+      );
       editingItemId = null;
     } catch (error) {
       console.log("error : ", error);
