@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TO-DO LIST</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./reset.css" />
+  </head>
+  <body>
+    <section id="wrap">
+      <div class="left_wrap">
+        <div class="todo-list">
+          <h2 class="left_title">할 일 목록</h2>
+        </div>
+      </div>
+      <div class="right_wrap">
+        <div class="top_input">
+          <input type="text" value="" id="newTodo" placeholder="할 일을 입력하세요." />
+          <button class="btn_0f mainBtn" id="register">등록하기</button>
+        </div>
+        <div class="contents_wrap">
+          <div class="todo_wrap">
+            <h2 class="contents_title">TO DO</h2>
+            <ul id="getTodoData"></ul>
+          </div>
+          <div class="done_wrap">
+            <h2 class="contents_title">DONE</h2>
+            <ul id="getDoneData"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="delete_popup">
+      <div class="bk"></div>
+      <div class="pop_contents">
+        <div class="pop_text">
+          <h3>정말 삭제하시겠습니까?</h3>
+        </div>
+        <div class="pop_btn_wrap">
+          <button class="btn_0f mainBtn delete-confirm">확인</button>
+          <button class="btn_gray_line mainBtn delete-cancel">취소</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="./index.js"></script>
+  </body>
+</html>
