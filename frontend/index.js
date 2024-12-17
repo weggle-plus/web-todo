@@ -124,7 +124,7 @@ const checkDone = async (todoItem) => {
     const response = await axios.patch(
       `http://localhost:4040/todos/${todoItem.id}`,
       {
-        done: !todoItem.done
+        done: !todoItem.done,
       }
     );
   } catch (error) {
@@ -185,4 +185,12 @@ document.addEventListener("DOMContentLoaded", () => {
   getTodoItems();
   const addTodoButton = document.getElementById("add_todo_btn");
   addTodoButton.addEventListener("click", addTodoItem);
+  const modalCloseTrueButton = document.getElementById("modal_close_true_btn");
+  modalCloseTrueButton.addEventListener("click", () => {
+    modalClose(true);
+  });
+  const modalCloseFalseButton = document.getElementById("modal_close_true_btn");
+  modalCloseFalseButton.addEventListener("click", () => {
+    modalClose(false);
+  });
 });
