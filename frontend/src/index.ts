@@ -20,12 +20,6 @@ const doneList = document.getElementById("done-list") as HTMLUListElement;
 // 모달 관련 요소 가져오기
 const modal = document.getElementById("modal") as HTMLElement;
 const confirmDeleteButton = document.getElementById("confirm-delete") as HTMLButtonElement;
-const cancelDeleteButton = document.getElementById("cancel-delete") as HTMLButtonElement;
-
-// 취소 버튼 클릭 시 모달 닫기
-cancelDeleteButton.addEventListener("click", () => {
-    closeDeleteModal();
-});
 
 addButton.addEventListener("click", () => {
     const title = todoInput.value;
@@ -129,24 +123,27 @@ function createDeleteButton(id: number): HTMLElement {
     const deleteButton = document.createElement('button');
     deleteButton.innerText = '삭제';
     deleteButton.addEventListener("click", () => {
-        // TODO: 모달창
         openDeleteModal(id);
     })
 
     return deleteButton;
 }
 
-function openDeleteModal(id:number) {
-    const newConfirmButton = confirmDeleteButton.cloneNode(true) as HTMLButtonElement;
+modal.addEventListener("click", async (event) => {
+    const target = event.target as HTMLElement;
 
-    newConfirmButton.addEventListener("click", async () => {
+    if (target.id === "confirm-delete") {
+        const id = Number(target.dataset.id);
         await deleteTodo(id);
         closeDeleteModal();
-    });
+    } else if (target.id === "cancel-delete") {
+        closeDeleteModal();
+    }
+});
 
-    confirmDeleteButton.replaceWith(newConfirmButton); // 기존 버튼 교체
-
-    modal.style.display = "flex"; // 모달 표시
+function openDeleteModal(id: number) {
+    confirmDeleteButton.dataset.id = id.toString();
+    modal.style.display = "flex";
 }
 
 function closeDeleteModal() {
