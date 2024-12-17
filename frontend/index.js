@@ -143,15 +143,8 @@ const finishEditing = async (todoItem, isEdited) => {
   if (isEdited) {
     try {
       let todoInput = document.getElementById(`title_input_${todoItem.id}`);
-      // todoList = todoList.map((item) => {
-      //   if (item.id === todoItem.id) {
-      //     item.title = todoInput.value;
-      //   }
-      //   return item;
-      // });
-      const response = axios.put("http://localhost:4040/todos", {
-        id: todoItem.id,
-        title: todoItem.title,
+      const response = axios.put(`http://localhost:4040/todos/${todoItem.id}`, {
+        title: todoInput.value,
       });
       editingItemId = null;
     } catch (error) {
