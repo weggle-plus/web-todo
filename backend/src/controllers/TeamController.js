@@ -88,7 +88,6 @@ class TeamController {
       const { userId, role } = req.body;
       const team = await this.teamService.addMember(
         req.params.teamId,
-        req.user.id,
         userId,
         role
       );
@@ -109,7 +108,6 @@ class TeamController {
       const { role } = req.body;
       const team = await this.teamService.updateMemberRole(
         req.params.teamId,
-        req.user.id,
         req.params.userId,
         role
       );
@@ -129,7 +127,6 @@ class TeamController {
     try {
       const team = await this.teamService.removeMember(
         req.params.teamId,
-        req.user.id,
         req.params.userId
       );
       res.json(team);

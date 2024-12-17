@@ -53,6 +53,21 @@ describe('TodoMariaRepository', () => {
     });
   });
 
+  describe('findAll()', () => {
+    it('모든 할일 목록을 최신순으로 조회할 수 있다', async () => {
+      const todos = [
+        { title: '첫번째 할일', content: '내용1', status: 'in-progress' },
+        { title: '두번째 할일', content: '내용2', status: 'done' }
+      ];
+      
+      await Promise.all(todos.map(todo => todoRepository.create(todo)));
+      
+      const foundTodos = await todoRepository.findAll();
+      expect(foundTodos).toHaveLength(2);
+      expect(new Date(foundTodos[0].createdAt)).toBeGreaterThan(new Date(foundTodos[1].createdAt));
+    });
+  });
+
 
   describe('findById()', () => {
     it('ID로 특정 할일을 조회할 수 있다', async () => {

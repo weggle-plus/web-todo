@@ -52,44 +52,38 @@ class TeamService {
     await this.teamRepository.delete(teamId);
   }
 
-  async addMember(teamId, managerId, newUserId, role = TEAM_MEMBER_ROLES.MEMBER) {
-    const managerRole = await this.teamRepository.getMemberRole(teamId, managerId);
-    if (managerRole !== TEAM_MEMBER_ROLES.MANAGER) {
-      throw new ValidationError('팀 관리자만 멤버를 추가할 수 있습니다.');
+  async addMember(teamId, newUserId, role = TEAM_MEMBER_ROLES.MEMBER) {
+    const team = await this.teamRepository.findById(teamId);
+    if (!team) {
+      throw new ValidationError('팀을 찾을 수 없습니다.');
     }
 
-    const user = await this.userRepository.findById(newUserId);
-    if (!user) {
-      throw new ValidationError('유효하지 않은 사용자입니다.');
-    }
-
-    const existingRole = await this.teamRepository.getMemberRole(teamId, newUserId);
-    if (existingRole) {
-      throw new ValidationError('이미 팀에 속한 멤버입니다.');
-    }
+    // const managerRole = await this.teamRepository.getMemberRole(teamId, managerId);
+    // if (managerRole !== TEAM_MEMBER_ROLES.MANAGER) {
+    //   throw new ValidationError('팀 관리자만 멤버를 추가할 수 있습니다.');
+    // }
 
     return await this.teamRepository.addMember(teamId, newUserId, role);
   }
 
-  async updateMemberRole(teamId, managerId, userId, newRole) {
-    const managerRole = await this.teamRepository.getMemberRole(teamId, managerId);
-    if (managerRole !== TEAM_MEMBER_ROLES.MANAGER) {
-      throw new ValidationError('팀 관리자만 역할을 변경할 수 있습니다.');
-    }
+  async updateMemberRole(teamId, userId, newRole) {
+    // const managerRole = await this.teamRepository.getMemberRole(teamId, managerId);
+    // if (managerRole !== TEAM_MEMBER_ROLES.MANAGER) {
+    //   throw new ValidationError('팀 관리자만 역할을 변경할 수 있습니다.');
+    // }
 
     return await this.teamRepository.updateMemberRole(teamId, userId, newRole);
   }
 
-  async removeMember(teamId, managerId, userId) {
-    const managerRole = await this.teamRepository.getMemberRole(teamId, managerId);
-    if (managerRole !== TEAM_MEMBER_ROLES.MANAGER) {
-      throw new ValidationError('팀 관리자만 멤버를 제거할 수 있습니다.');
-    }
+  async removeMember(teamId, userId) {
+    // const managerRole = await this.teamRepository.getMemberRole(teamId, managerId);
+    // if (managerRole !== TEAM_MEMBER_ROLES.MANAGER) {
+    //   throw new ValidationError('팀 관리자만 멤버를 제거할 수 있습니다.');
+    // }
 
-    if (managerId === userId) {
-      throw new ValidationError('관리자는 자신을 제거할 수 없습니다.');
-    }
-
+    // if (managerId === userId) {
+    //   throw new ValidationError('관리자는 자신을 제거할 수 없습니다.');
+    // }
     return await this.teamRepository.removeMember(teamId, userId);
   }
 }

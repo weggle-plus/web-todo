@@ -23,15 +23,15 @@ router.delete('/:teamId', authenticate, async (req, res, next) => {
   await TeamController.deleteTeam(req, res, next);
 });
 
-router.post('/:teamId/members', authenticate, async (req, res, next) => {
+router.post('/:teamId', authenticate, async (req, res, next) => {
   await TeamController.addMember(req, res, next);
 });
 
-router.put('/:teamId/members/:userId', authenticate, async (req, res, next) => {
+router.put('/:teamId/:userId', authenticate, async (req, res, next) => {
   await TeamController.updateMemberRole(req, res, next);
 });
 
-router.delete('/:teamId/members/:userId', authenticate, async (req, res, next) => {
+router.delete('/:teamId/:userId', authenticate, async (req, res, next) => {
   await TeamController.removeMember(req, res, next);
 });
 

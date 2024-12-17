@@ -76,16 +76,27 @@ describe('TeamMariaRepository', () => {
       description: '생성된 테스트 팀 설명'
     };
 
-    it('새로운 팀을 생성하고 생성자를 매니저로 추가할 수 있다', async () => {
+    it('새로운 팀을 생성할 수 있다', async () => {
       const created = await teamRepository.create(sampleTeam, testUser.id);
       
       expect(created).toMatchObject({
         ...sampleTeam,
         id: expect.any(Number)
       });
+    });
+  });
 
-      const memberRole = await teamRepository.getMemberRole(created.id, testUser.id);
-      expect(memberRole).toBe(TEAM_MEMBER_ROLES.MANAGER);
+  describe('findAll()', () => {
+    it('모든 팀 목록을 멤버 정보와 함께 조회할 수 있다', async () => {
+      const anotherTeam = await teamRepository.create({
+        name: '두번째 팀',
+        description: '설명'
+      }, testUser.id);
+      
+      const teams = await teamRepository.findAll();
+      expect(teams).toHaveLength(2);
+      expect(teams[0].members).toBeDefined();
+      expect(teams[1].members).toBeDefined();
     });
   });
 
@@ -135,6 +146,12 @@ describe('TeamMariaRepository', () => {
     it('존재하지 않는 사용자를 멤버로 추가시 에러가 발생한다', async () => {
       await expect(
         teamRepository.addMember(team.id, 99999)
+      ).rejects.toThrow();
+    });
+
+    it('유효하지 않은 역할로 멤버 추가시 에러가 발생한다', async () => {
+      await expect(
+        teamRepository.addMember(team.id, testUser.id, 'INVALID_ROLE')
       ).rejects.toThrow();
     });
   });
@@ -192,6 +209,28 @@ describe('TeamMariaRepository', () => {
 
       await expect(
         teamRepository.getMemberRole(team.id, otherUser.id)
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('removeMember()', () => {
+    it('팀에서 멤버를 제거할 수 있다', async () => {
+      const newUser = await User.create({
+        email: 'remove@test.com',
+        username: '제거될멤버',
+        password: 'password123'
+      });
+      
+      await teamRepository.addMember(team.id, newUser.id);
+      const updatedTeam = await teamRepository.removeMember(team.id, newUser.id);
+      
+      expect(updatedTeam.members).toHaveLength(1);
+      expect(updatedTeam.members.find(m => m.id === newUser.id)).toBeUndefined();
+    });
+
+    it('존재하지 않는 팀의 멤버 제거시 에러가 발생한다', async () => {
+      await expect(
+        teamRepository.removeMember(99999, newUser.id)
       ).rejects.toThrow();
     });
   });

@@ -29,21 +29,6 @@ class UserMariaRepository extends UserRepository {
     return this._excludePassword(user.toJSON());
   }
 
-  async login(email, password) {
-    const user = await this.User.findOne({ where: { email } });
-    if (!user) {
-      return null;
-    }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      return null;
-    }
-
-    await this.updateLastLogin(user.id);
-    return this._excludePassword(user.toJSON());
-  }
-
   async findByEmail(email) {
     return await this.User.findOne({ where: { email } });
   }

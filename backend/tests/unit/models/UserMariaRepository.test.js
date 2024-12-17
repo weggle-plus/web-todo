@@ -62,6 +62,21 @@ describe('UserMariaRepository', () => {
     });
   });
 
+  describe('findAll()', () => {
+    it('모든 사용자 목록을 조회할 수 있다', async () => {
+      const users = [
+        { email: 'test1@test.com', username: '테스트1', password: 'password123' },
+        { email: 'test2@test.com', username: '테스트2', password: 'password123' }
+      ];
+      
+      await Promise.all(users.map(user => userRepository.create(user)));
+      
+      const foundUsers = await userRepository.findAll();
+      expect(foundUsers).toHaveLength(2);
+      expect(foundUsers[0].password).toBeUndefined();
+    });
+  });
+
   describe('findByEmail()', () => {
     it('이메일로 사용자를 찾을 수 있다', async () => {
       const user = await userRepository.create({
@@ -108,6 +123,27 @@ describe('UserMariaRepository', () => {
       
       const updatedUser = await userRepository.findById(user.id);
       expect(updatedUser.lastLogin).toBeInstanceOf(Date);
+    });
+  });
+
+  describe('delete()', () => {
+    it('사용자를 삭제할 수 있다', async () => {
+      const user = await userRepository.create({
+        email: 'delete@test.com',
+        username: '삭제테스트',
+        password: 'password123'
+      });
+  
+      const deleted = await userRepository.delete(user.id);
+      expect(deleted.email).toBe(user.email);
+      
+      const found = await userRepository.findById(user.id);
+      expect(found).toBeNull();
+    });
+  
+    it('존재하지 않는 사용자 삭제 시 null을 반환한다', async () => {
+      const result = await userRepository.delete(999);
+      expect(result).toBeNull();
     });
   });
 }); 
