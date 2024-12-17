@@ -54,7 +54,7 @@ describe('TodoMariaRepository', () => {
   });
 
   describe('findAll()', () => {
-    it('모든 할일 목록을 최신순으로 조회할 수 있다', async () => {
+    it('모든 할일 목록은 생성일 내림차순으로 정렬된다', async () => {
       const todos = [
         { title: '첫번째 할일', content: '내용1', status: 'in-progress' },
         { title: '두번째 할일', content: '내용2', status: 'done' }

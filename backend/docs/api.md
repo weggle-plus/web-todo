@@ -16,16 +16,16 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **Method:** `POST`
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| title | TODO 제목 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| title | 필수 | TODO 제목 |
 
 ```json
 {
@@ -53,15 +53,16 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```
 
 #### 2. 모든 TODO 조회
-등록된 모든 TODO 항목을 조회합니다.
+- 등록된 모든 TODO 항목을 조회합니다.
+- 정렬순서는 생성일자 오름차순
 
 - **URL:** `/todos`
 - **Method:** `GET`
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **성공 응답 (200 OK):**  
 ```json
@@ -80,8 +81,8 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
     "title": "할 일 2",
     "status": "done",
     "content": "할 일 내용 2",
-    "createdAt": "2024-03-15T12:00:00.000Z",
-    "updatedAt": "2024-03-15T12:00:00.000Z",
+    "createdAt": "2024-03-15T12:30:00.000Z",
+    "updatedAt": "2024-03-15T13:00:00.000Z",
     "completedAt": "2024-03-15T12:30:00.000Z"
   }
 ]  
@@ -102,9 +103,9 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **URL 파라미터:** id (TODO의 고유 식별자)
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **성공 응답 (200 OK):**  
 ```json
@@ -135,16 +136,17 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| title | 수정된 할 일 제목 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| title | 선택 | 수정된 할 일 제목 |
+| content | 선택 | 수정된 할 일 내용 |
 
 ```json
 {
@@ -180,10 +182,10 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
   - 없음
@@ -216,9 +218,9 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **URL 파라미터:** id (TODO의 고유 식별자)
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **성공 응답 (204 No Content):**
   - 응답 본문 없음
@@ -235,6 +237,10 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 ### USER
 
+- 유저는 두 가지 타입이 있습니다.
+  - 일반 유저
+  - 관리자
+
 #### 1. 회원가입
 새로운 사용자 계정을 생성합니다.
 
@@ -242,17 +248,17 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **Method:** `POST`
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| email | 사용자 이메일 |
-| password | 사용자 비밀번호 |
-| username | 사용자 이름 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| email | 필수 | 사용자 이메일 |
+| password | 필수 | 사용자 비밀번호 |
+| username | 필수 | 사용자 이름 |
 
 ```json
 {
@@ -286,16 +292,16 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **Method:** `POST`
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| email | 사용자 이메일 |
-| password | 사용자 비밀번호 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| email | 필수 | 사용자 이메일 |
+| password | 필수 | 사용자 비밀번호 |
 
 ```json
 {
@@ -314,13 +320,17 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 #### 3. 프로필 조회
 사용자의 프로필 정보를 조회합니다.
 
-- **URL:** `/users/profile`
+- **URL:** `/users/:userId`
 - **Method:** `GET`
+- **URL 파라미터:** userId (사용자의 고유 식별자)
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:** 
+  - 요청 본문 없음
 
 - **성공 응답 (200 OK):**
 ```json
@@ -348,16 +358,17 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **Method:** `PUT`
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| username | 업데이트된 사용자 이름 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| username | 선택 | 업데이트된 사용자 이름 |
+| password | 선택 | 업데이트된 사용자 비밀번호 |
 
 ```json
 {
@@ -386,7 +397,11 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 ### TEAM
 
-- 유저는 여러 팀에 속할 수 있습니다.
+- 유저는 동시에 여러 팀에 속할 수 있습니다.
+- 역할은 세 가지가 있습니다.
+  - manager: 팀 관리자
+  - mentor: 멘토
+  - member: 멤버
 
 #### 1. 팀 생성
 
@@ -394,15 +409,16 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **Method:** `POST`
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| name | 팀 이름 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| name | 필수 | 팀 이름 |
+| description | 선택 | 팀 설명 |
 
 ```json
 {
@@ -436,9 +452,9 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **URL 파라미터:** teamId (팀의 고유 식별자)
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **성공 응답 (200 OK):**
 ```json
@@ -477,16 +493,17 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| name | 업데이트된 팀 이름 |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| name | 선택 | 업데이트된 팀 이름 |
+| description | 선택 | 업데이트된 팀 설명 |
 
 ```json
 {
@@ -530,9 +547,9 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **URL 파라미터:** teamId (팀의 고유 식별자)
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **성공 응답 (204 No Content):**
   - 응답 본문 없음
@@ -546,23 +563,23 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 #### 5. 팀 멤버 추가
 
-- **URL:** `/teams/:teamId/members`
+- **URL:** `/teams/:teamId`
 - **Method:** `POST`
 - **URL 파라미터:** teamId (팀의 고유 식별자)
 
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| userId | 추가할 사용자의 ID |
-| role | 사용자의 역할 (manager, mentor, member) |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| userId | 필수 | 추가할 사용자의 ID |
+| role | 선택 | 사용자의 역할 (manager, mentor, member) 기본값 member |
 
 ```json
 {
@@ -601,22 +618,22 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 #### 6. 팀 멤버 역할 업데이트
 
-- **URL:** `/teams/:teamId/members/:userId/role`
+- **URL:** `/teams/:teamId/:userId`
 - **Method:** `PATCH`
 - **URL 파라미터:** teamId (팀의 고유 식별자), userId (사용자의 고유 식별자)
 
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Content-Type | application/json |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
 
-| 필드 | 설명 |
-| --- | --- |
-| role | 업데이트할 역할 (manager, mentor, member) |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| role | 필수 | 업데이트할 역할 (manager, mentor, member) |
 
 ```json
 {
@@ -652,15 +669,15 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 #### 7. 팀 멤버 삭제
 
-- **URL:** `/teams/:teamId/members/:userId`
+- **URL:** `/teams/:teamId/:userId`
 - **Method:** `DELETE`
 - **URL 파라미터:** teamId (팀의 고유 식별자), userId (사용자의 고유 식별자)
 
 - **Request Header:** 
 
-| 필드 | 설명 |
-| --- | --- |
-| Authorization | Bearer <JWT 토큰> |
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **성공 응답 (204 No Content):**
   - 응답 본문 없음

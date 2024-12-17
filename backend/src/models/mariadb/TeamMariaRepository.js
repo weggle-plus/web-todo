@@ -12,6 +12,14 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async create(teamData, userId, options = {}) {
+    const existingTeam = await this.Team.findOne({
+      where: { name: teamData.name }
+    });
+    
+    if (existingTeam) {
+      throw new Error('이미 존재하는 팀 이름입니다.');
+    }
+    
     const team = await this.Team.create(teamData, options);
     await this.UserTeam.create({
       userId,

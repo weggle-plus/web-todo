@@ -84,6 +84,12 @@ describe('TeamMariaRepository', () => {
         id: expect.any(Number)
       });
     });
+
+    it('이미 존재하는 팀 이름으로 팀을 생성하면 에러가 발생한다', async () => {
+      await expect(
+        teamRepository.create(sampleTeam, testUser.id)
+      ).rejects.toThrow();
+    });
   });
 
   describe('findAll()', () => {
