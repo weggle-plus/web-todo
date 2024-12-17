@@ -8,7 +8,7 @@ class TodoController {
   }
   async createTodo(req, res) {
     try {
-      const todo = await todoService.createTodo(req.body);
+      const todo = await this.todoService.createTodo(req.body);
       res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       console.log(error);
@@ -18,7 +18,7 @@ class TodoController {
 
   async getAllTodos(req, res) {
     try {
-      const todos = await todoService.getAllTodos();
+      const todos = await this.todoService.getAllTodos();
       res.json(todos);
     } catch (error) {
       console.log(error);
@@ -28,7 +28,7 @@ class TodoController {
 
   async getTodoById(req, res) {
     try {
-      const todo = await todoService.getTodoById(req.params.id);
+      const todo = await this.todoService.getTodoById(req.params.id);
       res.json(todo);
     } catch (error) {
       console.log(error);
@@ -38,7 +38,7 @@ class TodoController {
 
   async updateTodo(req, res) {
     try {
-      const todo = await todoService.updateTodo(req.params.id, req.body);
+      const todo = await this.todoService.updateTodo(req.params.id, req.body);
       res.json(todo);
     } catch (error) {
       console.log(error);
@@ -48,7 +48,7 @@ class TodoController {
 
   async updateTodoStatus(req, res) {
     try {
-      const todo = await todoService.updateTodoStatus(req.params.id, req.body.status);
+      const todo = await this.todoService.updateTodoStatus(req.params.id, req.body.status);
       res.json(todo);
     } catch (error) {
       console.log(error);
@@ -58,7 +58,7 @@ class TodoController {
 
   async deleteTodo(req, res) {
     try {
-      await todoService.deleteTodo(req.params.id);
+      await this.todoService.deleteTodo(req.params.id);
       res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
       console.log(error);
