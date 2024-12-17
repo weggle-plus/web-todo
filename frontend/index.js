@@ -1,17 +1,7 @@
-let clickedItemId = null;
+import apiModule from "./api.js";
+
 let editingItemId = null;
 let todoList = [];
-
-const getTodoItems = async () => {
-  try {
-    const response = await axios.get("http://localhost:4040/todos");
-    todoList = response.data;
-    renderTodoItems();
-  } catch (error) {
-    console.log("error : ", error);
-    alert("할 일 목록 데이터 가져오기에 실패하였습니다.");
-  }
-};
 
 const renderTodoItems = () => {
   const todoListElement = document.getElementById("todo_list");
@@ -37,7 +27,7 @@ const renderTodoItems = () => {
       checkBox.type = "checkbox";
       checkBox.id = `todo_check_${item.id}`;
       checkBox.checked = item.done;
-      checkBox.addEventListener("click", () => checkDone(item));
+      checkBox.addEventListener("click", () => apiModule.checkDone(item));
 
       const itemLabel = document.createElement("label");
       itemLabel.setAttribute("for", checkBox.id);
@@ -56,12 +46,18 @@ const renderTodoItems = () => {
 
       const saveButton = document.createElement("button");
       saveButton.textContent = "완료";
-      saveButton.addEventListener("click", () => finishEditing(item, true));
+      saveButton.addEventListener("click", () => {
+        apiModule.finishEditing(item, true);
+        editingItemId = null;
+      });
 
       const cancelButton = document.createElement("button");
       cancelButton.classList.add("btn_modify");
       cancelButton.textContent = "취소";
-      cancelButton.addEventListener("click", () => finishEditing(item, false));
+      cancelButton.addEventListener("click", () => {
+        apiModule.finishEditing(item, false);
+        editingItemId = null;
+      });
 
       if (item.done) {
         todoItem.append(checkBox, itemLabel, deleteButton);
@@ -89,102 +85,34 @@ const renderTodoItems = () => {
   }
 };
 
-const addTodoItem = async () => {
-  let inputTodoElement = document.getElementById("input_todo");
-  try {
-    let todoTitle = inputTodoElement.value;
-    const response = await axios.post("http://localhost:4040/todos", {
-      title: todoTitle,
-    });
-    console.log("todo added : ", todoTitle);
-    inputTodoElement.value = "";
-    getTodoItems();
-  } catch (error) {
-    inputTodoElement.value = "";
-    console.log("error : ", error);
-    if (error.status === 400) {
-      alert("입력값이 필요합니다.");
-    } else {
-      alert("할 일을 저장할 수 없습니다.");
-    }
-  }
-};
-
-const deleteTodoItem = async (clickedItemId) => {
-  try {
-    const response = await axios.delete(
-      `http://localhost:4040/todos/${clickedItemId}`
-    );
-    clickedItemId = null;
-    getTodoItems();
-  } catch (error) {
-    console.log("error : ", error);
-    alert("할 일을 삭제할 수 없습니다.");
-  }
-};
-
-const checkDone = async (todoItem) => {
-  try {
-    const response = await axios.patch(
-      `http://localhost:4040/todos/${todoItem.id}`,
-      {
-        done: !todoItem.done,
-      }
-    );
-  } catch (error) {
-    console.log("error: ", error);
-    alert("체크박스 체크 에러입니다.");
-  }
-  getTodoItems();
-};
-
 const modifyTitle = (id) => {
   editingItemId = id;
-  getTodoItems();
-};
-
-const finishEditing = async (todoItem, isEdited) => {
-  if (isEdited) {
-    try {
-      let todoInput = document.getElementById(`title_input_${todoItem.id}`);
-      const response = await axios.put(
-        `http://localhost:4040/todos/${todoItem.id}`,
-        {
-          title: todoInput.value,
-        }
-      );
-      editingItemId = null;
-    } catch (error) {
-      console.log("error : ", error);
-      alert("수정에 실패하였습니다.");
-    }
-  } else {
-    editingItemId = null;
-  }
-  getTodoItems();
+  apiModule.getTodoItems().then((value) => {
+    todoList = value;
+    renderTodoItems();
+  });
 };
 
 const modalPop = (id) => {
-  clickedItemId = id;
+  apiModule.clickedItemId = id;
   document.getElementById("modal_container").classList.remove("hidden");
 };
 
 const modalClose = (isDelete) => {
   if (isDelete) {
-    deleteTodoItem(clickedItemId);
+    apiModule.deleteTodoItem(apiModule.clickedItemId);
   }
-  clickedItemId = null;
+  apiModule.clickedItemId = null;
   document.getElementById("modal_container").classList.add("hidden");
 };
 
-const addItem = () => {
-  console.log("add");
-};
-
 document.addEventListener("DOMContentLoaded", () => {
-  getTodoItems();
+  apiModule.getTodoItems().then((value) => {
+    todoList = value;
+    renderTodoItems();
+  });
   const addTodoButton = document.getElementById("add_todo_btn");
-  addTodoButton.addEventListener("click", addTodoItem);
+  addTodoButton.addEventListener("click", apiModule.addTodoItem);
   const modalCloseTrueButton = document.getElementById("modal_close_true_btn");
   modalCloseTrueButton.addEventListener("click", () => {
     modalClose(true);
