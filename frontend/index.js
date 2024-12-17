@@ -1,15 +1,58 @@
 const addBtn = document.getElementById("register");
 
-const textInput = document.getElementById("onlyInput");
-const updateBtn = document.getElementById("updateBtn");
+const inputContainer = document.getElementById("getData");
 
-updateBtn.addEventListener("click", function () {
-  textInput.removeAttribute("readonly");
-  textInput.focus();
-  updateBtn.innerHTML = "확인";
+inputContainer.addEventListener("click", function (event) {
+  const target = event.target;
 
-  console.log("수정클릭");
+  const group = target.closest(".contents_list");
+  const input = group.querySelector(".readonly");
+  const confirm = group.querySelector(".confirm");
+  const btnWrap = group.querySelector(".edit_btn_wrap");
+  const confirmWrap = group.querySelector(".confirm_btn_wrap");
+  const id = group.dataset.id;
+
+  if (target.classList.contains("update")) {
+    input.removeAttribute("readonly");
+    input.focus();
+
+    btnWrap.style.display = "none";
+    confirmWrap.style.display = "block";
+  }
+
+  if (target.classList.contains("confirm")) {
+    input.setAttribute("readonly", true);
+
+    btnWrap.style.display = "block";
+    confirmWrap.style.display = "none";
+    patchContent(id, input.value);
+    location.reload();
+  }
 });
+
+function patchContent(id, value) {
+  fetch(`http://localhost:8080/todo/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: value,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("서버 오류");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      console.log("성공", data);
+    })
+    .catch((error) => {
+      console.error("에러", error);
+    });
+}
 
 function getTodos() {
   fetch("http://localhost:8080/todo", {
@@ -25,15 +68,21 @@ function getTodos() {
         ul.insertAdjacentHTML(
           "beforeend",
           `
-                <li id=${item.id} class="contents_list">
+                <li data-id=${item.id} class="contents_list" >
                     <div>
                       <input type="checkbox" />
-                    
                       <input for="" value="${item.content}"  readonly  class="readonly">
                     </div>
-                    <span>
-                      <button class="btn_gray_line">수정</button>
-                      <button data-delete=${item.id} class="btn_red_line">삭제</button>
+                    <span class="input_btn_wrap">
+                      <span class="edit_btn_wrap">
+                        <button class="btn_gray_line update">수정</button>
+                        <button class="btn_red_line">삭제</button>
+                      </span>
+
+                      <span class="confirm_btn_wrap">
+                        <button class="btn_0f confirm">완료</button>
+                        <button class="btn_gray_line">취소</button>
+                      </span>
                     </span>
                 </li>
                 `

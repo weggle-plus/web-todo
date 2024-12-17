@@ -1,10 +1,23 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css");
+
+:root {
+  --main: #0f172a;
+  --gray: #94a3b8;
+  --red: #ef4444;
+  --d4d: #d4d4d4;
+
+  --red-border: 1px solid var(--red);
+
+  --extra-small: 4px;
+}
+
 body {
   font-family: "pretendard";
+  color: var(--main);
 }
 
 .btn_0f {
-  background-color: #0f172a;
+  background-color: var(--main);
   color: #fff;
   width: 88px;
   height: 40px;
@@ -15,7 +28,7 @@ body {
 }
 
 .btn_80 {
-  background-color: #0f172a;
+  background-color: var(--main);
   color: #fff;
   opacity: 0.8;
   width: 88px;
@@ -68,7 +81,6 @@ body {
   width: 240px;
   height: 40px;
   background-color: #e2e8f0;
-  color: #0f172a;
   line-height: 40px;
   padding-left: 16px;
   border-radius: 5px;
@@ -168,4 +180,15 @@ body {
   text-align: left;
 }
 .pop_contents button {
+}
+
+.input_btn_wrap {
+  position: relative;
+}
+
+.edit_btn_wrap {
+  display: block;
+}
+.confirm_btn_wrap {
+  display: none;
 }
