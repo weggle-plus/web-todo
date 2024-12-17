@@ -11,18 +11,18 @@ const SQL = {
 
 const errHandler = (err) => {
   console.error("에러발생", err);
-  return res.status(StatusCodes.BAD_REQUEST).json(err);
+  res.status(StatusCodes.BAD_REQUEST).json(err);
 };
 
 const noAffectHandler = (res) => {
-  return res.status(StatusCodes.BAD_REQUEST).json({
+  res.status(StatusCodes.BAD_REQUEST).json({
     message: "fail: bad request",
   });
 };
 
 const getTodo = (req, res) => {
   conn.query(SQL.select, (err, results) => {
-    if (err) errHandler(err);
+    if (err) return errHandler(err);
 
     res.status(StatusCodes.OK).json(results);
   });
@@ -32,7 +32,7 @@ const createTodo = (req, res) => {
   const { content } = req.body;
 
   conn.query(SQL.insert, content, (err, results) => {
-    if (err) errHandler(err);
+    if (err) return errHandler(err);
 
     res.status(StatusCodes.CREATED).json({
       message: "success: create todo",
@@ -46,19 +46,19 @@ const updateTodo = (req, res) => {
 
   if (id && content) {
     conn.query(SQL.updateContent, [content, id], (err, results) => {
-      if (err) errHandler(err);
-      if (results.affectedRows == 0) noAffectHandler(res);
+      if (err) return errHandler(err);
+      if (results.affectedRows == 0) return noAffectHandler(res);
 
-      return res.status(StatusCodes.OK).json({
+      res.status(StatusCodes.OK).json({
         message: "success: update todo content",
       });
     });
   } else if (id && isDone !== undefined) {
     conn.query(SQL.updateStatus, [isDone, id], (err, results) => {
-      if (err) errHandler(err);
-      if (results.affectedRows == 0) noAffectHandler(res);
+      if (err) return errHandler(err);
+      if (results.affectedRows == 0) return noAffectHandler(res);
 
-      return res.status(StatusCodes.OK).json({
+      res.status(StatusCodes.OK).json({
         message: "success: update todo status",
       });
     });
@@ -69,10 +69,10 @@ const deleteTodo = (req, res) => {
   const { id } = req.params;
 
   conn.query(SQL.delete, id, (err, results) => {
-    if (err) errHandler(err);
-    if (results.affectedRows == 0) noAffectHandler(res);
+    if (err) return errHandler(err);
+    if (results.affectedRows == 0) return noAffectHandler(res);
 
-    return res.status(StatusCodes.OK).json({
+    res.status(StatusCodes.OK).json({
       message: "success: delete todo",
     });
   });
