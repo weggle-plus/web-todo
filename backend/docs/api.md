@@ -174,7 +174,7 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 #### 5. TODO 상태 변경
 특정 TODO 항목의 상태만 변경합니다.
 
-- **URL:** `/todos/:id/status`
+- **URL:** `/todos/:id`
 - **Method:** `PATCH`
 - **URL 파라미터:** id (TODO의 고유 식별자)
 
@@ -186,16 +186,8 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 | Authorization | Bearer <JWT 토큰> |
 
 - **Request Body:**  
+  - 없음
 
-| 필드 | 설명 |
-| --- | --- |
-| status | 변경할 상태 (done, in-progress) |
-
-```json
-{
-  "status": "done"
-}  
-```
 - **성공 응답 (200 OK):**  
 ```json
 {

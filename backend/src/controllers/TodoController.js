@@ -1,10 +1,11 @@
 const { StatusCodes } = require('http-status-codes');
 const TodoService = require('../services/TodoService');
-const TodoRepositoryFactory = require('../models/TodoRepositoryFactory');
-const todoRepository = TodoRepositoryFactory.createRepository();
-const todoService = new TodoService(todoRepository);
+const { TodoRepositoryFactory } = require('../models/RepositoryFactory');
 
 class TodoController {
+  constructor() {
+    this.todoService = new TodoService(TodoRepositoryFactory.createRepository());
+  }
   async createTodo(req, res) {
     try {
       const todo = await todoService.createTodo(req.body);

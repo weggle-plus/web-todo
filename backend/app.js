@@ -5,7 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const { initializeDatabase } = require('./src/config/database');
-
+const cors = require('cors');
 // 환경변수 설정 로드
 const dotenv = require('dotenv');
 dotenv.config();
@@ -29,6 +29,7 @@ app.use(express.json());                                 // JSON 파싱 미들�
 app.use(express.urlencoded({ extended: false }));        // URL 인코딩 미들웨어
 app.use(cookieParser());                                 // 쿠키 파싱 미들웨어
 app.use(express.static(path.join(__dirname, 'public'))); // 정적 파일 제공
+app.use(cors());  // TODO: 프로덕션 환경에서는 수정
 
 // 데이터베이스 초기화
 initializeDatabase().catch(console.error);

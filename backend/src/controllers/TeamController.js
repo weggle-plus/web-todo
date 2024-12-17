@@ -1,17 +1,16 @@
 const { StatusCodes } = require('http-status-codes');
 const TeamService = require('../services/TeamService');
-const TeamMariaRepository = require('../models/mariadb/TeamMariaRepository');
-const UserMariaRepository = require('../models/mariadb/UserMariaRepository');
+const { TeamRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
 
 class TeamController {
   constructor() {
     this.teamService = new TeamService(
-      new TeamMariaRepository(),
-      new UserMariaRepository()
+      TeamRepositoryFactory.createRepository(),
+      UserRepositoryFactory.createRepository()
     );
   }
 
-  async createTeam(req, res, next) {
+  async createTeam(req, res) {
     try {
       const team = await this.teamService.createTeam(req.body, req.user.id);
       res.status(StatusCodes.CREATED).json(team);
@@ -22,22 +21,21 @@ class TeamController {
           error: error.message
         });
       }
-      next(error);
     }
   }
 
-  async getTeam(req, res, next) {
+  async getTeam(req, res) {
     try {
       const team = await this.teamService.getTeam(req.params.teamId);
       res.json(team);
     } catch (error) {
+      console.log(error);
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.NOT_FOUND).json({
           message: '팀 조회 중 오류가 발생했습니다.',
           error: error.message
         });
       }
-      next(error);
     }
   }
 
@@ -46,6 +44,7 @@ class TeamController {
       const teams = await this.teamService.getUserTeams(req.user.id);
       res.json(teams);
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }

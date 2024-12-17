@@ -24,6 +24,9 @@ const convertToSequelizeSchema = (schema) => {
       case 'text':
         sequelizeSchema[key].type = DataTypes.TEXT;
         break;
+      case 'boolean':
+        sequelizeSchema[key].type = DataTypes.BOOLEAN;
+        break;
       case 'date':
         sequelizeSchema[key].type = DataTypes.DATE;
         break;

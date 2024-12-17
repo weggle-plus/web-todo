@@ -1,4 +1,3 @@
-const { DataTypes } = require('sequelize');
 const sequelize = require('../../config/mariadb');
 const { UserSchema } = require('../interfaces/UserSchema');
 const { convertToSequelizeSchema } = require('./utils/schemaConverter');

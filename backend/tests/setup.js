@@ -1,31 +1,17 @@
-// tests/setup.js
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const mongoose = require('mongoose');
+const dotenv = require('dotenv');
+dotenv.config();
+const { Sequelize } = require('sequelize');
 
-let mongod;
-
-// 모든 테스트 전에 실행
-beforeAll(async () => {
-  mongod = await MongoMemoryServer.create();
-  const uri = mongod.getUri();
-  await mongoose.connect(uri);
-});
-
-// 각각의 테스트가 끝난 후 실행
-afterEach(async () => {
-  // 각 테스트 후 컬렉션 초기화
-  const collections = mongoose.connection.collections;
-  for (const key in collections) {
-    const collection = collections[key];
-    await collection.deleteMany();
+const sequelize = new Sequelize(
+  process.env.TEST_DB_DATABASE,  // 테스트용 데이터베이스 이름
+  process.env.DB_USERNAME,
+  process.env.DB_PASSWORD, 
+  {
+    host: process.env.DB_HOST, 
+    port: process.env.DB_PORT, 
+    dialect: 'mysql',
+    logging: false
   }
-});
+);
 
-// 모든 테스트가 끝난 후 실행
-afterAll(async () => {
-  await mongoose.connection.close();
-  await mongod.stop();
-});
-
-// 테스트 타임아웃 설정 (선택사항)
-jest.setTimeout(30000);
+module.exports = sequelize;

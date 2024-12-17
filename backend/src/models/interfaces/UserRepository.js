@@ -3,6 +3,10 @@ class UserRepository {
     throw new Error('Method not implemented');
   }
 
+  async login(email, password) {
+    throw new Error('Method not implemented');
+  }
+
   async findAll() {
     throw new Error('Method not implemented');
   }

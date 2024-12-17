@@ -1,10 +1,10 @@
 const { StatusCodes } = require('http-status-codes');
 const UserService = require('../services/UserService');
-const UserMariaRepository = require('../models/mariadb/UserMariaRepository');
+const { UserRepositoryFactory } = require('../models/RepositoryFactory');
 
 class UserController {
   constructor() {
-    this.userService = new UserService(new UserMariaRepository());
+    this.userService = new UserService(UserRepositoryFactory.createRepository());
   }
 
   async register(req, res, next) {

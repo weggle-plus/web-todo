@@ -1,5 +1,5 @@
 const sequelize = require('../../config/mariadb');
-const { TeamSchema } = require('../interfaces/TeamSchema');
+const { TeamSchema, UserTeamSchema } = require('../interfaces/TeamSchema');
 const { convertToSequelizeSchema } = require('./utils/schemaConverter');
 const User = require('./UserMaria');
 
@@ -16,12 +16,16 @@ const UserTeam = sequelize.define(
 // 다대다 관계 설정
 Team.belongsToMany(User, { 
   through: UserTeam,
-  as: 'members'
+  as: 'members',
+  foreignKey: 'teamId',
+  otherKey: 'userId'
 });
 
 User.belongsToMany(Team, { 
   through: UserTeam,
-  as: 'teams'
+  as: 'teams',
+  foreignKey: 'userId',
+  otherKey: 'teamId'
 });
 
 module.exports = { Team, UserTeam }; 
