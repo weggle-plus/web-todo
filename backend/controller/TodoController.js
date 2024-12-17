@@ -1,8 +1,29 @@
 const conn = require("../mariadb");
 const { StatusCodes } = require("http-status-codes");
 
+const SQL = {
+  select: "SELECT * FROM todos",
+  insert: "INSERT INTO todos (content) VALUES(?)",
+  updateContent: "UPDATE todos SET content =? WHERE id = ?",
+  updateStatus: "UPDATE todos SET is_done = ? WHERE id = ?",
+  delete: "DELETE FROM todos WHERE id = ?",
+};
+
+const errHandler = (err) => {
+  console.error("에러발생", err);
+  return res.status(StatusCodes.BAD_REQUEST).json(err);
+};
+
+const noAffectHandler = (res) => {
+  return res.status(StatusCodes.BAD_REQUEST).json({
+    message: "fail: bad request",
+  });
+};
+
 const getTodo = (req, res) => {
-  conn.query("SELECT * FROM todos", (err, results) => {
+  conn.query(SQL.select, (err, results) => {
+    if (err) errHandler(err);
+
     res.status(StatusCodes.OK).json(results);
   });
 };
@@ -10,11 +31,8 @@ const getTodo = (req, res) => {
 const createTodo = (req, res) => {
   const { content } = req.body;
 
-  conn.query(`INSERT INTO todos (content) VALUES(?)`, content, (err, results) => {
-    if (err) {
-      console.error("에러발생", err);
-      return res.status(StatusCodes.BAD_REQUEST).json(err);
-    }
+  conn.query(SQL.insert, content, (err, results) => {
+    if (err) errHandler(err);
 
     res.status(StatusCodes.CREATED).json({
       message: "success: create todo",
@@ -27,34 +45,18 @@ const updateTodo = (req, res) => {
   const { content, isDone } = req.body;
 
   if (id && content) {
-    conn.query("UPDATE todos SET content =? WHERE id = ?", [content, id], (err, results) => {
-      if (err) {
-        console.error("에러발생", err);
-        return res.status(StatusCodes.BAD_REQUEST).json(err);
-      }
-
-      if (results.affectedRows == 0) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          message: "fail: bad request",
-        });
-      }
+    conn.query(SQL.updateContent, [content, id], (err, results) => {
+      if (err) errHandler(err);
+      if (results.affectedRows == 0) noAffectHandler(res);
 
       return res.status(StatusCodes.OK).json({
         message: "success: update todo content",
       });
     });
   } else if (id && isDone !== undefined) {
-    conn.query("UPDATE todos SET is_done = ? WHERE id = ?", [isDone, id], (err, results) => {
-      if (err) {
-        console.error("에러발생", err);
-        return res.status(StatusCodes.BAD_REQUEST).end();
-      }
-
-      if (results.affectedRows == 0) {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          message: "fail: bad request",
-        });
-      }
+    conn.query(SQL.updateStatus, [isDone, id], (err, results) => {
+      if (err) errHandler(err);
+      if (results.affectedRows == 0) noAffectHandler(res);
 
       return res.status(StatusCodes.OK).json({
         message: "success: update todo status",
@@ -66,17 +68,9 @@ const updateTodo = (req, res) => {
 const deleteTodo = (req, res) => {
   const { id } = req.params;
 
-  conn.query("DELETE FROM todos WHERE id = ?", id, (err, results) => {
-    if (err) {
-      console.error("에러발생", err);
-      return res.status(StatusCodes.BAD_REQUEST).end();
-    }
-
-    if (results.affectedRows == 0) {
-      return res.status(StatusCodes.BAD_REQUEST).json({
-        message: "fail: bad request",
-      });
-    }
+  conn.query(SQL.delete, id, (err, results) => {
+    if (err) errHandler(err);
+    if (results.affectedRows == 0) noAffectHandler(res);
 
     return res.status(StatusCodes.OK).json({
       message: "success: delete todo",
