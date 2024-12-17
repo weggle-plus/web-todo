@@ -1,9 +1,10 @@
 import { postTodo, patchContent, getTodos, deleteTodo, patchStatus } from "./api.js";
 
 const addBtn = document.getElementById("register");
-const inputContainer = document.getElementById("getTodoData");
+const todoList = document.getElementById("getTodoData");
+const doneList = document.getElementById("getDoneData");
 
-inputContainer.addEventListener("click", (event) => {
+todoList.addEventListener("click", (event) => {
   const target = event.target;
 
   const group = target.closest(".contents_list");
@@ -52,6 +53,32 @@ inputContainer.addEventListener("click", (event) => {
 
   if (target.classList.contains("checkBox")) {
     patchStatus(id, checkBox.checked);
+    location.reload();
+  }
+});
+
+doneList.addEventListener("click", (event) => {
+  const target = event.target;
+  const group = target.closest(".contents_list");
+  const id = group.dataset.id;
+  const checkBox = group.querySelector(".checkBox");
+
+  if (target.classList.contains("delete")) {
+    document.querySelectorAll(".delete_popup").forEach((popup) => {
+      popup.style.display = "grid";
+
+      document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("delete-confirm")) {
+          deleteTodo(id);
+          location.reload();
+        }
+      });
+    });
+  }
+
+  if (target.classList.contains("checkBox")) {
+    patchStatus(id, checkBox.checked);
+    location.reload();
   }
 });
 
