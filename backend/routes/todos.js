@@ -17,22 +17,21 @@ router.get('/', (req, res) => {
   db.all(sql, [], (err, rows) => {
     if (err) {
       console.error('Error fetching todos:', err.message);
-      res.status(500).send('Internal Server Error');
-    } else {
-      res.json(rows); // 결과를 JSON 형태로 반환
+      return res.status(500).send('Internal Server Error');
     }
+    return res.status(StatusCodes.OK).json(rows); // 결과를 JSON 형태로 반환
   });
 
 })
 
 // 2. TO DO 항목 추가 | POST | /todos | 새로운 TO DO 행 추가
 router.post('/', (req, res) => {
-  const {title} = req.body; 
+  const {title} = req.body;
 
   db.run(`INSERT INTO todos (title) VALUES (?)`, [title], (err, results) => {
     if(err) {
-      console.log(err);
-      return res.status(StatusCodes.BAD_REQUEST).end();
+      console.error('Error adding TO DO', err.message);
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
     }
     return res.status(StatusCodes.CREATED).json(results);
   })
