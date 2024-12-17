@@ -5,14 +5,15 @@
   "scripts": {
     "start": "node bin/www.js",
     "start:dev": "nodemon bin/www.js",
-    "test": "jest --detectOpenHandles",
-    "test:watch": "jest --watch"
+    "test": "jest --detectOpenHandles --forceExit",
+    "test:verbose": "jest --verbose",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "@types/express": "^5.0.0",
-    "@types/jsonwebtoken": "^9.0.7",
     "bcrypt": "^5.1.1",
     "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
     "debug": "^4.4.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",

@@ -63,9 +63,9 @@ class TodoService {
     return this._processUpdate(todo, updateData);
   }
 
-  async updateTodoStatus(id, status) {
+  async updateTodoStatus(id) {
     const todo = await this.validateTodoExists(id);
-    this.validateStatus(status);
+    const status = todo.status === TODO_STATUS.DONE ? TODO_STATUS.IN_PROGRESS : TODO_STATUS.DONE;
     
     return this._processUpdate(todo, { status });
   }
