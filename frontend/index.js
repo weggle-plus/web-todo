@@ -1,7 +1,7 @@
 import { postTodo, patchContent, getTodos, deleteTodo, patchStatus } from "./api.js";
 
 const addBtn = document.getElementById("register");
-const inputContainer = document.getElementById("getData");
+const inputContainer = document.getElementById("getTodoData");
 
 inputContainer.addEventListener("click", (event) => {
   const target = event.target;
