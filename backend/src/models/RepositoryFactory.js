@@ -3,11 +3,12 @@ const TodoMariaRepository = require('./mariadb/TodoMariaRepository');
 const UserMariaRepository = require('./mariadb/UserMariaRepository');
 const TeamMariaRepository = require('./mariadb/TeamMariaRepository');
 
+
 class BaseRepositoryFactory {
-  static createRepository(mongoRepo, mariaRepo) {
+  static createRepository(mariaRepo) {
     switch(config.type) {
-      case 'mongodb':
-        return new mongoRepo();
+      // case 'mongodb':
+      //   return new mongoRepo();
       case 'mariadb':
         return new mariaRepo();
       default:
@@ -18,19 +19,19 @@ class BaseRepositoryFactory {
 
 class TodoRepositoryFactory extends BaseRepositoryFactory {
   static createRepository() {
-    return super.createRepository(TodoMongoRepository, TodoMariaRepository);
+    return super.createRepository(TodoMariaRepository);
   }
 }
 
 class UserRepositoryFactory extends BaseRepositoryFactory {
   static createRepository() {
-    return super.createRepository(UserMongoRepository, UserMariaRepository);
+    return super.createRepository(UserMariaRepository);  // TODO: 몽고 버전 추가
   }
 }
 
 class TeamRepositoryFactory extends BaseRepositoryFactory {
   static createRepository() {
-    return super.createRepository(TeamMongoRepository, TeamMariaRepository);
+    return super.createRepository(TeamMariaRepository); // TODO: 몽고 버전 추가
   }
 }
 
