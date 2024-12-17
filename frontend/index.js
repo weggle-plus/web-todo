@@ -1,4 +1,4 @@
-import { postTodo, patchContent, getTodos, deleteTodo } from "./api.js";
+import { postTodo, patchContent, getTodos, deleteTodo, patchStatus } from "./api.js";
 
 const addBtn = document.getElementById("register");
 const inputContainer = document.getElementById("getData");
@@ -8,10 +8,10 @@ inputContainer.addEventListener("click", (event) => {
 
   const group = target.closest(".contents_list");
   const input = group.querySelector(".readonly");
-  const confirm = group.querySelector(".confirm");
   const btnWrap = group.querySelector(".edit_btn_wrap");
   const confirmWrap = group.querySelector(".confirm_btn_wrap");
   const id = group.dataset.id;
+  const checkBox = group.querySelector(".checkBox");
 
   if (target.classList.contains("update")) {
     input.removeAttribute("readonly");
@@ -48,6 +48,10 @@ inputContainer.addEventListener("click", (event) => {
         }
       });
     });
+  }
+
+  if (target.classList.contains("checkBox")) {
+    patchStatus(id, checkBox.checked);
   }
 });
 

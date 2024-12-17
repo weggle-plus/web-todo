@@ -13,6 +13,24 @@ function deleteTodo(id) {
     });
 }
 
+function patchStatus(id, value) {
+  fetch(`http://localhost:8080/todo/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      isDone: value,
+    }),
+  })
+    .then((data) => {
+      console.log("상태 변경 성공", data);
+    })
+    .catch((error) => {
+      console.error("상태 변경 에러", error);
+    });
+}
+
 function patchContent(id, value) {
   fetch(`http://localhost:8080/todo/${id}`, {
     method: "PATCH",
@@ -58,7 +76,7 @@ function getTodos() {
           `
                   <li data-id=${item.id} class="contents_list" >
                       <div>
-                        <input type="checkbox" />
+                        <input type="checkbox" class="checkBox" />
                         <input for="" value="${item.content}"  readonly  class="readonly">
                       </div>
                       <span class="input_btn_wrap">
@@ -107,4 +125,4 @@ function postTodo() {
     });
 }
 
-export { patchContent, getTodos, postTodo, deleteTodo };
+export { patchContent, getTodos, postTodo, deleteTodo, patchStatus };
