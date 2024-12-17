@@ -1,20 +1,56 @@
-function deleteTodo(id) {
-  fetch(`http://localhost:8080/todo/${id}`, {
-    method: "DELETE",
+import { createDoneTag, createTodoTag } from "./createTag.js";
+
+const URL = "http://localhost:8080/todo";
+
+function getTodos() {
+  fetch(URL, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   })
+    .then((res) => {
+      if (!res.ok) throw new Error("서버 오류");
+      return res.json();
+    })
     .then((data) => {
-      console.log("성공", data);
+      data.map((item) => {
+        if (item.is_done) {
+          createDoneTag(item.id, item.content);
+        } else {
+          createTodoTag(item.id, item.content);
+        }
+      });
     })
     .catch((error) => {
-      console.error("에러", error);
+      console.error(error);
+    });
+}
+
+function postTodo(value) {
+  fetch(URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      content: value,
+    }),
+  })
+    .then((res) => {
+      if (!res.ok) throw new Error("서버 에러", err);
+      return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.error(error);
     });
 }
 
 function patchStatus(id, value) {
-  fetch(`http://localhost:8080/todo/${id}`, {
+  fetch(`${URL}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -23,16 +59,20 @@ function patchStatus(id, value) {
       isDone: value,
     }),
   })
+    .then((res) => {
+      if (!res.ok) throw new Error("서버 오류");
+      return res.json();
+    })
     .then((data) => {
-      console.log("상태 변경 성공", data);
+      console.log(data);
     })
     .catch((error) => {
-      console.error("상태 변경 에러", error);
+      console.error(error);
     });
 }
 
 function patchContent(id, value) {
-  fetch(`http://localhost:8080/todo/${id}`, {
+  fetch(`${URL}/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
@@ -42,108 +82,34 @@ function patchContent(id, value) {
     }),
   })
     .then((res) => {
-      if (!res.ok) {
-        throw new Error("서버 오류");
-      }
+      if (!res.ok) throw new Error("서버 오류");
       return res.json();
     })
     .then((data) => {
-      console.log("성공", data);
+      console.log(data);
     })
     .catch((error) => {
-      console.error("에러", error);
+      console.error(error);
     });
 }
 
-function getTodos() {
-  fetch("http://localhost:8080/todo", {
-    method: "GET",
+function deleteTodo(id) {
+  fetch(`${URL}/${id}`, {
+    method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
   })
     .then((res) => {
-      if (!res.ok) {
-        throw new Error("서버 오류");
-      }
+      if (!res.ok) throw new Error("서버 오류");
       return res.json();
     })
     .then((data) => {
-      const todoUl = document.getElementById("getTodoData");
-      const doneUl = document.getElementById("getDoneData");
-
-      data.map((item) => {
-        if (item.is_done) {
-          doneUl.insertAdjacentHTML(
-            "beforeend",
-            `
-                        <li data-id=${item.id} class="contents_list" >
-                            <div>
-                              <input type="checkbox" class="checkBox" checked/>
-                              <input for="" value="${item.content}"  readonly  class="readonly">
-                            </div>
-                            <span class="input_btn_wrap">
-                              <span class="edit_btn_wrap">
-                                <button class="btn_red_line delete">삭제</button>
-                              </span>
-                            </span>
-                        </li>
-                        `
-          );
-        } else {
-          todoUl.insertAdjacentHTML(
-            "beforeend",
-            `
-                        <li data-id=${item.id} class="contents_list" >
-                            <div>
-                              <input type="checkbox" class="checkBox"  />
-                              <input for="" value="${item.content}"  readonly  class="readonly">
-                            </div>
-                            <span class="input_btn_wrap">
-                              <span class="edit_btn_wrap">
-                                <button class="btn_gray_line update">수정</button>
-                                <button class="btn_red_line delete">삭제</button>
-                              </span>
-        
-                              <span class="confirm_btn_wrap">
-                                <button class="btn_0f confirm">완료</button>
-                                <button class="btn_gray_line cancel">취소</button>
-                              </span>
-                            </span>
-                        </li>
-                        `
-          );
-        }
-      });
+      console.log(data);
     })
     .catch((error) => {
-      console.error("에러", error);
+      console.error(error);
     });
 }
 
-function postTodo() {
-  const inputData = document.getElementById("newTodo").value;
-  fetch("http://localhost:8080/todo", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      content: inputData,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("서버 오류");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      console.log("성공", data);
-    })
-    .catch((error) => {
-      console.error("에러", error);
-    });
-}
-
-export { patchContent, getTodos, postTodo, deleteTodo, patchStatus };
+export { getTodos, postTodo, patchStatus, patchContent, deleteTodo };
