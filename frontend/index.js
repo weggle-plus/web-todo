@@ -93,7 +93,6 @@ const addTodoItem = async () => {
   let inputTodoElement = document.getElementById("input_todo");
   try {
     let todoTitle = inputTodoElement.value;
-    // todoList.push({ id: todoList.length + 1, title: todoTitle, done: false });
     const response = await axios.post("http://localhost:4040/todos", {
       title: todoTitle,
     });
@@ -109,7 +108,6 @@ const addTodoItem = async () => {
 
 const deleteTodoItem = async (clickedItemId) => {
   try {
-    // todoList = todoList.filter((item) => item.id !== clickedItemId);
     const response = await axios.delete(
       `http://localhost:4040/todos/${clickedItemId}`
     );
@@ -121,13 +119,18 @@ const deleteTodoItem = async (clickedItemId) => {
   }
 };
 
-const checkDone = (todoItem) => {
-  todoList = todoList.map((item) => {
-    if (item.id === todoItem.id) {
-      item.done = !item.done;
-    }
-    return item;
-  });
+const checkDone = async (todoItem) => {
+  try {
+    const response = await axios.patch(
+      `http://localhost:4040/todos/${todoItem.id}`,
+      {
+        done: !todoItem.done
+      }
+    );
+  } catch (error) {
+    console.log("error: ", error);
+    alert("체크박스 체크 에러입니다.");
+  }
   getTodoItems();
 };
 
