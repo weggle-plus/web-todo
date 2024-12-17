@@ -1,17 +1,11 @@
 let clickedItemId = null;
 let editingItemId = null;
-let todoList = [
-  {
-    id: 1,
-    title: "test",
-    done: false,
-  },
-];
+let todoList = [];
 
 const getTodoItems = async () => {
   try {
-    // const response = await axios.get("http://localhost:4040/todos");
-    // todoList = response.data;
+    const response = await axios.get("http://localhost:4040/todos");
+    todoList = response.data;
     renderTodoItems();
   } catch (error) {
     console.log("error : ", error);
