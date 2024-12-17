@@ -19,20 +19,18 @@ body {
 .btn_0f {
   background-color: var(--main);
   color: #fff;
-  width: 88px;
-  height: 40px;
   border: none;
   border-radius: 5px;
   font-size: 16px;
   font-weight: 500;
+  padding: 8px 16px;
 }
 
 .btn_80 {
   background-color: var(--main);
   color: #fff;
   opacity: 0.8;
-  width: 88px;
-  height: 40px;
+  padding: 8px 16px;
 }
 
 .btn_gray {
@@ -63,7 +61,7 @@ body {
 
 /* layout */
 #wrap {
-  max-width: 1024px;
+  max-width: 1200px;
   width: 100%;
   display: flex;
   align-items: flex-start;

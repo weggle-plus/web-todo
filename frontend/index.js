@@ -1,3 +1,5 @@
+import { postTodo, patchContent, getTodos } from "./api.js";
+
 const addBtn = document.getElementById("register");
 
 const inputContainer = document.getElementById("getData");
@@ -20,6 +22,13 @@ inputContainer.addEventListener("click", function (event) {
     confirmWrap.style.display = "block";
   }
 
+  if (target.classList.contains("cancel")) {
+    input.setAttribute("readonly", true);
+
+    confirmWrap.style.display = "none";
+    btnWrap.style.display = "block";
+  }
+
   if (target.classList.contains("confirm")) {
     input.setAttribute("readonly", true);
 
@@ -29,80 +38,6 @@ inputContainer.addEventListener("click", function (event) {
     location.reload();
   }
 });
-
-function patchContent(id, value) {
-  fetch(`http://localhost:8080/todo/${id}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      content: value,
-    }),
-  })
-    .then((res) => {
-      if (!res.ok) {
-        throw new Error("서버 오류");
-      }
-      return res.json();
-    })
-    .then((data) => {
-      console.log("성공", data);
-    })
-    .catch((error) => {
-      console.error("에러", error);
-    });
-}
-
-function getTodos() {
-  fetch("http://localhost:8080/todo", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((data) => {
-      const ul = document.getElementById("getData");
-      data.map((item) => {
-        ul.insertAdjacentHTML(
-          "beforeend",
-          `
-                <li data-id=${item.id} class="contents_list" >
-                    <div>
-                      <input type="checkbox" />
-                      <input for="" value="${item.content}"  readonly  class="readonly">
-                    </div>
-                    <span class="input_btn_wrap">
-                      <span class="edit_btn_wrap">
-                        <button class="btn_gray_line update">수정</button>
-                        <button class="btn_red_line">삭제</button>
-                      </span>
-
-                      <span class="confirm_btn_wrap">
-                        <button class="btn_0f confirm">완료</button>
-                        <button class="btn_gray_line">취소</button>
-                      </span>
-                    </span>
-                </li>
-                `
-        );
-      });
-    });
-}
-
-function postTodo() {
-  const inputData = document.getElementById("newTodo").value;
-  fetch("http://localhost:8080/todo", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      content: inputData,
-    }),
-  });
-}
 
 function registerData() {
   postTodo();
