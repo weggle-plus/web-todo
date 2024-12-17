@@ -12,3 +12,9 @@ li input[type="checkbox"]{
     order: -1;
     margin-right: 10px;
 }
+
+#modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
