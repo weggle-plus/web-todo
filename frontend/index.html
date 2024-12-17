@@ -10,40 +10,23 @@
   <body>
     <section id="wrap">
       <div class="left_wrap">
-        <h2 class="left_title">할 일 목록</h2>
+        <div class="todo-list">
+          <h2 class="left_title">할 일 목록</h2>
+        </div>
       </div>
       <div class="right_wrap">
         <div class="top_input">
           <input type="text" value="" id="newTodo" placeholder="할 일을 입력하세요." />
-          <button class="btn_0f" id="register">등록하기</button>
+          <button class="btn_0f mainBtn" id="register">등록하기</button>
         </div>
         <div class="contents_wrap">
           <div class="todo_wrap">
             <h2 class="contents_title">TO DO</h2>
-            <ul id="getTodoData">
-              <!-- <li>할 일 항목이 없습니다</li> -->
-              <li class="contents_list" style="display: none">
-                <div>
-                  <input type="checkbox" />
-                  <input
-                    for=""
-                    value="데브코스 수강하기 인풋 수정"
-                    id="onlyInput"
-                    readonly
-                    class="readonly" />
-                </div>
-                <span>
-                  <button class="btn_gray_line" id="updateBtn">수정</button>
-                  <button class="btn_red_line">삭제</button>
-                </span>
-              </li>
-            </ul>
+            <ul id="getTodoData"></ul>
           </div>
           <div class="done_wrap">
             <h2 class="contents_title">DONE</h2>
-            <ul id="getDoneData">
-              <li class="none_list">완료 항목이 없습니다</li>
-            </ul>
+            <ul id="getDoneData"></ul>
           </div>
         </div>
       </div>
@@ -52,15 +35,16 @@
     <div class="delete_popup">
       <div class="bk"></div>
       <div class="pop_contents">
-        <div>
+        <div class="pop_text">
           <h3>정말 삭제하시겠습니까?</h3>
         </div>
-        <div>
-          <button class="btn_0f delete-confirm">확인</button>
-          <button class="btn_gray_line">취소</button>
+        <div class="pop_btn_wrap">
+          <button class="btn_0f mainBtn delete-confirm">확인</button>
+          <button class="btn_gray_line mainBtn delete-cancel">취소</button>
         </div>
       </div>
     </div>
+
     <script type="module" src="./index.js"></script>
   </body>
 </html>
