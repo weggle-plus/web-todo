@@ -4,7 +4,7 @@ import {
   deleteTask,
   getAllTasks,
   updateTask,
-} from "../controller/taskController";
+} from "../controllers/taskController";
 import {
   createTaskValidators,
   deleteTaskValidators,
