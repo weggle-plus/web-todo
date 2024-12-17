@@ -1,0 +1,106 @@
+input,button,select{
+  height: 4rem;
+  border-radius: 0.4rem;
+  line-height: 24px;
+}
+input,select{
+  border: 1px solid #d4d4d8;
+  padding: 0.8rem 1.6rem;
+}
+button{
+  vertical-align: top;
+  padding: 0 1.6rem;
+  transition: all 0.3s;
+}
+
+input:disabled{
+  border: 0;
+}
+input[type="checkbox"]{
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 0;
+  background: url(../images/checkbox_off.png)no-repeat center / contain;
+}
+input[type="checkbox"]:checked{
+  background: url(../images/checkbox_on.png)no-repeat center / contain;
+}
+input[type="text"]{
+  width: 100%;
+}
+
+button.confirm{
+  border: 0;
+  color: #fff;
+  background: #0F172A;
+}
+button.confirm:hover{
+  background: rgba(15, 23, 42, 0.8);
+}
+button.edit{
+  color: #0F172A;
+  border: 1px solid #94A3B8;
+  background: #fff;
+}
+button.edit:hover{
+  color: #fff;
+  background: #94A3B8;
+}
+button.delete{
+  color: #EF4444;
+  border: 1px solid #EF4444;
+  background: #fff;
+}
+button.delete:hover{
+  color: #fff;
+  background: #EF4444;
+}
+
+
+.wrap{
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 4rem 2.4rem;
+}
+.wrap > div{
+  padding: 0 1.6rem;
+}
+.sidebar{
+  border-right: 1px solid #E2E8F0;
+}
+.sidebar ul{
+  width: 24rem;
+}
+.sidebar ul li{
+  padding: 0.8rem 1.6rem;
+  background: #E2E8F0;
+  border-radius: 0.4rem;
+  font-weight: 700;
+}
+
+.main{
+  width: 100%;
+  max-width: 80rem;
+}
+.main .todoWr h2{
+  font-size: 2.4rem;
+  font-weight: 700;
+}
+.main .todoWr button{
+  margin-left: 0.4rem;
+}
+.main .todoList,
+.main .doneList{
+  padding: 2rem 0;
+}
+.main .todoWr ul li{
+  margin: 1rem 0;
+}
+.main .addTodoWr,
+.main .todoList li,
+.main .doneList li{
+  display: flex;
+  align-items: center;
+}

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./css/reset.css">
+  <link rel="stylesheet" href="./css/index.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="sidebar">
+      <ul>
+        <li>Todo List</li>
+      </ul>
+    </div>
+    <div class="main">
+      <div class="todoWr">
+        <div class="addTodoWr">
+          <input type="text" id="todoInput" placeholder="할 일을 입력하세요">
+          <button class="confirm" id="addTodoButton">등록하기</button>
+        </div>
+        <div class="todoList">
+          <h2>TO DO</h2>
+          <p class="empty">할 일 항목이 없습니다.</p>
+          <ul id="todoList">
+          </ul>
+        </div>
+        <div class="doneList">
+          <h2>DONE</h2>
+          <p class="empty">완료 항목이 없습니다.</p>
+          <ul id="doneList">
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="./index.js"></script>
+</body>
+</html>
