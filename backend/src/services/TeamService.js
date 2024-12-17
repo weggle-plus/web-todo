@@ -1,11 +1,5 @@
 const { TEAM_MEMBER_ROLES } = require('../models/interfaces/TeamSchema');
-
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
+const ValidationError = require('../utils/errors/ValidationError');
 
 class TeamService {
   constructor(teamRepository, userRepository) {
@@ -13,19 +7,14 @@ class TeamService {
     this.userRepository = userRepository;
   }
 
-  async createTeam(teamData, creatorId) {
-    const creator = await this.userRepository.findById(creatorId);
-    if (!creator) {
-      throw new ValidationError('유효하지 않은 사용자입니다.');
-    }
-
-    return await this.teamRepository.create(teamData, creatorId);
+  async createTeam(teamData) {
+    return await this.teamRepository.create(teamData);
   }
 
   async getTeam(teamId) {
-    const team = await this.teamRepository.findById(teamId);
+    const team = await this.teamRepository.findByTeamId(teamId);
     if (!team) {
-      throw new ValidationError('팀을 찾을 수 없습니다.');
+      throw ValidationError.teamNotFound();
     }
     return team;
   }

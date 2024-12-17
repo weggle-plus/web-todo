@@ -1,5 +1,6 @@
 const TodoRepository = require('../interfaces/TodoRepository');
 const Todo = require('./TodoMaria');
+const ValidationError = require('../../utils/errors/ValidationError');
 
 class TodoMariaRepository extends TodoRepository {
   constructor(TodoModel = Todo) {
@@ -20,7 +21,8 @@ class TodoMariaRepository extends TodoRepository {
   }
 
   async create(todoData) {
-    return await this.Todo.create(todoData);
+    const todo = await this.Todo.create(todoData);
+    return this.formatTodoResponse(todo);
   }
 
   async findAll() {
@@ -36,13 +38,17 @@ class TodoMariaRepository extends TodoRepository {
 
   async update(id, todoData) {
     const todo = await this.Todo.findByPk(id);
-    if (!todo) return null;
+    if (!todo) {
+      throw ValidationError.todoNotFound();
+    }
     return await todo.update(todoData);
   }
 
   async delete(id) {
     const todo = await this.Todo.findByPk(id);
-    if (!todo) return null;
+    if (!todo) {
+      throw ValidationError.todoNotFound();
+    }
     await todo.destroy();
     return todo;
   }

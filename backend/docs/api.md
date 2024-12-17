@@ -25,7 +25,10 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| title | 필수 | TODO 제목 |
+| title | 선택 | TODO 제목 |
+| content | 선택 | TODO 내용 |
+| status | 선택 | TODO 상태 (in-progress, done) |
+
 
 ```json
 {

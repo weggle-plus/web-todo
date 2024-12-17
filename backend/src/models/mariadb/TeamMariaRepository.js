@@ -2,6 +2,7 @@ const { Team, UserTeam } = require('./TeamMaria');
 const User = require('./UserMaria');
 const { TEAM_MEMBER_ROLES } = require('../interfaces/TeamSchema');
 const TeamRepository = require('../interfaces/TeamRepository');
+const ValidationError = require('../../utils/errors/ValidationError');
 
 class TeamMariaRepository extends TeamRepository {
   constructor(UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
@@ -9,83 +10,94 @@ class TeamMariaRepository extends TeamRepository {
     this.User = UserModel;
     this.Team = TeamModel;
     this.UserTeam = UserTeamModel;
-  }
-
-  async create(teamData, userId, options = {}) {
-    const existingTeam = await this.Team.findOne({
-      where: { name: teamData.name }
-    });
-    
-    if (existingTeam) {
-      throw new Error('이미 존재하는 팀 이름입니다.');
-    }
-    
-    const team = await this.Team.create(teamData, options);
-    await this.UserTeam.create({
-      userId,
-      teamId: team.id,
-      role: TEAM_MEMBER_ROLES.MANAGER
-    }, options);
-    return this.findById(team.id);
-  }
-
-  async findById(id) {
-    return await this.Team.findByPk(id, {
+    this.teamOptions = {
       include: [{
         model: this.User,
         as: 'members',
         attributes: ['id', 'email', 'username'],
         through: {
           attributes: ['role', 'joinedAt']
-        }
+        },
+        order: [['members', 'joinedAt', 'ASC']]
       }]
+    };
+  }
+
+  async create(teamData, options = {}) {
+    const existingTeam = await this.Team.findOne({
+      where: { name: teamData.name }
     });
+    
+    if (existingTeam) {
+      throw ValidationError.teamNameAlreadyExists();
+    }
+    return await this.Team.create(teamData, options);
   }
 
-  async findByUser(userId) {
-    return await this.Team.findAll({
-      include: [{
-        model: this.User,
-        as: 'members',
-        attributes: ['id', 'email', 'username'],
-        through: {
-          attributes: ['role', 'joinedAt'],
-          where: { userId }
-        }
-      }]
+  async findAll() {
+    return await this.Team.findAll(this.teamOptions);
+  }
+
+  async findByTeamId(teamId) {
+    const team = await this.Team.findByPk(teamId, this.teamOptions);
+    return team ? team : null;
+  }
+
+  async findByUserId(userId) {
+    const user = await this.User.findByPk(userId);
+    if (!user) {
+      throw ValidationError.userNotFound();
+    }
+    return await this.Team.findAll(this.teamOptions);
+  }
+
+  async update(teamId, updateData) {
+    const team = await this.Team.findByPk(teamId);
+    if (!team) {
+      throw ValidationError.teamNotFound();
+    }
+    await this.Team.update(updateData, { where: { id: teamId } });
+
+    return await this.findByTeamId(teamId);
+  }
+
+  async delete(teamId) {
+    const team = await this.Team.findByPk(teamId);
+    if (!team) {
+      throw ValidationError.teamNotFound();
+    }
+    await this.Team.sequelize.transaction(async (t) => {
+      await this.UserTeam.destroy({ 
+        where: { teamId }, 
+        transaction: t 
+      });
+      await this.Team.destroy({ 
+        where: { id: teamId }, 
+        transaction: t 
+      });
     });
-  }
-
-  async update(id, updateData) {
-    await this.Team.update(updateData, { where: { id } });
-    return this.findById(id);
-  }
-
-  async delete(id) {
-    await this.UserTeam.destroy({ where: { teamId: id } });
-    await this.Team.destroy({ where: { id } });
   }
 
   async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
     const team = await this.Team.findByPk(teamId);
     if (!team) {
-      throw new Error('팀을 찾을 수 없습니다.');
+      throw ValidationError.teamNotFound();
     }
 
     const user = await this.User.findByPk(userId);
     if (!user) {
-      throw new Error('사용자를 찾을 수 없습니다.');
+      throw ValidationError.userNotFound();
     }
 
     const userTeam = await this.UserTeam.findOne({
       where: { teamId, userId }
     });
     if (userTeam) {
-      throw new Error('이미 존재하는 멤버입니다.');
+      throw ValidationError.teamMemberAlreadyExists();
     }
 
     if (!Object.values(TEAM_MEMBER_ROLES).includes(role)) {
-      throw new Error('유효하지 않은 역할입니다.');
+      throw ValidationError.teamMemberRoleInvalid();
     }
 
     await this.UserTeam.create({
@@ -94,7 +106,31 @@ class TeamMariaRepository extends TeamRepository {
       role
     });
 
-    return this.findById(teamId);
+    return this.findByTeamId(teamId);
+  }
+
+  async getMembers(teamId) {
+    const team = await this.findByTeamId(teamId);
+    if (!team) {  
+      throw ValidationError.teamNotFound();
+    }
+    return team.members;
+  }
+
+  async getMemberRole(teamId, userId) {
+    const team = await this.Team.findByPk(teamId);
+    if (!team) {
+      throw ValidationError.teamNotFound();
+    }
+
+    const userTeam = await this.UserTeam.findOne({
+      where: { teamId, userId }
+    });
+    if (!userTeam) {
+      throw ValidationError.teamMemberNotFound();
+    }
+
+    return userTeam.role;
   }
 
   async updateMemberRole(teamId, userId, role) {
@@ -102,11 +138,11 @@ class TeamMariaRepository extends TeamRepository {
       where: { teamId, userId }
     });
     if (!userTeam) {
-      throw new Error('사용자가 팀에 속해 있지 않습니다.');
+      throw ValidationError.teamMemberNotFound();
     }
 
     if (!Object.values(TEAM_MEMBER_ROLES).includes(role)) {
-      throw new Error('유효하지 않은 역할입니다.');
+      throw ValidationError.teamMemberRoleInvalid();
     }
 
     return await userTeam.update(
@@ -116,44 +152,14 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async removeMember(teamId, userId) {
-    await this.UserTeam.destroy({
-      where: { teamId, userId }
-    });
-    return this.findById(teamId);
-  }
-
-  async getMemberRole(teamId, userId) {
     const team = await this.Team.findByPk(teamId);
     if (!team) {
-      throw new Error('팀을 찾을 수 없습니다.');
+      throw ValidationError.teamNotFound();
     }
 
-    const userTeam = await this.UserTeam.findOne({
+    return await this.UserTeam.destroy({
       where: { teamId, userId }
     });
-    if (!userTeam) {
-      throw new Error('사용자가 팀에 속해 있지 않습니다.');
-    }
-
-    return userTeam.role;
-  }
-
-  async findAll() {
-    return await this.Team.findAll({
-      include: [{
-        model: this.User,
-        as: 'members',
-        attributes: ['id', 'email', 'username'],
-        through: {
-          attributes: ['role', 'joinedAt']
-        }
-      }]
-    });
-  }
-
-  async findMembers(teamId) {
-    const team = await this.findById(teamId);
-    return team ? team.members : [];
   }
 }
 
