@@ -16,10 +16,10 @@ function getTodos() {
     .then((data) => {
       data.map((item) => {
         if (item.is_done) {
-          createDoneTag(item.id, item.content);
-        } else {
-          createTodoTag(item.id, item.content);
+          return createDoneTag(item.id, item.content);
         }
+
+        createTodoTag(item.id, item.content);
       });
     })
     .catch((error) => {
