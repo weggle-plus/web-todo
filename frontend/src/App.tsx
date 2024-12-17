@@ -12,8 +12,8 @@ const App: React.FC = () => {
     inputValue,
     setInputValue,
     handleAddTodo,
-    handleToggle,
-    handleDelete,
+    handleDeleteTodo,
+    handleToggleTodo,
     editingTodoId,
     editingText,
     setEditingText,
@@ -34,8 +34,8 @@ const App: React.FC = () => {
         <TodoList 
           todos={todos} 
           done={done} 
-          handleToggle={handleToggle} 
-          handleDelete={handleDelete}
+          handleToggleTodo={handleToggleTodo} 
+          handleDeleteTodo={handleDeleteTodo}
           editingTodoId={editingTodoId}
           editingText={editingText}
           setEditingText={setEditingText}

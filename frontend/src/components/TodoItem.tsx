@@ -5,8 +5,8 @@ import { TodoItemProps } from "../types";
 const TodoItem: React.FC<TodoItemProps> = ({
   item,
   isTodo,
-  handleToggle,
-  handleDelete,
+  handleToggleTodo,
+  handleDeleteTodo,
   startEditing,
   saveEditing,
   cancelEditing,
@@ -24,24 +24,24 @@ const TodoItem: React.FC<TodoItemProps> = ({
             <input
               type="checkbox"
               checked={item.completed}
-              onChange={() => handleToggle(item.id, isTodo)}
+              onChange={() => handleToggleTodo(item.id, isTodo)}
             />
             <span
               className={isTodo ? styles.todoText : styles.doneText}
             >
-              {item.text}
+              {item.title}
             </span>
             {isTodo && (
               <button
                 className={styles.editButton}
-                onClick={() => startEditing && startEditing(item.id)}
+                onClick={() => startEditing && startEditing(item.id, item.title)}
               >
                 수정
               </button>
             )}
             <button
               className={styles.deleteButton}
-              onClick={() => handleDelete(item.id, isTodo)}
+              onClick={() => handleDeleteTodo(item.id, isTodo)}
             >
               삭제
             </button>

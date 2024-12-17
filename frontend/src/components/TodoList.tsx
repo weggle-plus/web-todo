@@ -8,8 +8,8 @@ import { TodoListProps } from "../types";
 const TodoList: React.FC<TodoListProps> = ({
   todos,
   done,
-  handleToggle,
-  handleDelete,
+  handleToggleTodo,
+  handleDeleteTodo,
   editingTodoId,
   editingText,
   setEditingText,
@@ -21,7 +21,7 @@ const TodoList: React.FC<TodoListProps> = ({
 
   const confirmDelete = () => {
     if (modalState.target) {
-      handleDelete(modalState.target.id, modalState.target.isTodo);
+      handleDeleteTodo(modalState.target.id, modalState.target.isTodo);
       closeModal();
     }
   };
@@ -36,8 +36,8 @@ const TodoList: React.FC<TodoListProps> = ({
               key={todo.id}
               item={todo}
               isTodo
-              handleToggle={handleToggle}
-              handleDelete={(id, isTodo) => openModal(id, isTodo)}
+              handleToggleTodo={handleToggleTodo}
+              handleDeleteTodo={(id, isTodo) => openModal(id, isTodo)}
               startEditing={startEditing}
               saveEditing={saveEditing}
               cancelEditing={cancelEditing}
@@ -58,8 +58,8 @@ const TodoList: React.FC<TodoListProps> = ({
               key={item.id}
               item={item}
               isTodo={false}
-              handleToggle={handleToggle}
-              handleDelete={(id, isTodo) => openModal(id, isTodo)}
+              handleToggleTodo={handleToggleTodo}
+              handleDeleteTodo={(id, isTodo) => openModal(id, isTodo)}
             />
           ))
         ) : (
