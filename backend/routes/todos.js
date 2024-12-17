@@ -16,8 +16,8 @@ router.get('/', (req, res) => {
 
   db.all(sql, [], (err, rows) => {
     if (err) {
-      console.error('Error fetching todos:', err.message);
-      return res.status(500).send('Internal Server Error');
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: `Internal Server Error: ${err.message}` });
     }
     return res.status(StatusCodes.OK).json(rows); // 결과를 JSON 형태로 반환
   });
@@ -28,12 +28,19 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
   const {title} = req.body;
 
-  db.run(`INSERT INTO todos (title) VALUES (?)`, [title], (err, results) => {
+  // 유효성 검사: title이 undefined이거나 공백일 경우
+  if (!title || !title.trim()) {
+    return res.status(StatusCodes.BAD_REQUEST)
+    .json({ message: "Invalid input format" });
+  }
+
+  db.run(`INSERT INTO todos (title) VALUES (?)`, [title], (err) => {
     if(err) {
-      console.error('Error adding TO DO', err.message);
-      return res.status(StatusCodes.INTERNAL_SERVER_ERROR).end();
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: `Error adding TO DO: ${err.message}` });
     }
-    return res.status(StatusCodes.CREATED).json(results);
+    return res.status(StatusCodes.CREATED)
+    .json({ message : "TO DO created successfully" });
   })
 
 })
