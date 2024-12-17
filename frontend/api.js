@@ -1,8 +1,8 @@
-import { createDoneTag, createTodoTag } from "./createTag.js";
+import { createDoneTag, createNoDoneTag, createNoTodoTag, createTodoTag } from "./createTag.js";
 
 const URL = "http://localhost:8080/todo";
 
-function getTodos() {
+function getTodosAPI() {
   fetch(URL, {
     method: "GET",
     headers: {
@@ -14,20 +14,28 @@ function getTodos() {
       return res.json();
     })
     .then((data) => {
+      let todoCount = 0;
+      let doneCount = 0;
+
       data.map((item) => {
         if (item.is_done) {
+          doneCount += 1;
           return createDoneTag(item.id, item.content);
         }
 
+        todoCount += 1;
         createTodoTag(item.id, item.content);
       });
+
+      if (!todoCount) createNoTodoTag();
+      if (!doneCount) createNoDoneTag();
     })
     .catch((error) => {
       console.error(error);
     });
 }
 
-function postTodo(value) {
+function postTodoAPI(value) {
   fetch(URL, {
     method: "POST",
     headers: {
@@ -49,7 +57,7 @@ function postTodo(value) {
     });
 }
 
-function patchStatus(id, value) {
+function patchStatusAPI(id, value) {
   fetch(`${URL}/${id}`, {
     method: "PATCH",
     headers: {
@@ -71,7 +79,7 @@ function patchStatus(id, value) {
     });
 }
 
-function patchContent(id, value) {
+function patchContentAPI(id, value) {
   fetch(`${URL}/${id}`, {
     method: "PATCH",
     headers: {
@@ -93,7 +101,7 @@ function patchContent(id, value) {
     });
 }
 
-function deleteTodo(id) {
+function deleteTodoAPI(id) {
   fetch(`${URL}/${id}`, {
     method: "DELETE",
     headers: {
@@ -112,4 +120,4 @@ function deleteTodo(id) {
     });
 }
 
-export { getTodos, postTodo, patchStatus, patchContent, deleteTodo };
+export { getTodosAPI, postTodoAPI, patchStatusAPI, patchContentAPI, deleteTodoAPI };
