@@ -50,13 +50,13 @@ router.post('/', (req, res) => {
 router.patch('/:id', (req, res) => {
   const {id} = req.params;
   const {done} = req.body;
-  const sql = `UPDATE todos SET done = ? WHERE id = ?`
+  const sql = `UPDATE todos SET done = ? WHERE id = ?;`
 
   
-  db.get(`SELECT * FROM todos WHERE id = ?`, [id], (err, row) => {
+  db.get(`SELECT * FROM todos WHERE id = ?;`, [id], (err, row) => {
     if (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: `Error adding TO DO: ${err.message}` });
+        .json({ message: `Error finding TO DO's id: ${err.message}` });
     }
 
     if (!row) { // DB에 해당 id가 존재하지 않으면
@@ -68,7 +68,7 @@ router.patch('/:id', (req, res) => {
     db.run(sql, [done, id], function (err) {
       if(err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json({ message: `Error adding TO DO: ${err.message}` });
+          .json({ message: `Error updating TO DO's done: ${err.message}` });
       }
       
       return res.status(StatusCodes.OK)
@@ -81,7 +81,7 @@ router.patch('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   const {id} = req.params;
   const {title} = req.body;
-  const sql = `UPDATE todos SET title = ? WHERE id = ?`
+  const sql = `UPDATE todos SET title = ? WHERE id = ?;`
 
   // 유효성 검사: title이 undefined이거나 공백일 경우
   if (!title || !title.trim()) {
@@ -89,10 +89,10 @@ router.put('/:id', (req, res) => {
       .json({ message: "Invalid input format" });
   }
 
-  db.get(`SELECT * FROM todos WHERE id = ?`, [id], (err, row) => {
+  db.get(`SELECT * FROM todos WHERE id = ?;`, [id], (err, row) => {
     if (err) {
       return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-        .json({ message: `Error adding TO DO: ${err.message}` });
+        .json({ message: `Error finding TO DO's id: ${err.message}` });
     }
 
     if (!row) { // DB에 해당 id가 존재하지 않으면
@@ -104,7 +104,7 @@ router.put('/:id', (req, res) => {
     db.run(sql, [title, id], function (err) {
       if(err) {
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-          .json({ message: `Error adding TO DO: ${err.message}` });
+          .json({ message: `Error updating TO DO's title: ${err.message}` });
       }
       
       return res.status(StatusCodes.OK)
@@ -114,6 +114,35 @@ router.put('/:id', (req, res) => {
 });
 
 // 5. TO DO 항목 삭제 | DELETE | /todos/:id | 해당 TO DO를 삭제
+router.delete('/:id', (req, res) => {
+  const {id} = req.params;
+  const sql = `DELETE FROM todos WHERE id = ?;`
 
+  db.get(`SELECT * FROM todos WHERE id = ?;`, [id], (err, row) => {
+    if (err) {
+      return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: `Error finding TO DO's id: ${err.message}` });
+    }
+
+    if (!row) { // DB에 해당 id가 존재하지 않으면
+      return res.status(StatusCodes.NOT_FOUND)
+      .json({ message: "TO DO id not found" });
+    }
+
+    db.run(sql, [id], function (err) {
+      if (err) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+          .json({ message: `Error deleting TO DO: ${err.message}` });
+      }
+
+      return res.status(StatusCodes.NO_CONTENT)
+        .json({ message: "TO DO deleted successfully", id })
+  
+    });
+  });
+});
 
 module.exports = router;
+
+// cf. sqlite의 경우 화살표 함수를 사용할 때 this 오류가 발생한다.
+// 화살표 함수는 this를 부모 스코프에서 가져오기 때문이다.
