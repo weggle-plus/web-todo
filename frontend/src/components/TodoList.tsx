@@ -35,7 +35,7 @@ const TodoList: React.FC<TodoListProps> = ({
             <TodoItem
               key={todo.id}
               item={todo}
-              isTodo
+              isTodo={true}
               handleToggleTodo={handleToggleTodo}
               handleDeleteTodo={(id, isTodo) => openModal(id, isTodo)}
               startEditing={startEditing}

@@ -14,7 +14,6 @@ const todoAPI = {
   // 모든 TODO 조회
   getTodos: async (): Promise<Todo[]> => {
     const response = await axios.get(BASE_URL);
-    console.log(response.data);
     return response.data;
   },
 
