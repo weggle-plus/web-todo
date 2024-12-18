@@ -15,33 +15,35 @@ async function addTodo() {
     headers: {
         'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ subject : todoText, start_date : new Date().toISOString().split('T')[0] }),
+    body: JSON.stringify({ 
+      subject : todoText, 
+      start_date : new Date().toISOString().split('T')[0] 
+    }),
   });
   if (response.ok) {
     const newTodo = await response.json();
-    const li = createTodoItem(newTodo.subject);
-    li.dataset.id = newTodo.id;
-    
-    // const li = createTodoItem(todoText);
+    const li = createTodoItem(newTodo);
     todoList.appendChild(li);
     todoInput.value = '';
     updateEmptyMessage();
   }else {
-    alert('메이데이!');
+    const errorMessage = await response.text(); 
+    alert(`메이데이! ${errorMessage}`);
   }
 }
 
-function createTodoItem(todoText) {
+function createTodoItem(todo) {
   const li = document.createElement('li');
 
   li.innerHTML = `
     <input type="checkbox">
-    <input type="text" value="${todoText}" readonly>
+    <input type="text" value="${todo.subject}" readonly>
     <button class="edit">수정</button>
     <button class="delete">삭제</button>
   `;
 
   li.dataset.id = todo.id;
+
   li.querySelector('input[type="checkbox"]').addEventListener('click', function() {
     toggleTodoStatus(li, this.checked);
   });
@@ -72,25 +74,49 @@ function toggleTodoStatus(li, isChecked) {
 
 function toggleEdit(li, editButton) {
   const inputField = li.querySelector('input[type="text"]');
+  const todoId = li.dataset.id;
+
   if (inputField.readOnly) {
     inputField.readOnly = false;
     inputField.focus();
     editButton.textContent = '완료';
   } else {
-    inputField.readOnly = true;
-    editButton.textContent = '수정';
+    const updatedSubject = inputField.value.trim();
+    if (updatedSubject === '') {
+      alert('할 일을 입력하세요!');
+      return;
+    }
+
+    fetch(`http://localhost:5555/tasks`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: todoId, subject: updatedSubject }),
+    }).then(response => {
+      if (response.ok) {
+        inputField.readOnly = true;
+        editButton.textContent = '수정';
+      } else {
+        alert('메이데이! 수정 오류');
+      }
+    }).catch(error => {
+      console.log('Error:', error);
+      alert('메이데이! 수정 중 오류');
+    });
   }
 }
 
 function deleteTodoItem(li) {
   const todoId = li.dataset.id;
+  console.log(`삭제ID: ${todoId}`);
 
   fetch(`http://localhost:5555/tasks`, {
     method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ id: todoId }),
+    body: JSON.stringify({ id: parseInt(todoId, 10) }),
   }).then(response => {
     if (response.ok) {
       const todoList = document.getElementById('todoList');
@@ -103,19 +129,12 @@ function deleteTodoItem(li) {
       }
       updateEmptyMessage();
     } else {
-      alert('메이데이!');
+      alert('메이데이! 삭제 오류');
     }
+  }).catch(error => {
+    console.error('Error:', error); // 오류 로그
+    alert('메이데이! 삭제 중 오류');
   });
-
-  // const todoList = document.getElementById('todoList');
-  // const doneList = document.getElementById('doneList');
-
-  // if (todoList.contains(li)) {
-  //   todoList.removeChild(li);
-  // } else if (doneList.contains(li)) {
-  //   doneList.removeChild(li);
-  // }
-  // updateEmptyMessage();
 }
 
 function updateEmptyMessage() {
@@ -132,14 +151,14 @@ async function loadTodos() {
   const response = await fetch('http://localhost:5555/tasks');
   if (response.ok) {
     const { tasks } = await response.json();
-    todos.forEach(todo => {
+    tasks.forEach(todo => {
       const li = createTodoItem(todo);
       document.getElementById('todoList').appendChild(li);
     });
   }else {
-    alert('메이데이!');
+    const errorMessage = await response.text(); 
+    alert(`메이데이! ${errorMessage}`);
   }
-  // updateEmptyMessage();
 }
 
 loadTodos();

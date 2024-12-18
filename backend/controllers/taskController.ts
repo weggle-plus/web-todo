@@ -13,18 +13,24 @@ export function createTask(req: Request, res: Response) {
   connection.query<ResultSetHeader>(sql, values, (err, result) => {
     if (err !== null) {
       console.log(err);
-      res.status(StatusCodes.BAD_REQUEST).end();
+      res.status(StatusCodes.BAD_REQUEST).json({ error: 'Failed to create task' });
       return;
     }
 
-    res.status(StatusCodes.CREATED).end();
+    res.status(StatusCodes.CREATED).json({
+      id: result.insertId,
+      subject: subject,
+      start_date: start_date,
+      completed: false,
+    }).end();
   });
 }
 
 export function getAllTasks(req: Request, res: Response) {
-  const { start_date } = req.body;
+  const { start_date } = req.query;
 
-  const sql = `SELECT * FROM ${TABLES.TASKS} WHERE ${TASKS.START_DATE}=?`;
+  // const sql = `SELECT * FROM ${TABLES.TASKS} WHERE ${TASKS.START_DATE}=?`;
+  const sql = `SELECT * FROM ${TABLES.TASKS}`;
   const values = [start_date];
 
   connection.query<RowDataPacket[]>(sql, values, (err, result) => {
@@ -60,22 +66,21 @@ export function updateTask(req: Request, res: Response) {
 
     if (err !== null) {
       console.log(err);
-      res.status(StatusCodes.BAD_REQUEST).end();
+      res.status(StatusCodes.BAD_REQUEST).json({ error: 'Failed to update task' });
       return;
     }
 
     if (task.affectedRows === 0) {
-      res.status(StatusCodes.NOT_FOUND).end();
+      res.status(StatusCodes.NOT_FOUND).json({ error: 'Task not found' });
       return;
     }
 
-    res.status(StatusCodes.OK).json(task).end();
+    res.status(StatusCodes.OK).json({ message: 'Task updated successfully' }).end();
   });
 }
 
 export function deleteTask(req: Request, res: Response) {
   const { id } = req.body;
-
   const sql = `DELETE FROM ${TABLES.TASKS} WHERE ${TASKS.ID}=?`;
   const values = [id];
 
@@ -84,15 +89,15 @@ export function deleteTask(req: Request, res: Response) {
 
     if (err !== null) {
       console.log(err);
-      res.status(StatusCodes.BAD_REQUEST).end();
+      res.status(StatusCodes.BAD_REQUEST).json({ error: 'Failed to delete task' });
       return;
     }
 
     if (task.affectedRows === 0) {
-      res.status(StatusCodes.NOT_FOUND).end();
+      res.status(StatusCodes.NOT_FOUND).json({ error: 'Task not found' });
       return;
     }
 
-    res.status(StatusCodes.OK).end();
+    res.status(StatusCodes.OK).json({ message: 'Task deleted successfully' });
   });
 }
