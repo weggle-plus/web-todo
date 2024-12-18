@@ -23,7 +23,7 @@ a {
     color: inherit;
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
     appearance: none;
     /* -webkit-appearance: none; */
 }

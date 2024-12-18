@@ -1,6 +1,6 @@
 const BASE_URL = 'http://localhost:3000/todos';
 
-export async function fetchData<T>(url?: string, options?: RequestInit): Promise<T|null> {
+export async function fetchData<T>(url?: string, options?: RequestInit): Promise<T | null> {
     try {
         const response = await fetch(`${BASE_URL}/${url}`, options);
 
@@ -9,7 +9,7 @@ export async function fetchData<T>(url?: string, options?: RequestInit): Promise
         }
 
         // 응답 본문 없는 경우
-        if (response.status === 204){
+        if (response.status === 204) {
             return null;
         }
 
