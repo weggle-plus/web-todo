@@ -66,7 +66,7 @@ const removeTodo = (req, res) => {
 
 const editTodo = (req, res) => {
     const {id} = req.params;
-    const {title, newStatus} = req.body;
+    const {title, status} = req.body;
 
     let sql = ``;
     let values = [];
@@ -76,7 +76,7 @@ const editTodo = (req, res) => {
         values = [title, id];
     } else {
         sql = `UPDATE todo SET status = ? WHERE id = ?`
-        values = [newStatus, id];
+        values = [status, id];
     }
     
     conn.query(sql, values,
@@ -89,7 +89,7 @@ const editTodo = (req, res) => {
                     return res.status(StatusCodes.OK).json({
                         id: id,
                         title: title,
-                        status: newStatus
+                        status: status
                     });
                 } else {
                     return res.status(StatusCodes.NOT_FOUND).end();
