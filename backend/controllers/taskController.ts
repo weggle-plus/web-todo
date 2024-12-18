@@ -5,14 +5,12 @@ import { ResultSetHeader, RowDataPacket } from "mysql2";
 import { TABLES, TASKS } from "../constants/databaseInfo";
 
 export function createTask(req: Request, res: Response) {
-  const { startDate, subject } = req.body;
+  const { start_date, subject } = req.body;
 
   const sql = `INSERT INTO ${TABLES.TASKS} (${TASKS.START_DATE}, ${TASKS.SUBJECT}) VALUES (?, ?)`;
-  const values = [startDate, subject];
+  const values = [start_date, subject];
 
   connection.query<ResultSetHeader>(sql, values, (err, result) => {
-    const user = result;
-
     if (err !== null) {
       console.log(err);
       res.status(StatusCodes.BAD_REQUEST).end();
@@ -24,10 +22,10 @@ export function createTask(req: Request, res: Response) {
 }
 
 export function getAllTasks(req: Request, res: Response) {
-  const { startDate } = req.body;
+  const { start_date } = req.body;
 
   const sql = `SELECT * FROM ${TABLES.TASKS} WHERE ${TASKS.START_DATE}=?`;
-  const values = [startDate];
+  const values = [start_date];
 
   connection.query<RowDataPacket[]>(sql, values, (err, result) => {
     const tasks = result;
@@ -67,7 +65,7 @@ export function updateTask(req: Request, res: Response) {
     }
 
     if (task.affectedRows === 0) {
-      res.status(StatusCodes.BAD_REQUEST).end();
+      res.status(StatusCodes.NOT_FOUND).end();
       return;
     }
 
@@ -91,7 +89,7 @@ export function deleteTask(req: Request, res: Response) {
     }
 
     if (task.affectedRows === 0) {
-      res.status(StatusCodes.BAD_REQUEST).end();
+      res.status(StatusCodes.NOT_FOUND).end();
       return;
     }
 
