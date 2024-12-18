@@ -78,6 +78,34 @@ class TeamMariaRepository extends TeamRepository {
     });
   }
 
+  async inviteMember(teamId, inviterId, inviteeId, invitationMessage = '') {
+    await this.TeamInvitation.create({
+      teamId,
+      inviterId,
+      inviteeId,
+      invitationMessage,
+      invitationStatus: 'pending'
+    });
+  } 
+
+  async acceptInvitation(teamId, userId) {
+    await this.TeamInvitation.update({
+      invitationStatus: 'accepted',
+      respondedAt: new Date()
+    }, {
+      where: { teamId, inviteeId: userId }
+    });
+  }
+
+  async rejectInvitation(teamId, userId) {
+    await this.TeamInvitation.update({
+      invitationStatus: 'rejected',
+      respondedAt: new Date()
+    }, {
+      where: { teamId, inviteeId: userId }
+    });
+  }
+
   async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
     const team = await this.Team.findByPk(teamId);
     if (!team) {

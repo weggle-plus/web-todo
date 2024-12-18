@@ -22,6 +22,18 @@ class TeamRepository {
   async delete(teamId) {  // 팀 아이디로 팀 삭제
     throw new Error('Method not implemented');
   }
+  // 팀 초대 관련 메서드
+  async inviteMember(teamId, inviterId, inviteeId) {
+    throw new Error('Method not implemented');
+  }
+
+  async acceptInvitation(teamId, inviteeId) {
+    throw new Error('Method not implemented');
+  }
+
+  async rejectInvitation(teamId, inviteeId) {
+    throw new Error('Method not implemented');
+  }
 
   // 팀 멤버 관련 메서드
   async addMember(teamId, userId, role) {

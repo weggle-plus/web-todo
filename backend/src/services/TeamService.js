@@ -7,8 +7,30 @@ class TeamService {
     this.userRepository = userRepository;
   }
 
-  async createTeam(teamData) {
-    return await this.teamRepository.create(teamData);
+  async createTeam(teamData, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
+    const user = await this.userRepository.findByUserId(userId);
+    if (!user) {
+      throw ValidationError.userNotFound();
+    }
+    const team = await this.teamRepository.create(teamData);
+    await this.teamRepository.addMember(team.id, userId, role);
+    return team;
+  }
+  
+  async inviteMember(teamId, userId) {
+    const user = await this.userRepository.findByUserId(userId);
+    if (!user) {
+      throw ValidationError.userNotFound();
+    }
+    await this.teamRepository.inviteMember(teamId, userId);
+  }
+
+  async acceptInvitation(teamId, userId) {
+    await this.teamRepository.acceptInvitation(teamId, userId);
+  }
+
+  async rejectInvitation(teamId, userId) {
+    await this.teamRepository.rejectInvitation(teamId, userId);
   }
 
   async getTeam(teamId) {
