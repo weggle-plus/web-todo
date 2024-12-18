@@ -53,6 +53,7 @@ function updateEmptyMessage(type: 'todo' | 'done', count: number) {
 
 function createTodoItem(todo: Todo) {
     const li = document.createElement('li');
+    li.className = "todo-item";
 
     const checkBox = createCheckbox(todo);
     li.appendChild(checkBox);
@@ -61,11 +62,16 @@ function createTodoItem(todo: Todo) {
     todoTitleSpan.textContent = todo.title;
     li.appendChild(todoTitleSpan);
 
+    const buttonGroup = document.createElement('div');
+    buttonGroup.className = 'item-button-group';
+
     const editButton = createEditButton(todo, li, todoTitleSpan);
-    li.appendChild(editButton);
+    buttonGroup.appendChild(editButton);
 
     const deleteButton = createDeleteButton(todo.id);
-    li.appendChild(deleteButton);
+    buttonGroup.appendChild(deleteButton);
+
+    li.appendChild(buttonGroup);
 
     return li;
 }
@@ -85,9 +91,10 @@ function createCheckbox(todo: Todo): HTMLElement {
 
 function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElement): HTMLElement {
     const editButton = document.createElement('button');
+    editButton.id = 'edit-button';
+    
     editButton.innerText = '수정';
 
-    // 상태에 따라 수정 버튼 표시/숨김
     if (todo.status === 'done') {
         editButton.style.display = 'none';
     }
@@ -121,7 +128,9 @@ function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElemen
 
 function createDeleteButton(id: number): HTMLElement {
     const deleteButton = document.createElement('button');
+    deleteButton.id = 'delete-button';
     deleteButton.innerText = '삭제';
+
     deleteButton.addEventListener("click", () => {
         openDeleteModal(id);
     })

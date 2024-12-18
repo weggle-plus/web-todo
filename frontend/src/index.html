@@ -5,6 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TO DO</title>
+  <link rel="stylesheet" type="text/css" href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css'>
+  <link rel="stylesheet" href="reset.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 
@@ -12,10 +14,10 @@
   <div class="page">
     <!-- sidebar -->
     <aside class="sidebar">
-      <h2>할 일 목록</h2>
       <div class="menu">
-        
+        <p class="menu-item">할 일 목록</p>
       </div>
+      <div class="divider"></div>
     </aside>
 
     <!-- main content -->
@@ -25,26 +27,31 @@
         <input type="text" id="todo-input" placeholder="할 일을 입력해주세요." />
         <button id="add-button">등록하기</button>
       </div>
-
-      <!-- todo list -->
-      <section>
-        <h3>TO DO</h3>
-        <p id="empty-message-todo">할 일 항목이 없습니다.</p>
-        <ul id="todo-list"></ul>
-      </section>
-
-      <!-- done list -->
-      <section>
-        <h3>DONE</h3>
-        <p id="empty-message-done">완료 항목이 없습니다.</p>
-        <ul id="done-list"></ul>
-      </section>
+      <!-- list container -->
+      <div class="list-container">
+        <!-- todo list -->
+        <section>
+          <h3 class="section-title">TO DO</h3>
+          <p class="empty-message" id="empty-message-todo">할 일 항목이 없습니다.</p>
+          <ul id="todo-list"></ul>
+        </section>
+        <!-- done list -->
+        <section>
+          <h3 class="section-title">DONE</h3>
+          <p class="empty-message" id="empty-message-done">완료 항목이 없습니다.</p>
+          <ul id="done-list"></ul>
+        </section>
+      </div>
     </main>
   </div>
-  <div id="modal" style="display: none;">
-    <p>정말 삭제하시겠습니까?</p>
-    <button id="confirm-delete">확인</button>
-    <button id="cancel-delete">취소</button>
+  <div id="modal">
+    <div class="modal-content">
+      <p>정말 삭제하시겠습니까?</p>
+      <div class="delete-button-group">
+        <button id="confirm-delete">확인</button>
+        <button id="cancel-delete">취소</button>
+      </div>
+    </div>
   </div>
   <script type="module" src="../dist/bundle.js"></script>
 </body>
