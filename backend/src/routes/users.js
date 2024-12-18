@@ -11,11 +11,11 @@ router.post('/login', validatePassword, async (req, res, next) => {
   await UserController.login(req, res, next);
 });
 
-router.get('/profile', authenticate, async (req, res, next) => {
+router.get('/profile', async (req, res, next) => {
   await UserController.getProfile(req, res, next);
 });
 
-router.put('/profile', authenticate, async (req, res, next) => {
+router.put('/profile', async (req, res, next) => {
   await UserController.updateProfile(req, res, next);
 });
 
