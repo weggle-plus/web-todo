@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const TodoService = require('../services/TodoService');
 const { TodoRepositoryFactory } = require('../models/RepositoryFactory');
+const { ERROR_MESSAGES } = require('../constants/messages');
 
 class TodoController {
   constructor() {
@@ -12,7 +13,7 @@ class TodoController {
       res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 생성하는 중 오류가 발생했습니다.', error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ERROR_MESSAGES.TODO.CREATE, error: error.message });
     }
   }
 
@@ -22,7 +23,7 @@ class TodoController {
       res.json(todos);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일들을 조회하는 중 오류가 발생했습니다.', error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ERROR_MESSAGES.TODO.READ, error: error.message });
     }
   } 
 
@@ -32,7 +33,7 @@ class TodoController {
       res.json(todo);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 조회하는 중 오류가 발생했습니다.', error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ERROR_MESSAGES.TODO.READ, error: error.message });
     }
   }
 
@@ -42,7 +43,7 @@ class TodoController {
       res.json(todo);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 업데이트하는 중 오류가 발생했습니다.', error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ERROR_MESSAGES.TODO.UPDATE, error: error.message });
     }
   }
 
@@ -52,7 +53,7 @@ class TodoController {
       res.json(todo);
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일의 상태를 업데이트하는 중 오류가 발생했습니다.', error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ERROR_MESSAGES.TODO.UPDATE, error: error.message });
     }
   }
 
@@ -62,7 +63,7 @@ class TodoController {
       res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
       console.log(error);
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 삭제하는 중 오류가 발생했습니다.', error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ message: ERROR_MESSAGES.TODO.DELETE, error: error.message });
     }
   }
 }

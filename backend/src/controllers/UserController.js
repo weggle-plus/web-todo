@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const UserService = require('../services/UserService');
 const { UserRepositoryFactory } = require('../models/RepositoryFactory');
+const { ERROR_MESSAGES } = require('../constants/messages');
 
 class UserController {
   constructor() {
@@ -14,7 +15,7 @@ class UserController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.BAD_REQUEST).json({ 
-          message: '회원가입 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.USER.REGISTER,
           error: error.message 
         });
       }
@@ -30,7 +31,7 @@ class UserController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.UNAUTHORIZED).json({ 
-          message: '로그인 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.USER.LOGIN,
           error: error.message 
         });
       }
@@ -45,7 +46,7 @@ class UserController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.NOT_FOUND).json({ 
-          message: '프로필 조회 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.USER.READ,
           error: error.message 
         });
       }
@@ -60,7 +61,7 @@ class UserController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.BAD_REQUEST).json({ 
-          message: '프로필 업데이트 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.USER.UPDATE,
           error: error.message 
         });
       }

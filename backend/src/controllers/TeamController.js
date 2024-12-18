@@ -1,6 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
 const TeamService = require('../services/TeamService');
 const { TeamRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
+const { ERROR_MESSAGES } = require('../constants/messages');
 
 class TeamController {
   constructor() {
@@ -17,7 +18,7 @@ class TeamController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.BAD_REQUEST).json({
-          message: '팀 생성 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.CREATE,
           error: error.message
         });
       }
@@ -32,7 +33,7 @@ class TeamController {
       console.log(error);
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.NOT_FOUND).json({
-          message: '팀 조회 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.READ,
           error: error.message
         });
       }
@@ -60,7 +61,7 @@ class TeamController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.FORBIDDEN).json({
-          message: '팀 업데이트 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.UPDATE,
           error: error.message
         });
       }
@@ -75,7 +76,7 @@ class TeamController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.FORBIDDEN).json({
-          message: '팀 삭제 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.DELETE,
           error: error.message
         });
       }
@@ -95,7 +96,7 @@ class TeamController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.FORBIDDEN).json({
-          message: '팀 멤버 추가 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.MEMBER.ADD,
           error: error.message
         });
       }
@@ -115,7 +116,7 @@ class TeamController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.FORBIDDEN).json({
-          message: '팀 멤버 역할 업데이트 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.MEMBER.UPDATE_ROLE,
           error: error.message
         });
       }
@@ -133,7 +134,7 @@ class TeamController {
     } catch (error) {
       if (error.name === 'ValidationError') {
         return res.status(StatusCodes.FORBIDDEN).json({
-          message: '팀 멤버 삭제 중 오류가 발생했습니다.',
+          message: ERROR_MESSAGES.TEAM.MEMBER.REMOVE,
           error: error.message
         });
       }
