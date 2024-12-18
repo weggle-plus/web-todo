@@ -33,6 +33,11 @@ const todoAPI = {
   deleteTodo: async (id: number): Promise<void> => {
     await axios.delete(`${BASE_URL}/${id}`);
   },
+
+  updateTodoStatus: async (id: number, status: boolean): Promise<Todo> => {
+    const response = await axios.put(`${BASE_URL}/${id}`, { status });
+    return response.data;
+  }
 };
 
 export default todoAPI;

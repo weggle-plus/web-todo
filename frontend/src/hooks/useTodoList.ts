@@ -53,19 +53,21 @@ const useTodoList = () => {
       // 기존 todo 항목 찾기
       const existingTodo = [...todos, ...done].find((todo) => todo.id === id);
       if (!existingTodo) return;
-  
-      const updatedTodo = await todoAPI.updateTodo(id, {
-        title: existingTodo.title,  // 기존 제목 유지
-        status: !existingTodo.status, // 상태 반전
-      });
+
+      // 상태 반전
+      const status = !existingTodo.status;
+      const updatedTodo = await todoAPI.updateTodoStatus(id, status);
+
+      // 기존 title 유지
+      const completeUpdatedTodo = { ...updatedTodo, title: existingTodo.title };
   
       // 상태 업데이트
-      if (updatedTodo.status) {
+      if (completeUpdatedTodo.status) {
         setTodos((prev) => prev.filter((todo) => todo.id !== id));
-        setDone((prev) => [...prev, updatedTodo]);
+        setDone((prev) => [...prev, completeUpdatedTodo]);
       } else {
         setDone((prev) => prev.filter((todo) => todo.id !== id));
-        setTodos((prev) => [...prev, updatedTodo]);
+        setTodos((prev) => [...prev, completeUpdatedTodo]);
       }
     } catch (error) {
       console.error("Failed to toggle todo:", error);
