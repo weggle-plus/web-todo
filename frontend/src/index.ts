@@ -232,7 +232,7 @@ async function updateTodoTitle(id: number, title: string) {
     request = { title: title };
 
     try {
-        let response = await fetchData<Todo>(`/${id}`, {
+        let response = await fetchData<Todo>(`${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -258,7 +258,7 @@ async function updateTodoTitle(id: number, title: string) {
 // 할 일 삭제
 async function deleteTodo(id: number) {
     try {
-        await fetchData(`/${id}`, {
+        await fetchData(`${id}`, {
             method: 'DELETE'
         });
 
