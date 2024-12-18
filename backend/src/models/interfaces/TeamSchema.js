@@ -1,5 +1,3 @@
-// TeamSchema.js
-
 const TEAM_MEMBER_ROLES = {
   MANAGER: 'manager',
   MENTOR: 'mentor',
@@ -24,14 +22,24 @@ const TeamSchema = {
     trim: true
   },
   createdAt: {
-    type: 'date',
+    type: 'timestamp',
     required: true,
-    default: new Date()
+    default: 'CURRENT_TIMESTAMP'
+  },
+  createdBy: {
+    type: 'integer',
+    required: true,
+    references: 'users.id'
   },
   updatedAt: {
-    type: 'date',
+    type: 'timestamp',
     required: true,
-    default: new Date()
+    default: 'CURRENT_TIMESTAMP'
+  },
+  updatedBy: {
+    type: 'integer',
+    required: false,
+    references: 'users.id'
   }
 };
 
@@ -48,13 +56,23 @@ const UserTeamSchema = {
   },
   role: {
     type: 'enum',
-    enum: Object.values(TEAM_MEMBER_ROLES),
+    values: Object.values(TEAM_MEMBER_ROLES),
     default: TEAM_MEMBER_ROLES.MEMBER
   },
   joinedAt: {
-    type: 'date',
+    type: 'timestamp',
     required: true,
-    default: new Date()
+    default: 'CURRENT_TIMESTAMP'
+  },
+  __options: {
+    underscored: true,
+    indexes: [
+      {
+        name: 'idx_user_team_unique',
+        unique: true,
+        fields: ['user_id', 'team_id']
+      }
+    ]
   }
 };
 
@@ -86,18 +104,28 @@ const TeamInvitationSchema = {
   },
   invitationStatus: {
     type: 'enum',
-    enum: ['pending', 'accepted', 'rejected'],
+    values: ['pending', 'accepted', 'rejected'],
+    required: true,
     default: 'pending'
   },
   invitedAt: {
-    type: 'date',
+    type: 'timestamp',
     required: true,
-    default: new Date()
+    default: 'CURRENT_TIMESTAMP'
   },
   respondedAt: {
-    type: 'date',
+    type: 'timestamp',
     required: false,
     default: null
+  },
+  __options: {
+    indexes: [
+      {
+        name: 'idx_team_invitation_unique',
+        unique: true,
+        fields: ['teamId', 'inviteeId', 'invitationStatus']
+      }
+    ]
   }
 };
 

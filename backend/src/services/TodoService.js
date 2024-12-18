@@ -1,5 +1,5 @@
 const { TODO_STATUS } = require('../models/interfaces/TodoSchema');
-const ValidationError = require('../utils/errors/ValidationError');
+const ServiceError = require('../utils/errors/ServiceError');
 
 
 class TodoService {
@@ -7,45 +7,70 @@ class TodoService {
     this.todoRepository = todoRepository;
   }
 
-  validateStatus(status) {
-    if (status && !Object.values(TODO_STATUS).includes(status)) {
-      throw ValidationError.todoStatusInvalid();
-    }
-  }
-
   async validateTodoExists(id) {
     const todo = await this.todoRepository.findById(id);
     if (!todo) {
-      throw ValidationError.todoNotFound();
+      throw ServiceError.todoNotFound();
     }
     return todo;
   }
 
-  async createTodo(todoData) {
-    if (todoData.status) {
-      this.validateStatus(todoData.status);
+  async createTodo(todoData, userId, teamId = null) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw ServiceError.authRequired();
     }
-    return await this.todoRepository.create(todoData);
+    if (teamId) {
+      const team = await this.teamRepository.findById(teamId);
+      if (!team) {
+        throw ServiceError.teamNotFound();
+      }
+    }
+    return await this.todoRepository.create(todoData, userId, teamId);
   }
 
-  async getAllTodos() {
-    return await this.todoRepository.findAll();
+  async getAllUserTodos(userId) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw ServiceError.authRequired();
+    }
+    return await this.todoRepository.findByUserId(userId);
   }
 
-  async getTodoById(id) {
-    return await this.validateTodoExists(id);
+  async getAllTeamTodos(teamId, userId) {
+    const isMember = await this.teamRepository.isMember(teamId, userId);
+    if (!isMember) {
+      throw ServiceError.todoNotBelongToUser();
+    }
+    return await this.todoRepository.findByTeamId(teamId);
   }
 
-  async updateTodo(id, updateData) {
-    const todo = await this.validateTodoExists(id);
-    if (updateData.status) {
-      this.validateStatus(updateData.status);
+  async getTodoByTodoId(todoId) {
+    return await this.validateTodoExists(todoId);
+  }
+
+  async updateTodo(userId, todoId, updateData) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw ServiceError.authRequired();
+    }
+
+    const todo = await this.validateTodoExists(todoId);
+    if (todo.teamId) {
+      const isMember = await this.teamRepository.isMember(todo.teamId, userId);
+      if (!isMember) {
+        throw ServiceError.todoNotBelongToUser();
+      }
+    } else {
+      if (todo.createdBy !== userId) {
+        throw ServiceError.todoNotBelongToUser();
+      }
     }
     return this._processUpdate(todo, updateData);
   }
 
-  async updateTodoStatus(id) {
-    const todo = await this.validateTodoExists(id);
+  async updateTodoStatus(todoId) {
+    const todo = await this.validateTodoExists(todoId);
     const status = todo.status === TODO_STATUS.DONE ? TODO_STATUS.IN_PROGRESS : TODO_STATUS.DONE;
     
     return this._processUpdate(todo, { status });
@@ -74,13 +99,12 @@ class TodoService {
     } else {
       updatedTodo.completedAt = null;
     }
-
     return await this.todoRepository.update(todo.id, updatedTodo);
   }
 
-  async deleteTodo(id) {
-    await this.validateTodoExists(id);
-    return await this.todoRepository.delete(id);
+  async deleteTodo(todoId) {
+    await this.validateTodoExists(todoId);
+    return await this.todoRepository.delete(todoId);
   }
 }
 

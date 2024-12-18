@@ -1,7 +1,7 @@
 const User = require('./UserMaria');
 const bcrypt = require('bcrypt');
 const UserRepository = require('../interfaces/UserRepository');
-const ValidationError = require('../../utils/errors/ValidationError');
+const DatabaseError = require('../../utils/errors/DatabaseError');
 
 class UserMariaRepository extends UserRepository {
   constructor(UserModel = User) {
@@ -52,18 +52,16 @@ class UserMariaRepository extends UserRepository {
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
-    
-    await this.User.update(updateData, { where: { id: userId } });
+    const result = await this.User.update(updateData, { 
+      where: { id: userId } 
+    });
+    if (result[0] === 0) throw DatabaseError.userUpdateFailed();
     return await this.findById(userId);
   }
 
   async delete(userId) {
-    const user = await this.User.findByPk(userId);
-    if (!user) {
-      throw ValidationError.userNotFound();
-    }
-    await user.destroy();
-    return this._excludePassword(user.toJSON());
+    const result = await this.User.destroy({ where: { id: userId } });
+    return result === 1;
   }
 
   async updateLastLogin(userId) {
@@ -71,17 +69,6 @@ class UserMariaRepository extends UserRepository {
       { lastLogin: new Date() },
       { where: { id: userId } }
     );
-  }
-
-  async updatePassword(userId, newPassword) {
-    const user = await this.User.findByPk(userId);
-    if (!user) {
-      throw ValidationError.userNotFound();
-    }
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await user.update({ password: hashedPassword });
-    return this._excludePassword(user.toJSON());
   }
 }
 

@@ -1,73 +1,117 @@
 const { StatusCodes } = require('http-status-codes');
+const { body } = require('express-validator');
 const UserService = require('../services/UserService');
 const { UserRepositoryFactory } = require('../models/RepositoryFactory');
-const { ERROR_MESSAGES } = require('../constants/messages');
+const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
+const validateRequest = require('../middleware/validateRequest');
 
 class UserController {
-  constructor() {
-    this.userService = new UserService(UserRepositoryFactory.createRepository());
-  }
+  static userService = new UserService(UserRepositoryFactory.createRepository());
 
-  async register(req, res, next) {
+  static validateRegister = [
+    body('email')
+      .isEmail()
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.EMAIL_INVALID)
+      .normalizeEmail(),
+    body('password')
+      .isString()
+      .isLength({ min: 8, max: 64 })
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
+    body('username')
+      .optional()
+      .isString()
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED)
+      .isLength({ min: 2, max: 30 })
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_LENGTH)
+      .trim(),
+    validateRequest
+  ];
+
+  static validateLogin = [
+    body('email')
+      .isEmail()
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.EMAIL_INVALID)
+      .normalizeEmail(),
+    body('password')
+      .isString()
+      .notEmpty()
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_REQUIRED),
+    validateRequest
+  ];
+
+  static validateProfileUpdate = [
+    body('username')
+      .optional()
+      .isString()
+      .isLength({ min: 2, max: 30 })
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_LENGTH)
+      .trim(),
+    body('password')
+      .optional()
+      .isString()
+      .isLength({ min: 8, max: 64 })
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
+    validateRequest
+  ];
+
+  static register = async (req, res, next) => {
     try {
-      const user = await this.userService.register(req.body);
+      const user = await UserController.userService.register(req.body);
       res.status(StatusCodes.CREATED).json(user);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.BAD_REQUEST).json({ 
-          message: ERROR_MESSAGES.USER.REGISTER,
-          error: error.message 
-        });
-      }
       next(error);
     }
   }
 
-  async login(req, res, next) {
+  static login = async (req, res, next) => {
     try {
       const { email, password } = req.body;
-      const result = await this.userService.login(email, password);
+      const result = await UserController.userService.login(email, password);
       res.json(result);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.UNAUTHORIZED).json({ 
-          message: ERROR_MESSAGES.USER.LOGIN,
-          error: error.message 
-        });
-      }
       next(error);
     }
   }
 
-  async getProfile(req, res, next) {
+  static getProfile = async (req, res, next) => {
     try {
-      const user = await this.userService.getProfile(req.user.id);
+      const user = await UserController.userService.getProfile(req.user.id);
       res.json(user);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.NOT_FOUND).json({ 
-          message: ERROR_MESSAGES.USER.READ,
-          error: error.message 
-        });
-      }
       next(error);
     }
   }
 
-  async updateProfile(req, res, next) {
+  static updateProfile = async (req, res, next) => {
     try {
-      const user = await this.userService.updateProfile(req.user.id, req.body);
+      const user = await UserController.userService.updateProfile(req.user.id, req.body);
       res.json(user);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.BAD_REQUEST).json({ 
-          message: ERROR_MESSAGES.USER.UPDATE,
-          error: error.message 
-        });
-      }
+      next(error);
+    }
+  }
+
+  static logout = async (req, res, next) => {
+    try {
+      await UserController.userService.logout(req.user.id);
+      res.status(StatusCodes.NO_CONTENT).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static deleteProfile = async (req, res, next) => {
+    try {
+      await UserController.userService.deleteProfile(req.user.id);
+      res.status(StatusCodes.NO_CONTENT).send();
+    } catch (error) {
       next(error);
     }
   }
 }
 
-module.exports = new UserController(); 
+module.exports = UserController; 

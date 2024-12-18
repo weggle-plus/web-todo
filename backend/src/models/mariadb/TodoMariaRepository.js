@@ -1,11 +1,16 @@
 const TodoRepository = require('../interfaces/TodoRepository');
 const Todo = require('./TodoMaria');
-const ValidationError = require('../../utils/errors/ValidationError');
+const User = require('./UserMaria');
+const { Team, UserTeam } = require('./TeamMaria');
+
 
 class TodoMariaRepository extends TodoRepository {
-  constructor(TodoModel = Todo) {
+  constructor(TodoModel = Todo, UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
     super();
     this.Todo = TodoModel;
+    this.User = UserModel;
+    this.Team = TeamModel;
+    this.UserTeam = UserTeamModel;
   }
 
   formatTodoResponse(todo) {
@@ -15,43 +20,54 @@ class TodoMariaRepository extends TodoRepository {
       status: todo.status,
       content: todo.content,
       createdAt: todo.createdAt,
+      createdBy: todo.createdBy,
       updatedAt: todo.updatedAt,
-      completedAt: todo.completedAt
+      updatedBy: todo.updatedBy,
+      completedAt: todo.completedAt,
+      teamId: todo.teamId
     };
   }
 
-  async create(todoData) {
+  async create(todoData, userId, teamId = null) {
+    todoData.createdBy = userId;
+    todoData.teamId = teamId;
     const todo = await this.Todo.create(todoData);
     return this.formatTodoResponse(todo);
   }
 
-  async findAll() {
+  async findByTodoId(todoId) {
+    return await this.Todo.findByPk(todoId);
+  }
+
+  async findByUserId(userId) {
     const todos = await this.Todo.findAll({
+      where: { createdBy: userId, teamId: null },
       order: [['createdAt', 'DESC']]
     });
     return todos.map(todo => this.formatTodoResponse(todo));
   }
 
-  async findById(id) {
-    return await this.Todo.findByPk(id);
+  async findByTeamId(teamId) {
+    const todos = await this.Todo.findAll({
+      where: { teamId: teamId },
+      order: [['createdAt', 'DESC']]
+    });
+    return todos.map(todo => this.formatTodoResponse(todo));
   }
 
-  async update(id, todoData) {
-    const todo = await this.Todo.findByPk(id);
-    if (!todo) {
-      throw ValidationError.todoNotFound();
-    }
-    return await todo.update(todoData);
+  async update(todoId, todoData) {
+    await this.Todo.update(todoData, { 
+      where: { id: todoId } 
+    });
+    return await this.findByTodoId(todoId);
   }
 
-  async delete(id) {
-    const todo = await this.Todo.findByPk(id);
-    if (!todo) {
-      throw ValidationError.todoNotFound();
-    }
-    await todo.destroy();
-    return todo;
+  async delete(todoId) {
+    const result = await this.Todo.destroy({ where: { id: todoId } });
+    return result === 1;
   }
+
+
 }
 
 module.exports = TodoMariaRepository; 

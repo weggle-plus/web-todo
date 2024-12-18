@@ -1,17 +1,13 @@
 const sequelize = require('../../config/mariadb');
 const { UserSchema } = require('../interfaces/UserSchema');
-const { convertToSequelizeSchema } = require('./utils/schemaConverter');
+const convertToSequelizeSchema = require('./utils/schemaConverter');
 
+const convertedSchema = convertToSequelizeSchema(UserSchema);
 const User = sequelize.define(
   'User',
-  convertToSequelizeSchema(UserSchema),
+  convertedSchema.attributes,
   {
-    indexes: [
-      {
-        unique: true,
-        fields: ['email']
-      }
-    ]
+    ...convertedSchema.options,
   }
 );
 

@@ -2,7 +2,8 @@ const { Team, UserTeam } = require('./TeamMaria');
 const User = require('./UserMaria');
 const { TEAM_MEMBER_ROLES } = require('../interfaces/TeamSchema');
 const TeamRepository = require('../interfaces/TeamRepository');
-const ValidationError = require('../../utils/errors/ValidationError');
+const UserRepository = require('../interfaces/UserRepository');
+const ServiceError = require('../../utils/errors/ServiceError');
 
 class TeamMariaRepository extends TeamRepository {
   constructor(UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
@@ -23,14 +24,16 @@ class TeamMariaRepository extends TeamRepository {
     };
   }
 
-  async create(teamData, options = {}) {
-    const existingTeam = await this.Team.findOne({
-      where: { name: teamData.name }
-    });
-    
-    if (existingTeam) {
-      throw ValidationError.teamNameAlreadyExists();
+  async create(teamData, userId, options = {}) {
+    const user = await UserRepository.findById(userId);
+    if (!user) {
+      throw ServiceError.authRequired();
     }
+    const existingTeam = await this.Team.findOne({ where: { name: teamData.name } });
+    if (existingTeam) {
+      throw ServiceError.teamNameAlreadyExists();
+    }
+
     return await this.Team.create(teamData, options);
   }
 
@@ -44,27 +47,25 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async findByUserId(userId) {
-    const user = await this.User.findByPk(userId);
-    if (!user) {
-      throw ValidationError.userNotFound();
-    }
-    return await this.Team.findAll(this.teamOptions);
+    return await this.Team.findAll({
+      ...this.teamOptions,
+      include: [{
+        ...this.teamOptions.include[0],
+        where: {
+          id: userId
+        }
+      }]
+    });
   }
 
   async update(teamId, updateData) {
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ValidationError.teamNotFound();
-    }
     await this.Team.update(updateData, { where: { id: teamId } });
-
-    return await this.findByTeamId(teamId);
   }
 
   async delete(teamId) {
     const team = await this.Team.findByPk(teamId);
     if (!team) {
-      throw ValidationError.teamNotFound();
+      throw ServiceError.teamNotFound();
     }
     await this.Team.sequelize.transaction(async (t) => {
       await this.UserTeam.destroy({ 
@@ -79,6 +80,14 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async inviteMember(teamId, inviterId, inviteeId, invitationMessage = '') {
+    const user = await UserRepository.findById(inviterId);
+    if (!user) {
+      throw ServiceError.authRequired();
+    }
+    const isMember = await this.isMember(teamId, inviteeId);
+    if (isMember) {
+      throw ServiceError.memberAlreadyExists();
+    }
     await this.TeamInvitation.create({
       teamId,
       inviterId,
@@ -88,103 +97,72 @@ class TeamMariaRepository extends TeamRepository {
     });
   } 
 
-  async acceptInvitation(teamId, userId) {
+  async acceptInvitation(teamId, inviteeId) {
+    await this.addMember(teamId, inviteeId);
     await this.TeamInvitation.update({
       invitationStatus: 'accepted',
       respondedAt: new Date()
     }, {
-      where: { teamId, inviteeId: userId }
+      where: { teamId, inviteeId }
     });
   }
 
-  async rejectInvitation(teamId, userId) {
+  async rejectInvitation(teamId, inviteeId) {
     await this.TeamInvitation.update({
       invitationStatus: 'rejected',
       respondedAt: new Date()
     }, {
-      where: { teamId, inviteeId: userId }
+      where: { teamId, inviteeId }
     });
   }
 
   async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ValidationError.teamNotFound();
-    }
-
-    const user = await this.User.findByPk(userId);
+    const user = await UserRepository.findById(userId);
     if (!user) {
-      throw ValidationError.userNotFound();
+      throw ServiceError.userNotFound();
     }
-
-    const userTeam = await this.UserTeam.findOne({
-      where: { teamId, userId }
-    });
-    if (userTeam) {
-      throw ValidationError.teamMemberAlreadyExists();
-    }
-
-    if (!Object.values(TEAM_MEMBER_ROLES).includes(role)) {
-      throw ValidationError.teamMemberRoleInvalid();
-    }
-
     await this.UserTeam.create({
       teamId,
       userId,
       role
     });
+  }
 
-    return this.findByTeamId(teamId);
+  async isMember(teamId, userId) {
+    const user = await UserRepository.findById(userId);
+    if (!user) {
+      throw ServiceError.userNotFound();
+    }
+    const team = await this.findByTeamId(teamId);
+    if (!team) {
+      throw ServiceError.teamNotFound();
+    }
+    const userTeam = await this.UserTeam.findOne({
+      where: { teamId, userId }
+    });
+    return userTeam ? true : false;
   }
 
   async getMembers(teamId) {
     const team = await this.findByTeamId(teamId);
-    if (!team) {  
-      throw ValidationError.teamNotFound();
-    }
-    return team.members;
+    return team ? team.members : [];
   }
 
   async getMemberRole(teamId, userId) {
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ValidationError.teamNotFound();
-    }
-
     const userTeam = await this.UserTeam.findOne({
       where: { teamId, userId }
     });
-    if (!userTeam) {
-      throw ValidationError.teamMemberNotFound();
-    }
-
-    return userTeam.role;
+    return userTeam ? userTeam.role : null;
   }
 
   async updateMemberRole(teamId, userId, role) {
-    const userTeam = await this.UserTeam.findOne({
-      where: { teamId, userId }
-    });
-    if (!userTeam) {
-      throw ValidationError.teamMemberNotFound();
-    }
-
-    if (!Object.values(TEAM_MEMBER_ROLES).includes(role)) {
-      throw ValidationError.teamMemberRoleInvalid();
-    }
-
-    return await userTeam.update(
+    return await this.UserTeam.update(
       { role },
       { where: { teamId, userId } }
     );
   }
 
   async removeMember(teamId, userId) {
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ValidationError.teamNotFound();
-    }
-
     return await this.UserTeam.destroy({
       where: { teamId, userId }
     });

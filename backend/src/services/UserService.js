@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const ValidationError = require('../utils/errors/ValidationError');
-
+const ServiceError = require('../utils/errors/ServiceError');
 
 class UserService {
   constructor(userRepository) {
@@ -11,7 +10,7 @@ class UserService {
   async register(userData) {
     const existingUser = await this.userRepository.findByEmail(userData.email);
     if (existingUser) {
-      throw ValidationError.emailAlreadyExists();
+      throw ServiceError.emailAlreadyExists();
     }
 
     return await this.userRepository.create(userData);
@@ -20,16 +19,12 @@ class UserService {
   async login(email, password) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw ValidationError.invalidEmailOrPassword();
+      throw ServiceError.invalidEmailOrPassword();
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw ValidationError.invalidEmailOrPassword();
-    }
-
-    if (!user.isActive) {
-      throw ValidationError.inactiveAccount();
+      throw ServiceError.invalidEmailOrPassword();
     }
 
     await this.userRepository.updateLastLogin(user.id);
@@ -46,7 +41,7 @@ class UserService {
   async getProfile(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw ValidationError.userNotFound();
+      throw ServiceError.userNotFound();
     }
     return user;
   }
@@ -54,13 +49,13 @@ class UserService {
   async updateProfile(userId, updateData) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw ValidationError.userNotFound();
+      throw ServiceError.userNotFound();
     }
 
     if (updateData.email) {
       const existingUser = await this.userRepository.findByEmail(updateData.email);
       if (existingUser && existingUser.id !== userId) {
-        throw ValidationError.emailAlreadyExists();
+        throw ServiceError.emailAlreadyExists();
       }
     }
 
@@ -77,6 +72,10 @@ class UserService {
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+  }
+
+  async deleteProfile(userId) {
+    await this.userRepository.delete(userId);
   }
 }
 

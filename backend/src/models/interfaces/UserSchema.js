@@ -18,34 +18,50 @@ const UserSchema = {
     type: 'string',
     required: true
   },
+  // TODO: failedLoginAttempts
   username: {
     type: 'string',
-    required: true
+    required: false,
+    default: null
   },
   role: {
     type: 'enum',
-    enum: Object.values(USER_ROLES),
+    values: Object.values(USER_ROLES),
     default: USER_ROLES.USER
   },
   profileImage: {
     type: 'string',
+    required: false,
     default: ''
   },
   isActive: {
     type: 'boolean',
+    required: true,
     default: true
   },
-  lastLogin: {
-    type: 'date',
+  lastLoginAt: {
+    type: 'timestamp',
+    required: false,
     default: null
   },
   createdAt: {
-    type: 'date',
-    default: new Date()
+    type: 'timestamp',
+    required: true,
+    default: 'CURRENT_TIMESTAMP'
   },
   updatedAt: {
-    type: 'date',
-    default: new Date()
+    type: 'timestamp',
+    required: true,
+    default: 'CURRENT_TIMESTAMP'
+  },
+  __options: {
+    underscored: true,
+    indexes: [
+      {
+        name: 'idx_users_email',  // 로그인 쿼리 최적화
+        fields: ['email', 'password']
+      }
+    ]
   }
 };
 

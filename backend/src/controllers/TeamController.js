@@ -1,146 +1,152 @@
 const { StatusCodes } = require('http-status-codes');
+const { body, param } = require('express-validator');
 const TeamService = require('../services/TeamService');
 const { TeamRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
-const { ERROR_MESSAGES } = require('../constants/messages');
+const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
+const { TEAM_MEMBER_ROLES } = require('../models/interfaces/TeamSchema');
+const validateRequest = require('../middleware/validateRequest');
 
 class TeamController {
-  constructor() {
-    this.teamService = new TeamService(
-      TeamRepositoryFactory.createRepository(),
-      UserRepositoryFactory.createRepository()
-    );
-  }
+  static teamService = new TeamService(
+    TeamRepositoryFactory.createRepository(),
+    UserRepositoryFactory.createRepository()
+  );
 
-  async createTeam(req, res) {
+  static validateTeam = [
+    body('name')
+      .isString()
+      .notEmpty()
+      .trim()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_REQUIRED)
+      .isLength({ min: 2, max: 50 })
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_LENGTH),
+    body('description')
+      .optional()
+      .isString()
+      .trim()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.DESCRIPTION_INVALID),
+    validateRequest
+  ];
+
+  static validateTeamId = [
+    param('teamId')
+      .isInt()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.ID_INVALID),
+    validateRequest
+  ];
+
+  static validateMember = [
+    body('userId')
+      .isInt()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ID_INVALID),
+    body('role')
+      .optional()
+      .isIn(Object.values(TEAM_MEMBER_ROLES))
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
+    validateRequest
+  ];
+
+  static validateMemberRole = [
+    param('teamId')
+      .isInt()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.ID_INVALID),
+    param('userId')
+      .isInt()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ID_INVALID),
+    body('role')
+      .isIn(Object.values(TEAM_MEMBER_ROLES))
+      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
+    validateRequest
+  ];
+
+  static createTeam = async (req, res, next) => {
     try {
-      const team = await this.teamService.createTeam(req.body, req.user.id);
+      const team = await TeamController.teamService.createTeam(req.body, req.user.id);
       res.status(StatusCodes.CREATED).json(team);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.BAD_REQUEST).json({
-          message: ERROR_MESSAGES.TEAM.CREATE,
-          error: error.message
-        });
-      }
-    }
-  }
-
-  async getTeam(req, res) {
-    try {
-      const team = await this.teamService.getTeam(req.params.teamId);
-      res.json(team);
-    } catch (error) {
-      console.log(error);
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          message: ERROR_MESSAGES.TEAM.READ,
-          error: error.message
-        });
-      }
-    }
-  }
-
-  async getUserTeams(req, res, next) {
-    try {
-      const teams = await this.teamService.getUserTeams(req.user.id);
-      res.json(teams);
-    } catch (error) {
-      console.log(error);
       next(error);
     }
   }
 
-  async updateTeam(req, res, next) {
+  static getTeam = async (req, res, next) => {
     try {
-      const team = await this.teamService.updateTeam(
+      const team = await TeamController.teamService.getTeam(req.params.teamId);
+      res.json(team);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static getUserTeams = async (req, res, next) => {
+    try {
+      const teams = await TeamController.teamService.getUserTeams(req.user.id);
+      res.json(teams);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static updateTeam = async (req, res, next) => {
+    try {
+      const team = await TeamController.teamService.updateTeam(
         req.params.teamId,
         req.user.id,
         req.body
       );
       res.json(team);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          message: ERROR_MESSAGES.TEAM.UPDATE,
-          error: error.message
-        });
-      }
       next(error);
     }
   }
 
-  async deleteTeam(req, res, next) {
+  static deleteTeam = async (req, res, next) => {
     try {
-      await this.teamService.deleteTeam(req.params.teamId, req.user.id);
+      await TeamController.teamService.deleteTeam(req.params.teamId, req.user.id);
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          message: ERROR_MESSAGES.TEAM.DELETE,
-          error: error.message
-        });
-      }
       next(error);
     }
   }
 
-  async addMember(req, res, next) {
+  static addMember = async (req, res, next) => {
     try {
       const { userId, role } = req.body;
-      const team = await this.teamService.addMember(
+      const team = await TeamController.teamService.addMember(
         req.params.teamId,
         userId,
         role
       );
       res.json(team);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          message: ERROR_MESSAGES.TEAM.MEMBER.ADD,
-          error: error.message
-        });
-      }
       next(error);
     }
   }
 
-  async updateMemberRole(req, res, next) {
+  static updateMemberRole = async (req, res, next) => {
     try {
       const { role } = req.body;
-      const team = await this.teamService.updateMemberRole(
+      const team = await TeamController.teamService.updateMemberRole(
         req.params.teamId,
         req.params.userId,
         role
       );
       res.json(team);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          message: ERROR_MESSAGES.TEAM.MEMBER.UPDATE_ROLE,
-          error: error.message
-        });
-      }
       next(error);
     }
   }
 
-  async removeMember(req, res, next) {
+  static removeMember = async (req, res, next) => {
     try {
-      const team = await this.teamService.removeMember(
+      const team = await TeamController.teamService.removeMember(
         req.params.teamId,
         req.params.userId
       );
       res.json(team);
     } catch (error) {
-      if (error.name === 'ValidationError') {
-        return res.status(StatusCodes.FORBIDDEN).json({
-          message: ERROR_MESSAGES.TEAM.MEMBER.REMOVE,
-          error: error.message
-        });
-      }
       next(error);
     }
   }
 }
 
-module.exports = new TeamController(); 
+module.exports = TeamController; 

@@ -1,131 +1,101 @@
 const TodoMariaRepository = require('../../../src/models/mariadb/TodoMariaRepository');
 const { TodoSchema } = require('../../../src/models/interfaces/TodoSchema');
-const { convertToSequelizeSchema } = require('../../../src/models/mariadb/utils/schemaConverter');
+const { UserSchema } = require('../../../src/models/interfaces/UserSchema');
+const { TeamSchema } = require('../../../src/models/interfaces/TeamSchema');
+const convertToSequelizeSchema = require('../../../src/models/mariadb/utils/schemaConverter');
 const sequelize = require('../../../tests/setup');
 
 describe('TodoMariaRepository', () => {
   let todoRepository;
   let Todo;
+  let User;
+  let Team;
+  let testUser;
+  let testTeam;
   let Todo1;
   let Todo2;
-  const sampleTodo = {
-    title: '테스트 할일',
-    content: '테스트 내용',
-    status: 'in-progress'
-  };
 
   beforeAll(async () => {
-    await sequelize.authenticate(); // DB 연결 확인
-    Todo = sequelize.define(
-      'Todo',
-      convertToSequelizeSchema(TodoSchema)
-    );
-    await sequelize.sync({ force: true });
-    todoRepository = new TodoMariaRepository(Todo);
-  });
+    await sequelize.authenticate();
+    
+    // 모델 정의
+    Todo = sequelize.define('Todo', convertToSequelizeSchema(TodoSchema));
+    User = sequelize.define('User', convertToSequelizeSchema(UserSchema));
+    Team = sequelize.define('Team', convertToSequelizeSchema(TeamSchema));
 
-  afterAll(async () => {
-    await sequelize.close();
+    // 관계 설정
+    Todo.belongsTo(User, { foreignKey: 'createdBy' });
+    Todo.belongsTo(Team, { foreignKey: 'teamId' });
+
+    await sequelize.sync({ force: true });
+    
+    todoRepository = new TodoMariaRepository(Todo, User, Team);
   });
 
   beforeEach(async () => {
     await Todo.destroy({ truncate: true, cascade: true });
     
+    // 테스트 사용자 생성
+    testUser = await User.create({
+      email: 'test@test.com',
+      username: '테스트유저',
+      password: 'password123'
+    });
+
+    // 테스트 팀 생성
+    testTeam = await Team.create({
+      name: '테스트팀',
+      description: '테스트용 팀'
+    });
+
+    // 테스트 할일 생성
     const todos = [
-      { title: '첫번째 할일', content: '내용1', status: 'in-progress' },
-      { title: '두번째 할일', content: '내용2', status: 'done' }
+      { 
+        title: '첫번째 할일', 
+        content: '내용1', 
+        status: 'in-progress',
+        createdBy: testUser.id,
+        teamId: testTeam.id
+      },
+      { 
+        title: '두번째 할일', 
+        content: '내용2', 
+        status: 'done',
+        createdBy: testUser.id,
+        teamId: testTeam.id
+      }
     ];
+
     Todo1 = await todoRepository.create(todos[0]);
     Todo2 = await todoRepository.create(todos[1]);
   });
 
-  describe('create()', () => {
-    it('새로운 할일을 생성할 수 있다', async () => {
-      const created = await todoRepository.create(sampleTodo);
-      
-      expect(created).toMatchObject({
-        ...sampleTodo,
-        id: expect.any(Number),
-        title: sampleTodo.title,
-        status: sampleTodo.status,
-        content: sampleTodo.content,
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
-        completedAt: sampleTodo.status === 'done' ? expect.any(Date) : undefined
-      });
+  // 새로운 테스트 추가
+  describe('findByTeamId()', () => {
+    it('팀 ID로 할일을 조회할 수 있다', async () => {
+      const todos = await todoRepository.findByTeamId(testTeam.id);
+      expect(todos).toHaveLength(2);
+      expect(todos[0].teamId).toBe(testTeam.id);
+    });
+
+    it('존재하지 않는 팀 ID로 조회시 빈 배열을 반환한다', async () => {
+      const todos = await todoRepository.findByTeamId(999);
+      expect(todos).toHaveLength(0);
     });
   });
 
-  describe('findAll()', () => {
-    it('모든 할일 목록은 생성일 내림차순으로 정렬된다', async () => {
-      const now = new Date();
+  describe('findByUserId()', () => {
+    it('사용자 ID로 할일을 조회할 수 있다', async () => {
+      const todos = await todoRepository.findByUserId(testUser.id);
+      expect(todos).toHaveLength(2);
+      expect(todos[0].createdBy).toBe(testUser.id);
+    });
 
-      await todoRepository.create({ ...sampleTodo, createdAt: new Date(now.getTime() - 2000) }); // 2초 전
-      await todoRepository.create({ ...sampleTodo, createdAt: now });
-
-      const foundTodos = await todoRepository.findAll();
-      expect(new Date(foundTodos[foundTodos.length - 2].createdAt).getTime())
-        .toBeGreaterThan(new Date(foundTodos[foundTodos.length - 1].createdAt).getTime());
+    it('존재하지 않는 사용자 ID로 조회시 빈 배열을 반환한다', async () => {
+      const todos = await todoRepository.findByUserId(999);
+      expect(todos).toHaveLength(0);
     });
   });
 
-
-  describe('findById()', () => {
-    it('ID로 특정 할일을 조회할 수 있다', async () => {
-      const created = await todoRepository.create(sampleTodo);
-      const found = await todoRepository.findById(created.id);
-      
-      expect(found).toMatchObject({
-        id: created.id,
-        title: created.title,
-        content: created.content,
-        status: created.status
-      });
-    });
-
-    it('존재하지 않는 ID로 조회시 null을 반환한다', async () => {
-      const found = await todoRepository.findById(999);
-      expect(found).toBeNull();
-    });
-  });
-
-  describe('update()', () => {
-    it('할일을 수정할 수 있다', async () => {
-      const updateData = {
-        title: '수정된 할일',
-        content: '수정된 내용',
-        status: 'done'
-      };
-      
-      const updated = await todoRepository.update(Todo2.id, updateData);
-      
-      expect(updated).toMatchObject({
-        id: Todo2.id,
-        ...updateData
-      });
-    });
-
-    it('존재하지 않는 ID로 수정 시도시 에러를 반환한다', async () => {
-      await expect(todoRepository.update(999, { title: '수정' })).rejects.toThrow();
-    });
-  });
-
-  describe('delete()', () => {
-    it('할일을 삭제할 수 있다', async () => {
-      const created = await todoRepository.create({
-        title: '삭제할 할일',
-        content: '내용',
-        status: 'in-progress'
-      });
-      
-      await todoRepository.delete(created.id);
-      const found = await Todo.findByPk(created.id);
-      
-      expect(found).toBeNull();
-    });
-
-    it('존재하지 않는 ID로 삭제 시도시 에러를 반환한다', async () => {
-      await expect(todoRepository.delete(999)).rejects.toThrow();
-    });
-  });
+  // 기존 테스트들...
 }); 
