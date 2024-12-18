@@ -1,25 +1,6 @@
 const { TODO_STATUS } = require('../models/interfaces/TodoSchema');
+const ValidationError = require('../utils/errors/ValidationError');
 
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-
-  static titleRequired() {
-    return new ValidationError("할 일의 제목은 필수입니다");
-  }
-
-  static statusInvalid() {
-    return new ValidationError(
-      `잘못된 상태값입니다. "${TODO_STATUS.IN_PROGRESS}" 또는 "${TODO_STATUS.DONE}"만 가능합니다`
-    );
-  }
-
-  static todoNotFound() {
-    return new ValidationError("해당 할 일을 찾을 수 없습니다");
-  }
-}
 
 class TodoService {
   constructor(todoRepository) {
@@ -28,7 +9,7 @@ class TodoService {
 
   validateStatus(status) {
     if (status && !Object.values(TODO_STATUS).includes(status)) {
-      throw ValidationError.statusInvalid();
+      throw ValidationError.todoStatusInvalid();
     }
   }
 
@@ -41,10 +22,9 @@ class TodoService {
   }
 
   async createTodo(todoData) {
-    if (!todoData.title) {
-      throw new ValidationError.titleRequired();
+    if (todoData.status) {
+      this.validateStatus(todoData.status);
     }
-    this.validateStatus(todoData.status);
     return await this.todoRepository.create(todoData);
   }
 
@@ -58,8 +38,9 @@ class TodoService {
 
   async updateTodo(id, updateData) {
     const todo = await this.validateTodoExists(id);
-    this.validateStatus(updateData.status);
-    
+    if (updateData.status) {
+      this.validateStatus(updateData.status);
+    }
     return this._processUpdate(todo, updateData);
   }
 

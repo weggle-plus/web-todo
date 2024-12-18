@@ -1,12 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const ValidationError = require('../utils/errors/ValidationError');
 
-class ValidationError extends Error {
-  constructor(message) {
-    super(message);
-    this.name = "ValidationError";
-  }
-}
 
 class UserService {
   constructor(userRepository) {
@@ -16,7 +11,7 @@ class UserService {
   async register(userData) {
     const existingUser = await this.userRepository.findByEmail(userData.email);
     if (existingUser) {
-      throw new ValidationError('이미 등록된 이메일입니다.');
+      throw ValidationError.emailAlreadyExists();
     }
 
     return await this.userRepository.create(userData);
@@ -25,16 +20,16 @@ class UserService {
   async login(email, password) {
     const user = await this.userRepository.findByEmail(email);
     if (!user) {
-      throw new ValidationError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      throw ValidationError.invalidEmailOrPassword();
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw new ValidationError('이메일 또는 비밀번호가 올바르지 않습니다.');
+      throw ValidationError.invalidEmailOrPassword();
     }
 
     if (!user.isActive) {
-      throw new ValidationError('비활성화된 계정입니다.');
+      throw ValidationError.inactiveAccount();
     }
 
     await this.userRepository.updateLastLogin(user.id);
@@ -51,7 +46,7 @@ class UserService {
   async getProfile(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new ValidationError('사용자를 찾을 수 없습니다.');
+      throw ValidationError.userNotFound();
     }
     return user;
   }
@@ -59,13 +54,13 @@ class UserService {
   async updateProfile(userId, updateData) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw new ValidationError('사용자를 찾을 수 없습니다.');
+      throw ValidationError.userNotFound();
     }
 
     if (updateData.email) {
       const existingUser = await this.userRepository.findByEmail(updateData.email);
       if (existingUser && existingUser.id !== userId) {
-        throw new ValidationError('이미 사용 중인 이메일입니다.');
+        throw ValidationError.emailAlreadyExists();
       }
     }
 
@@ -85,4 +80,4 @@ class UserService {
   }
 }
 
-module.exports = UserService; 
+module.exports = UserService;

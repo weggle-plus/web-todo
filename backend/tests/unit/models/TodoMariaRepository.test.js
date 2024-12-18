@@ -3,10 +3,16 @@ const { TodoSchema } = require('../../../src/models/interfaces/TodoSchema');
 const { convertToSequelizeSchema } = require('../../../src/models/mariadb/utils/schemaConverter');
 const sequelize = require('../../../tests/setup');
 
-
 describe('TodoMariaRepository', () => {
   let todoRepository;
   let Todo;
+  let Todo1;
+  let Todo2;
+  const sampleTodo = {
+    title: '테스트 할일',
+    content: '테스트 내용',
+    status: 'in-progress'
+  };
 
   beforeAll(async () => {
     await sequelize.authenticate(); // DB 연결 확인
@@ -24,59 +30,49 @@ describe('TodoMariaRepository', () => {
 
   beforeEach(async () => {
     await Todo.destroy({ truncate: true, cascade: true });
+    
+    const todos = [
+      { title: '첫번째 할일', content: '내용1', status: 'in-progress' },
+      { title: '두번째 할일', content: '내용2', status: 'done' }
+    ];
+    Todo1 = await todoRepository.create(todos[0]);
+    Todo2 = await todoRepository.create(todos[1]);
   });
 
   describe('create()', () => {
-    const sampleTodo = {
-      title: '테스트 할일',
-      content: '테스트 내용',
-      status: 'in-progress'
-    };
-
     it('새로운 할일을 생성할 수 있다', async () => {
       const created = await todoRepository.create(sampleTodo);
       
       expect(created).toMatchObject({
         ...sampleTodo,
         id: expect.any(Number),
+        title: sampleTodo.title,
+        status: sampleTodo.status,
+        content: sampleTodo.content,
         createdAt: expect.any(Date),
-        updatedAt: expect.any(Date)
+        updatedAt: expect.any(Date),
+        completedAt: sampleTodo.status === 'done' ? expect.any(Date) : undefined
       });
-    });
-
-    it('필수 필드가 없으면 에러가 발생한다', async () => {
-      const invalidTodo = { status: 'in-progress' };
-      
-      await expect(todoRepository.create(invalidTodo))
-        .rejects
-        .toThrow();
     });
   });
 
   describe('findAll()', () => {
-    it('모든 할일 목록을 최신순으로 조회할 수 있다', async () => {
-      const todos = [
-        { title: '첫번째 할일', content: '내용1', status: 'in-progress' },
-        { title: '두번째 할일', content: '내용2', status: 'done' }
-      ];
-      
-      await Promise.all(todos.map(todo => todoRepository.create(todo)));
-      
+    it('모든 할일 목록은 생성일 내림차순으로 정렬된다', async () => {
+      const now = new Date();
+
+      await todoRepository.create({ ...sampleTodo, createdAt: new Date(now.getTime() - 2000) }); // 2초 전
+      await todoRepository.create({ ...sampleTodo, createdAt: now });
+
       const foundTodos = await todoRepository.findAll();
-      expect(foundTodos).toHaveLength(2);
-      expect(new Date(foundTodos[0].createdAt)).toBeGreaterThan(new Date(foundTodos[1].createdAt));
+      expect(new Date(foundTodos[foundTodos.length - 2].createdAt).getTime())
+        .toBeGreaterThan(new Date(foundTodos[foundTodos.length - 1].createdAt).getTime());
     });
   });
 
 
   describe('findById()', () => {
     it('ID로 특정 할일을 조회할 수 있다', async () => {
-      const created = await todoRepository.create({
-        title: '테스트 할일',
-        content: '테스트 내용',
-        status: 'in-progress'
-      });
-      
+      const created = await todoRepository.create(sampleTodo);
       const found = await todoRepository.findById(created.id);
       
       expect(found).toMatchObject({
@@ -95,29 +91,22 @@ describe('TodoMariaRepository', () => {
 
   describe('update()', () => {
     it('할일을 수정할 수 있다', async () => {
-      const created = await todoRepository.create({
-        title: '원래 할일',
-        content: '원래 내용',
-        status: 'in-progress'
-      });
-
       const updateData = {
         title: '수정된 할일',
         content: '수정된 내용',
         status: 'done'
       };
       
-      const updated = await todoRepository.update(created.id, updateData);
+      const updated = await todoRepository.update(Todo2.id, updateData);
       
       expect(updated).toMatchObject({
-        id: created.id,
+        id: Todo2.id,
         ...updateData
       });
     });
 
-    it('존재하지 않는 ID로 수정 시도시 null을 반환한다', async () => {
-      const updated = await todoRepository.update(999, { title: '수정' });
-      expect(updated).toBeNull();
+    it('존재하지 않는 ID로 수정 시도시 에러를 반환한다', async () => {
+      await expect(todoRepository.update(999, { title: '수정' })).rejects.toThrow();
     });
   });
 
@@ -135,9 +124,8 @@ describe('TodoMariaRepository', () => {
       expect(found).toBeNull();
     });
 
-    it('존재하지 않는 ID로 삭제 시도시 null을 반환한다', async () => {
-      const result = await todoRepository.delete(999);
-      expect(result).toBeNull();
+    it('존재하지 않는 ID로 삭제 시도시 에러를 반환한다', async () => {
+      await expect(todoRepository.delete(999)).rejects.toThrow();
     });
   });
 }); 

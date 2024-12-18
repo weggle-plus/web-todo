@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
-const { authenticate } = require('../middleware/auth.middleware');
+const { authenticate, validatePassword } = require('../middleware/auth.middleware');
 
-router.post('/register', async (req, res, next) => {
+router.post('/register', validatePassword, async (req, res, next) => {
   await UserController.register(req, res, next);
 });
 
-router.post('/login', async (req, res, next) => {
+router.post('/login', validatePassword, async (req, res, next) => {
   await UserController.login(req, res, next);
 });
 
