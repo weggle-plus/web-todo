@@ -23,7 +23,7 @@ const TodoItem: React.FC<TodoItemProps> = ({
           <>
             <input
               type="checkbox"
-              checked={item.completed}
+              checked={!isTodo || item.completed}
               onChange={() => handleToggleTodo(item.id, isTodo)}
             />
             <span
