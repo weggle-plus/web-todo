@@ -30,7 +30,7 @@ export function getAllTasks(req: Request, res: Response) {
   const values = [startDate];
 
   connection.query<RowDataPacket[]>(sql, values, (err, result) => {
-    const tasks = result as [];
+    const tasks = result;
 
     if (err !== null) {
       console.log(err);
@@ -39,7 +39,7 @@ export function getAllTasks(req: Request, res: Response) {
     }
 
     if (tasks.length === 0) {
-      res.status(StatusCodes.BAD_REQUEST).end();
+      res.status(StatusCodes.NOT_FOUND).end();
       return;
     }
 
