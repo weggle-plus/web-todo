@@ -1,0 +1,104 @@
+.todoItem,
+.doneItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 15px; /* 수정 상태에서 아래와 간격 추가 */
+}
+
+.todoItem input[type="checkbox"],
+.doneItem input[type="checkbox"] {
+  margin-right: 10px;
+  width: 18px; /* 체크박스 크기 동일 */
+  height: 18px;
+  border-radius: 4px;
+}
+
+.todoItem span,
+.doneItem span {
+  flex: 1;
+  text-align: left; /* 텍스트 왼쪽 정렬 */
+}
+
+.editInput {
+  flex: 1; /* 입력 필드 확장 */
+  padding: 10px;
+  border: 1px solid #000;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  margin-right: 10px; /* 버튼과의 간격 유지 */
+}
+
+.todoItem button,
+.doneItem button {
+  margin-left: 5px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.todoItem .editButton {
+  background-color: #fff;
+  color: #555;
+  border: 1px solid #ccc;
+}
+
+.todoItem .editButton:hover {
+  background-color: #555;
+  color: #fff;
+}
+
+.todoItem .deleteButton,
+.doneItem .deleteButton {
+  background-color: #fff;
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.todoItem .deleteButton:hover,
+.doneItem .deleteButton:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+.saveButton,
+.cancelButton {
+  display: inline-block;
+  padding: 8px 16px; /* 동일한 크기로 설정 */
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.saveButton {
+  background-color: #000;
+  color: #fff;
+  border: none;
+}
+
+.saveButton:hover {
+  background-color: #333;
+}
+
+.cancelButton {
+  background-color: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+
+.cancelButton:hover {
+  background-color: #f4f4f4;
+}
+
+.todoText {
+  color: #000; /* 진한 검정색 */
+  font-weight: bold;
+}
+
+.doneText {
+  color: #555; /* 옅은 검정색 */
+  font-weight: normal;
+}
