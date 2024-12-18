@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { USER_ROLES } = require('../models/interfaces/UserSchema');
+const { body, validationResult } = require('express-validator');
+const { StatusCodes } = require('http-status-codes');
 
 const authMiddleware = {
   authenticate: (req, res, next) => {
@@ -39,4 +41,29 @@ const authMiddleware = {
   }
 };
 
-module.exports = authMiddleware;
+const validatePassword = [
+  body('password')
+    .isLength({ min: 8 })
+    .withMessage('비밀번호는 8자 이상이어야 합니다.'),
+  body('password')
+    .matches(/[a-zA-Z]/)
+    .withMessage('비밀번호는 영문자가 포함되어야 합니다.'),
+  body('password')
+    .matches(/[0-9]/)
+    .withMessage('비밀번호는 숫자가 포함되어야 합니다.'),
+  body('password')
+    .matches(/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/)
+    .withMessage('비밀번호는 특수문자가 포함되어야 합니다.'),
+  (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
+    }
+    next();
+  }
+];
+
+module.exports = {
+  authMiddleware,
+  validatePassword
+};

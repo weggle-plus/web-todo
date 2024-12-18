@@ -139,12 +139,12 @@ input[type="checkbox"] {
     border-radius: 6px;
 }
 
-input[type="checkbox"]:hover{
+input[type="checkbox"]:hover {
     background: url('../images/hover.png') no-repeat center center;
     background-color: #4755694D;
 }
 
-input[type="checkbox"]:checked{
+input[type="checkbox"]:checked {
     background: url('../images/checked.png') no-repeat center center;
 }
 

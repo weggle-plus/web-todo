@@ -92,7 +92,7 @@ function createCheckbox(todo: Todo): HTMLElement {
 function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElement): HTMLElement {
     const editButton = document.createElement('button');
     editButton.id = 'edit-button';
-    
+
     editButton.innerText = '수정';
 
     if (todo.status === 'done') {
