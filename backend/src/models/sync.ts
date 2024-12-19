@@ -1,6 +1,8 @@
-// models/index.ts
 import sequelize from '../config/sequelize';
 import Todo from './Todo';
+
+// 모델을 sequelize 인스턴스에 등록
+sequelize.models.Todo = Todo;
 
 (async () => {
   try {
@@ -15,3 +17,4 @@ import Todo from './Todo';
     console.error('데이터베이스 초기화 중 에러 발생:', error);
   }
 })();
+
