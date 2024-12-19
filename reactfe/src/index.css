@@ -129,6 +129,9 @@ section {
 .todo_item > label {
   cursor: pointer;
 }
+.todo_item_title {
+  flex: 1;
+}
 .done_wrap {
   margin-top: 40px;
 }
