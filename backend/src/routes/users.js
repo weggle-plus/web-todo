@@ -26,8 +26,7 @@ router.get('/:id',
   }
 );
 
-router.put('/:id', 
-  UserController.validateUserId,
+router.put('/', 
   UserController.validateProfileUpdate, 
   async (req, res, next) => {
     await UserController.updateProfile(req, res, next);

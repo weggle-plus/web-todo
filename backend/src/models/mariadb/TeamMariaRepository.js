@@ -15,7 +15,7 @@ class TeamMariaRepository extends TeamRepository {
       include: [{
         model: this.User,
         as: 'members',
-        attributes: ['id', 'email', 'username'],
+        attributes: ['id', 'username'],
         through: {
           attributes: ['role', 'joinedAt']
         },

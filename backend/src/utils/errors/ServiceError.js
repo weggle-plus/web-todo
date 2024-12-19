@@ -18,12 +18,12 @@ class ServiceError extends Error {
     return new ServiceError(SERVICE_ERROR_MESSAGES.USER.NOT_FOUND, StatusCodes.NOT_FOUND);
   }
 
-  static emailAlreadyExists() {
-    return new ServiceError(SERVICE_ERROR_MESSAGES.USER.EMAIL_ALREADY_EXISTS, StatusCodes.CONFLICT);
+  static usernameAlreadyExists() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.USER.USERNAME_ALREADY_EXISTS, StatusCodes.CONFLICT);
   }
 
-  static invalidEmailOrPassword() {
-    return new ServiceError(SERVICE_ERROR_MESSAGES.USER.INVALID_EMAIL_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
+  static invalidUsernameOrPassword() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.USER.INVALID_USERNAME_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
   }
 
   static todoNotBelongToUser() {

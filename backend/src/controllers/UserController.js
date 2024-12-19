@@ -9,16 +9,6 @@ class UserController {
   static userService = new UserService(UserRepositoryFactory.createRepository());
 
   static validateRegister = [
-    body('email')
-      .isEmail()
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.EMAIL_INVALID)
-      .normalizeEmail(),
-    body('password')
-      .isString()
-      .isLength({ min: 8, max: 64 })
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
     body('username')
       .optional()
       .isString()
@@ -26,14 +16,20 @@ class UserController {
       .isLength({ min: 2, max: 30 })
       .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_LENGTH)
       .trim(),
+    body('password')
+      .isString()
+      .isLength({ min: 8, max: 64 })
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
+      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
     validateRequest
   ];
 
   static validateLogin = [
-    body('email')
-      .isEmail()
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.EMAIL_INVALID)
-      .normalizeEmail(),
+    body('username')
+      .isString()
+      .notEmpty()
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED),
     body('password')
       .isString()
       .notEmpty()
@@ -77,8 +73,8 @@ class UserController {
 
   static login = async (req, res, next) => {
     try {
-      const { email, password } = req.body;
-      const result = await UserController.userService.login(email, password);
+      const { username, password } = req.body;
+      const result = await UserController.userService.login(username, password);
       res.json(result);
     } catch (error) {
       next(error);
@@ -96,7 +92,7 @@ class UserController {
 
   static updateProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.updateProfile(req.user.id, req.params.id, req.body);
+      const user = await UserController.userService.updateProfile(req.user.id, req.body);
       res.json(user);
     } catch (error) {
       next(error);

@@ -11,7 +11,7 @@ class UserRepository {
     throw new Error('Method not implemented');
   }
 
-  async findByEmail(email) {  // 로그인 사용자 조회
+  async findByUsername(username) {  // 로그인 사용자 조회
     throw new Error('Method not implemented');
   }
 

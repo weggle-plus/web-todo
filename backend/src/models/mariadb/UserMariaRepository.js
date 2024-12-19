@@ -11,7 +11,6 @@ class UserMariaRepository extends UserRepository {
 
   formatUserResponse(user) {
     return {
-      email: user.email,
       username: user.username,
       lastLogin: user.lastLogin,
     };
@@ -20,7 +19,6 @@ class UserMariaRepository extends UserRepository {
   formatUser(user) {
     return {
       id: user.id,
-      email: user.email,
       username: user.username,
       lastLogin: user.lastLogin,
       createdAt: user.createdAt,
@@ -34,7 +32,7 @@ class UserMariaRepository extends UserRepository {
       ...userData,
       password: hashedPassword
     });
-    return this.formatUserResponse(user.toJSON());
+    return this.formatUser(user.toJSON());
   }
 
   async findAll() {
@@ -48,8 +46,8 @@ class UserMariaRepository extends UserRepository {
   }
 
   // 비밀번호 포함이므로 취급주의
-  async findByEmail(email) {
-    return await this.User.findOne({ where: { email } });
+  async findByUsername(username) {
+    return await this.User.findOne({ where: { username } });
   }
 
   async update(userId, updateData) {

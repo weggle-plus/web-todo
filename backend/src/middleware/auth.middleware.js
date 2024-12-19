@@ -15,7 +15,7 @@ const authMiddleware = {
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const user = await userRepository.findByEmail(decoded.email);
+      const user = await userRepository.findByUsername(decoded.username);
       if (!user) {
         return res.status(StatusCodes.UNAUTHORIZED).json({ message: AUTH_ERROR_MESSAGES.UNAUTHORIZED });
       }

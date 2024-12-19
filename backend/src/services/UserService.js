@@ -9,23 +9,30 @@ class UserService {
   }
 
   async register(userData) {
-    const existingUser = await this.userRepository.findByEmail(userData.email);
-    if (existingUser) {
-      throw ServiceError.emailAlreadyExists();
+    if (userData.username) {
+      const existingUsername = await this.userRepository.findByUsername(userData.username);
+      if (existingUsername) {
+        throw ServiceError.usernameAlreadyExists();
+      }
     }
 
-    return await this.userRepository.create(userData);
+    const user = await this.userRepository.create(userData);
+    const token = this._generateToken(user);
+    return {
+      username: user.username,
+      token
+    };
   }
 
-  async login(email, password) {
-    const user = await this.userRepository.findByEmail(email);
+  async login(username, password) {
+    const user = await this.userRepository.findByUsername(username);
     if (!user) {
-      throw ServiceError.invalidEmailOrPassword();
+      throw ServiceError.invalidUsernameOrPassword();
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw ServiceError.invalidEmailOrPassword();
+      throw ServiceError.invalidUsernameOrPassword();
     }
 
     await this.userRepository.updateLastLogin(user.id);
@@ -33,7 +40,7 @@ class UserService {
     const token = this._generateToken(user);
 
     return {
-      user: this.userRepository.formatUserResponse(user.toJSON()),
+      username: user.username,
       token
     };
   }
@@ -46,22 +53,14 @@ class UserService {
     if (user.id !== userId) {
       throw AuthError.forbidden();
     }
-    return user;
+    return this.userRepository.formatUserResponse(user);
   }
 
-  async updateProfile(userId, id, updateData) {
-    const user = await this.userRepository.findById(id);
-    if (!user) {
-      throw AuthError.forbidden();
-    }
-    if (user.id !== userId) {
-      throw AuthError.forbidden();
-    }
-
-    if (updateData.email) {
-      const existingUser = await this.userRepository.findByEmail(updateData.email);
-      if (existingUser && existingUser.id !== userId) {
-        throw ServiceError.emailAlreadyExists();
+  async updateProfile(userId, updateData) {
+    if (updateData.username) {
+      const existingUser = await this.userRepository.findByUsername(updateData.username);
+      if (existingUser) {
+        throw ServiceError.usernameAlreadyExists();
       }
     }
 
@@ -71,7 +70,7 @@ class UserService {
   _generateToken(user) {
     return jwt.sign(
       { 
-        email: user.email
+        username: user.username
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }

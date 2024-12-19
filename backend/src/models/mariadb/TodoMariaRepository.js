@@ -35,7 +35,6 @@ class TodoMariaRepository extends TodoRepository {
   }
 
   async findById(todoId) {
-    console.log(todoId);
     const todo = await this.Todo.findByPk(todoId);
     return todo ? this.formatTodoResponse(todo) : null;
   }

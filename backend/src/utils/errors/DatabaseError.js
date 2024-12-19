@@ -12,14 +12,26 @@ class DatabaseError extends Error {
     return new DatabaseError(DATABASE_ERROR_MESSAGES.TODO.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
+  static todoDeleteFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.TODO.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
   // User
   static userUpdateFailed() {
     return new DatabaseError(DATABASE_ERROR_MESSAGES.USER.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
+  static userDeleteFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.USER.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
   // Team
   static teamUpdateFailed() {
     return new DatabaseError(DATABASE_ERROR_MESSAGES.TEAM.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  static teamDeleteFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.TEAM.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 

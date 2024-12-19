@@ -261,28 +261,25 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| email | 필수 | 사용자 이메일 |
 | password | 필수 | 사용자 비밀번호 |
-| username | 선택 | 사용자 이름 |
+| username | 필수 | 사용자 이름 |
 
 ```json
 {
-  "email": "user@example.com",
-  "password": "password123!",
-  "username": "user_name"
+  "username": "user_name",
+  "password": "password123!"
 }
 ```
 - **성공 응답 (201 Created):**
 ```json
 {
-  "email": "user@example.com",
-  "username": "user_name"
+  "username": "user_name",
+  "token": "JWT 토큰"
 }
 ```
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "회원가입 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
@@ -302,19 +299,19 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| email | 필수 | 사용자 이메일 |
+| username | 필수 | 사용자 이름 |
 | password | 필수 | 사용자 비밀번호 |
 
 ```json
 {
-  "email": "user@example.com",
+  "username": "user_name",
   "password": "password123"
 }
 ```
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "로그인이 완료되었습니다.",
+  "username": "user_name",
   "token": "JWT 토큰"
 }
 ```
@@ -337,15 +334,12 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **성공 응답 (200 OK):**
 ```json
 {
-  "id": "user_id",
-  "email": "user@example.com",
-  "username": "user_name"
+    "username": "user_name"
 }
 ```
 - **실패 응답 (401 Unauthorized):**  
 ```json
 {
-  "message": "프로필 조회 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
@@ -353,7 +347,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 #### 4. 프로필 업데이트
 사용자의 프로필 정보를 업데이트합니다.
 
-- **URL:** `/users/profile`
+- **URL:** `/users`
 - **Method:** `PUT`
 - **Request Header:** 
 
@@ -378,18 +372,12 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "프로필 업데이트가 완료되었습니다.",
-  "user": {
-    "id": "user_id",
-    "email": "user@example.com",
-    "username": "updated_user_name"
-  }
+  "username": "updated_user_name"
 }
 ```
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "프로필 업데이트 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```

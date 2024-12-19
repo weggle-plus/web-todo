@@ -9,7 +9,7 @@ const UserSchema = {
     primaryKey: true,
     autoIncrement: true
   },
-  email: {
+  username: {
     type: 'string',
     required: true,
     unique: true
@@ -19,11 +19,6 @@ const UserSchema = {
     required: true
   },
   // TODO: failedLoginAttempts
-  username: {
-    type: 'string',
-    required: false,
-    default: null
-  },
   role: {
     type: 'enum',
     values: Object.values(USER_ROLES),
@@ -58,8 +53,8 @@ const UserSchema = {
     underscored: true,
     indexes: [
       {
-        name: 'idx_users_email',  // 로그인 쿼리 최적화
-        fields: ['email', 'password']
+        name: 'idx_users_username',  // 로그인 쿼리 최적화
+        fields: ['username', 'password']
       }
     ]
   }
