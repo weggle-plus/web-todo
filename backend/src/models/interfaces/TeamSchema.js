@@ -1,8 +1,4 @@
-const TEAM_MEMBER_ROLES = {
-  MANAGER: 'manager',
-  MENTOR: 'mentor',
-  MEMBER: 'member'  
-};
+const constants = require('../../constants/constants');
 
 const TeamSchema = {
   id: {
@@ -56,8 +52,8 @@ const UserTeamSchema = {
   },
   role: {
     type: 'enum',
-    values: Object.values(TEAM_MEMBER_ROLES),
-    default: TEAM_MEMBER_ROLES.MEMBER
+    values: Object.values(constants.TEAM_MEMBER_ROLES),
+    default: constants.TEAM_MEMBER_ROLES.MANAGER
   },
   joinedAt: {
     type: 'timestamp',
@@ -104,9 +100,9 @@ const TeamInvitationSchema = {
   },
   invitationStatus: {
     type: 'enum',
-    values: ['pending', 'accepted', 'rejected'],
+    values: Object.values(constants.TEAM_INVITATION_STATUS),
     required: true,
-    default: 'pending'
+    default: constants.TEAM_INVITATION_STATUS.PENDING
   },
   invitedAt: {
     type: 'timestamp',
@@ -132,6 +128,5 @@ const TeamInvitationSchema = {
 module.exports = {
   TeamSchema,
   UserTeamSchema,
-  TeamInvitationSchema,
-  TEAM_MEMBER_ROLES
+  TeamInvitationSchema
 };

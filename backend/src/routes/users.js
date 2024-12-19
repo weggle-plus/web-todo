@@ -2,16 +2,18 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
 const authMiddleware = require('../middleware/auth.middleware');
+const { validateLogin, validateUserIdParam, validateProfile } = require('../middleware/validateRequest');
+
 
 router.post('/register', 
-  UserController.validateRegister, 
+  validateProfile, 
   async (req, res, next) => {
     await UserController.register(req, res, next);
   }
 );
 
 router.post('/login', 
-  UserController.validateLogin, 
+  validateLogin, 
   async (req, res, next) => {
     await UserController.login(req, res, next);
   }
@@ -20,21 +22,21 @@ router.post('/login',
 router.use(authMiddleware.authenticate);
 
 router.get('/:id', 
-  UserController.validateUserIdParam,
+  validateUserIdParam,
   async (req, res, next) => {
     await UserController.getProfile(req, res, next);
   }
 );
 
 router.put('/', 
-  UserController.validateProfileUpdate, 
+  validateProfile, 
   async (req, res, next) => {
     await UserController.updateProfile(req, res, next);
   }
 );
 
 router.delete('/:id', 
-  UserController.validateUserIdParam,
+  validateUserIdParam,
   async (req, res, next) => {
     await UserController.deleteProfile(req, res, next);
   }

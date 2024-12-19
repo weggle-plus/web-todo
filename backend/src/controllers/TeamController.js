@@ -1,10 +1,7 @@
 const { StatusCodes } = require('http-status-codes');
-const { body, param } = require('express-validator');
 const TeamService = require('../services/TeamService');
 const { TeamRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
-const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
-const { TEAM_MEMBER_ROLES } = require('../models/interfaces/TeamSchema');
-const validateRequest = require('../middleware/validateRequest');
+
 
 class TeamController {
   static teamService = new TeamService(
@@ -12,52 +9,7 @@ class TeamController {
     UserRepositoryFactory.createRepository()
   );
 
-  static validateTeam = [
-    body('name')
-      .isString()
-      .notEmpty()
-      .trim()
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_REQUIRED)
-      .isLength({ min: 2, max: 50 })
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_LENGTH),
-    body('description')
-      .optional()
-      .isString()
-      .trim()
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.DESCRIPTION_INVALID),
-    validateRequest
-  ];
 
-  static validateTeamId = [
-    param('teamId')
-      .isInt()
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.ID_INVALID),
-    validateRequest
-  ];
-
-  static validateMember = [
-    body('userId')
-      .isInt()
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ID_INVALID),
-    body('role')
-      .optional()
-      .isIn(Object.values(TEAM_MEMBER_ROLES))
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
-    validateRequest
-  ];
-
-  static validateMemberRole = [
-    param('teamId')
-      .isInt()
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.ID_INVALID),
-    param('userId')
-      .isInt()
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ID_INVALID),
-    body('role')
-      .isIn(Object.values(TEAM_MEMBER_ROLES))
-      .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
-    validateRequest
-  ];
 
   static createTeam = async (req, res, next) => {
     try {
@@ -89,8 +41,8 @@ class TeamController {
   static updateTeam = async (req, res, next) => {
     try {
       const team = await TeamController.teamService.updateTeam(
-        req.params.teamId,
         req.user.id,
+        req.params.teamId,
         req.body
       );
       res.json(team);
@@ -101,48 +53,26 @@ class TeamController {
 
   static deleteTeam = async (req, res, next) => {
     try {
-      await TeamController.teamService.deleteTeam(req.params.teamId, req.user.id);
+      await TeamController.teamService.deleteTeam(req.user.username, req.params.teamId);
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }
   }
 
-  static addMember = async (req, res, next) => {
+  static inviteMember = async (req, res, next) => {
     try {
-      const { userId, role } = req.body;
-      const team = await TeamController.teamService.addMember(
-        req.params.teamId,
-        userId,
-        role
-      );
-      res.json(team);
+      await TeamController.teamService.inviteMember(req.params.teamId, req.params.inviteeId, req.user.id, req.body.message);
+      res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }
   }
 
-  static updateMemberRole = async (req, res, next) => {
+  static handleTeamMemberAction = async (req, res, next) => {
     try {
-      const { role } = req.body;
-      const team = await TeamController.teamService.updateMemberRole(
-        req.params.teamId,
-        req.params.userId,
-        role
-      );
-      res.json(team);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static removeMember = async (req, res, next) => {
-    try {
-      const team = await TeamController.teamService.removeMember(
-        req.params.teamId,
-        req.params.userId
-      );
-      res.json(team);
+      await TeamController.teamService.handleTeamMemberAction(req.params.teamId, req.user.id, req.body.action);
+      res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }

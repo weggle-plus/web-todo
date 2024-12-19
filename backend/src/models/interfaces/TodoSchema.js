@@ -1,8 +1,4 @@
-const TODO_STATUS = {
-  PENDING: 'pending',
-  IN_PROGRESS: 'in-progress',
-  DONE: 'done'
-};
+const constants = require('../../constants/constants');
 
 const TodoSchema = {
   id: {
@@ -17,8 +13,8 @@ const TodoSchema = {
   },
   status: {
     type: 'enum',
-    values: Object.values(TODO_STATUS),
-    default: TODO_STATUS.IN_PROGRESS
+    values: Object.values(constants.TODO_STATUS),
+    default: constants.TODO_STATUS.IN_PROGRESS
   },
   // TODO: priority
   // TODO: category
@@ -81,6 +77,5 @@ const TodoSchema = {
 };
 
 module.exports = {
-  TodoSchema,
-  TODO_STATUS
+  TodoSchema
 }; 

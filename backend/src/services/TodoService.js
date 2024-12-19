@@ -1,6 +1,5 @@
-const { TODO_STATUS } = require('../models/interfaces/TodoSchema');
 const ServiceError = require('../utils/errors/ServiceError');
-
+const constants = require('../constants/constants');
 
 class TodoService {
   constructor(todoRepository, userRepository, teamRepository) {
@@ -77,7 +76,7 @@ class TodoService {
 
   async updateTodoStatus(todoId) {
     const todo = await this.validateTodoExists(todoId);
-    const status = todo.status === TODO_STATUS.DONE ? TODO_STATUS.IN_PROGRESS : TODO_STATUS.DONE;
+    const status = todo.status === constants.TODO_STATUS.DONE ? constants.TODO_STATUS.IN_PROGRESS : constants.TODO_STATUS.DONE;
     
     return this._processUpdate(todo, { status });
   }
@@ -98,7 +97,7 @@ class TodoService {
     };
 
     const newStatus = updates.status || todo.status;
-    if (newStatus === TODO_STATUS.DONE) {
+    if (newStatus === constants.TODO_STATUS.DONE) {
       if (!todo.completedAt) {
         updatedTodo.completedAt = new Date();
       }

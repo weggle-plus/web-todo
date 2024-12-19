@@ -9,8 +9,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 ### TODO
 
-#### 1. 유저에 속하는 TODO 생성
-새로운 TODO 항목을 생성합니다.
+#### 1. 유저의 TODO 생성
 
 - **URL:** `/todos`
 - **Method:** `POST`
@@ -49,14 +48,14 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "teamId": null
 }  
 ```
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
   "error": "구체적인 오류 메시지"
 }  
 ```
 
-#### 2. 유저의 모든 TODO 조회
+#### 2. 유저의 TODO 조회
 - 유저에게 소속된 모든 TODO 항목을 조회합니다.
 - (팀 소속 TODO 항목 제외)
 - 정렬순서는 생성일자 오름차순
@@ -95,14 +94,14 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   }
 ]  
 ```
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
   "error": "구체적인 오류 메시지"
 } 
 ```
 
-#### 3. 소속팀의 TODO 조회
+#### 3. 팀의 TODO 조회
 - 유저가 소속된 팀의 모든 TODO 항목을 조회합니다.
 - 정렬순서는 생성일자 오름차순
 - **URL:** `/todos/team/:teamId`
@@ -134,7 +133,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ]
 ```
 
-#### 4. 팀에 속하는 TODO 생성
+#### 4. 팀의 TODO 생성
 
 - **URL:** `/todos/team/:teamId`
 - **Method:** `POST`
@@ -159,7 +158,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **성공 응답 (201 Created):**
+- **성공 응답 : 201 Created**
 ```json
 {
   "message": "팀 할일이 생성되었습니다.",
@@ -170,7 +169,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -217,7 +216,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "completedAt": "2024-03-15T12:30:00.000Z"
 }  
 ```
-- **실패 응답 (404 Not Found):**  
+- **실패 응답 : 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -252,7 +251,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "completedAt": "2024-03-15T12:30:00.000Z"
 }  
 ```
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -273,7 +272,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 - **성공 응답 (204 No Content):**
   - 응답 본문 없음
-- **실패 응답 (404 Not Found):**  
+- **실패 응답: 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -323,7 +322,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "token": "JWT 토큰"
 }
 ```
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -391,7 +390,8 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```
 
 #### 4. 프로필 업데이트
-사용자의 프로필 정보를 업데이트합니다.
+- 사용자의 프로필 정보를 업데이트합니다.
+- 아이디 변경 시 토큰도 재발급해야 합니다.
 
 - **URL:** `/users`
 - **Method:** `PUT`
@@ -421,7 +421,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "username": "updated_user_name"
 }
 ```
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 유저 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -437,6 +437,8 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   - member: 멤버
 
 #### 1. 팀 생성
+- 팀을 생성하고 본인을 팀에 소속시킵니다.
+- 본인의 역할은 기본적으로 manager로 설정되며 팀 생성 시 역할을 선택할 수 있습니다.
 
 - **URL:** `/teams`
 - **Method:** `POST`
@@ -452,10 +454,13 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 | --- | --- | --- |
 | name | 필수 | 팀 이름 |
 | description | 선택 | 팀 설명 |
+| role | 선택 | 본인의 역할 (manager, mentor, member) 기본값: manager |
 
 ```json
 {
-  "name": "팀 이름"
+  "name": "팀 이름",
+  "description": "팀 설명",
+  "role": "mentor"
 }
 ```
 
@@ -465,22 +470,27 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "message": "팀이 생성되었습니다.",
   "team": {
     "id": "team_id",
-    "name": "팀 이름"
+    "name": "팀 이름",
+    "members": [
+      {
+        "username": "user_name",
+        "role": "mentor"
+      }
+    ]
   }
 }
 ```
 
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
-  "message": "팀 생성 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
 
 
-
-#### 2. 팀 조회 
+#### 2. 팀 현황 조회 
+- 팀 이름, 팀 설명, 팀 멤버 목록을 조회합니다.
 
 - **URL:** `/teams/:teamId`
 - **Method:** `GET`
@@ -494,33 +504,77 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "팀이 조회되었습니다.",
-  "team": {
-    "id": "team_id",
+  "id": "team_id",
+  "name": "팀 이름",
+  "members": [
+    {
+      "username": "user_name1",
+      "role": "manager"
+    },
+    {
+      "username": "user_name2",
+      "role": "member"
+    }
+  ]
+}
+```
+
+- **실패 응답: 인증 실패 401 Unauthorized, 존재하지 않는 팀 404 Not Found**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
+
+#### 3. 유저가 속한 팀 조회
+- 유저가 속한 모든 팀을 조회합니다.
+
+- **URL:** `/teams`
+- **Method:** `GET`
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:** 
+  - 없음
+
+- **성공 응답 (200 OK):**
+```json
+[
+  {
     "name": "팀 이름",
+    "description": "팀 설명",
     "members": [
       {
         "username": "user_name1",
-        "role": "manager"
+        "role": "member"
       },
       {
         "username": "user_name2",
         "role": "member"
       }
     ]
+  },
+  {
+    "name": "팀 이름2",
+    "description": "팀 설명2",
+    "members": [
+      {
+        "username": "user_name1",
+        "role": "member"
+      },
+      {
+        "username": "user_name3",
+        "role": "member"
+      }
+    ]
   }
-}
+]
 ```
 
-- **실패 응답 (404 Not Found):**  
-```json
-{
-  "message": "팀 조회 중 오류가 발생했습니다.",
-  "error": "구체적인 오류 메시지"
-}
-```
-
-#### 3. 팀 업데이트
+#### 4. 팀 업데이트
 
 - **URL:** `/teams/:teamId`
 - **Method:** `PUT`
@@ -542,40 +596,38 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 ```json
 {
-  "name": "업데이트된 팀 이름"
+  "name": "업데이트된 팀 이름",
+  "description": "업데이트된 팀 설명"
 }
 ```
 
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "팀이 업데이트되었습니다.",
-  "team": {
-    "id": "team_id",
-    "name": "업데이트된 팀 이름",
-    "members": [
-      {
-        "username": "user_name1",
-        "role": "manager"
-      },
-      {
-        "username": "user_name2",
-        "role": "member"
-      }
-    ]
-  }
+  "id": "team_id",
+  "name": "업데이트된 팀 이름",
+  "description": "업데이트된 팀 설명",
+  "members": [
+    {
+      "username": "user_name1",
+      "role": "manager"
+    },
+    {
+      "username": "user_name2",
+      "role": "member"
+    }
+  ]
 }
 ```
 
-- **실패 응답 (400 Bad Request):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
-  "message": "팀 업데이트 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
 
-#### 4. 팀 삭제
+#### 5. 팀 삭제
 
 - **URL:** `/teams/:teamId`
 - **Method:** `DELETE`
@@ -588,180 +640,21 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 - **성공 응답 (204 No Content):**
   - 응답 본문 없음
-- **실패 응답 (404 Not Found):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
 {
-  "message": "팀 삭제 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
 
-#### 5. 팀 멤버 추가
+#### 6. 팀 멤버 초대
 
-- **URL:** `/teams/:teamId`
+- 팀 멤버전원은 초대발송이 가능합니다.
+
+- **URL:** `/teams/:teamId/:inviteeId`
 - **Method:** `POST`
-- **URL 파라미터:** teamId (팀의 고유 식별자)
+- **URL 파라미터:** teamId (팀의 고유 식별자), inviteeId (초대받을 사용자의 고유 식별자)
 
-- **Request Header:** 
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| Content-Type | 필수 | application/json |
-| Authorization | 필수 | Bearer <JWT 토큰> |
-
-- **Request Body:**  
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| userId | 필수 | 추가할 사용자의 ID |
-| role | 선택 | 사용자의 역할 (manager, mentor, member) 기본값 member |
-
-```json
-{
-  "userId": "user_id",
-  "role": "member"
-}
-```
-
-- **성공 응답 (200 OK):**
-```json
-{
-  "message": "팀 멤버가 추가되었습니다.",
-  "team": {
-    "id": "team_id",
-    "name": "팀 이름",
-    "members": [
-      {
-        "username": "user_name1",
-        "role": "manager"
-      },
-      {
-        "username": "user_name2",
-        "role": "member"
-      }
-    ]
-  }
-}
-```
-- **실패 응답 (400 Bad Request):**  
-```json
-{
-  "message": "팀 멤버 추가 중 오류가 발생했습니다.",
-  "error": "구체적인 오류 메시지"
-}
-```
-
-#### 6. 팀 멤버 역할 업데이트
-
-- **URL:** `/teams/:teamId/:userId`
-- **Method:** `PATCH`
-- **URL 파라미터:** teamId (팀의 고유 식별자), userId (사용자의 고유 식별자)
-
-- **Request Header:** 
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| Content-Type | 필수 | application/json |
-| Authorization | 필수 | Bearer <JWT 토큰> |
-
-- **Request Body:**  
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| role | 필수 | 업데이트할 역할 (manager, mentor, member) |
-
-```json
-{
-  "role": "mentor"
-}
-```
-
-- **성공 응답 (200 OK):**
-```json
-{
-  "message": "팀 멤버 역할이 업데이트되었습니다.",
-  "team": {
-    "id": "team_id",
-    "name": "팀 이름",
-    "members": [
-      {
-        "username": "user_name1",
-        "role": "mentor"
-      }
-    ]
-  }
-}
-```
-
-- **실패 응답 (400 Bad Request):**  
-
-```json
-{
-  "message": "팀 멤버 역할 업데이트 중 오류가 발생했습니다.",
-  "error": "구체적인 오류 메시지"
-}
-```
-
-#### 7. 팀 멤버 삭제
-
-- **URL:** `/teams/:teamId/:userId`
-- **Method:** `DELETE`
-- **URL 파라미터:** teamId (팀의 고유 식별자), userId (사용자의 고유 식별자)
-
-- **Request Header:** 
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| Authorization | 필수 | Bearer <JWT 토큰> |
-
-- **성공 응답 (204 No Content):**
-  - 응답 본문 없음
-- **실패 응답 (404 Not Found):**  
-```json
-{
-  "message": "팀 멤버 삭제 중 오류가 발생했습니다.",
-  "error": "구체적인 오류 메시지"
-}
-```
-
-#### 8. 팀 초대
-- **URL:** `/teams/:teamId/invite`
-- **Method:** `POST`
-- **URL 파라미터:** teamId (팀의 고유 식별자)
-- **Request Header:** 
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| Content-Type | 필수 | application/json |
-| Authorization | 필수 | Bearer <JWT 토큰> |
-
-- **Request Body:**  
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| userId | 필수 | 초대할 사용자 ID |
-| message | 선택 | 초대 메시지 |
-
-```json
-{
-  "userId": "초대할 사용자 ID",
-  "message": "초대 메시지"  // 선택
-}
-```
-
-- **성공 응답 (200 OK):**
-```json
-{
-  "message": "초대가 전송되었습니다."
-}
-```
-
-#### 9. 팀 초대 수락/거절
-- **URL:** `/teams/:teamId/invite/:action`
-- **Method:** `POST`
-- **URL 파라미터:** 
-  - teamId (팀의 고유 식별자)
-  - action ("accept" 또는 "reject")
 - **Request Header:** 
 
 | 필드 | 필수 | 설명 |
@@ -769,12 +662,59 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 | Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:** 
-  - 없음
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| role | 선택 | 초대할 역할 (manager, mentor, member) 기본값: member |
+| message | 선택 | 초대 메시지 |
 
-- **성공 응답 (200 OK):**
 ```json
 {
-  "message": "초대를 수락하였습니다." // 또는 "초대를 거절하였습니다."
+  "role": "mentor",
+  "message": "저희 팀으로 초대합니다."
 }
 ```
 
+- **성공 응답 (200 OK):**
+  - 응답 본문 없음
+
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 팀 또는 유저 404 Not Found**  
+
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
+
+
+#### 7. 초대 수락 / 초대 거절 / 팀 탈퇴
+- **URL:** `/teams/:teamId/action`
+- **Method:** `POST`
+- **URL 파라미터:** 
+  - teamId (팀의 고유 식별자)
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| action | 필수 | 초대 수락: accept, 초대 거절: reject, 팀 탈퇴: leave |
+
+```json
+{
+  "action": "accept"
+}
+```
+
+- **성공 응답 : 200 OK**
+  - 응답 본문 없음
+
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 팀 또는 사용자 없음 404 Not Found**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```

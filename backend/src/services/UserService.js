@@ -73,8 +73,15 @@ class UserService {
         throw ServiceError.usernameAlreadyExists();
       }
     }
-
-    return await this.userRepository.update(userId, updateData);
+    const user = await this.userRepository.update(userId, updateData);
+    if (updateData.username) {
+      const token = this._generateToken(user);
+      return {
+        username: user.username,
+        token
+      };
+    }
+    return user;
   }
 
   _generateToken(user) {

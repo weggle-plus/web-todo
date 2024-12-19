@@ -7,7 +7,19 @@ class TeamRepository {
     throw new Error('Method not implemented');
   }
 
-  async findByTeamId(teamId) {  // 팀 아이디로 팀 조회
+  async countMyTeams(userId) {  // 사용자가 속한 팀 수 조회
+    throw new Error('Method not implemented');
+  }
+
+  async countTeamMembers(teamId) {  // 팀 아이디로 팀 멤버 수 조회
+    throw new Error('Method not implemented');
+  }
+
+  async findById(teamId) {  // 팀 아이디로 팀 조회
+    throw new Error('Method not implemented');
+  }
+
+  async findByName(name) {  // 팀 이름으로 팀 조회
     throw new Error('Method not implemented');
   }
 

@@ -32,4 +32,12 @@ User.belongsToMany(Team, {
   otherKey: 'teamId'
 });
 
+Team.hasMany(UserTeam, {
+  foreignKey: 'teamId'
+});
+
+UserTeam.belongsTo(Team, {
+  foreignKey: 'teamId'
+});
+
 module.exports = { Team, UserTeam }; 
