@@ -130,7 +130,7 @@ input[type="text"]:focus {
     gap: 16px;
 }
 
-#done-list .todo-item {
+#done-list .todo-item span {
     text-decoration: line-through;
 }
 
