@@ -75,6 +75,7 @@ function toggleTodoStatus(li, isChecked) {
 function toggleEdit(li, editButton) {
   const inputField = li.querySelector('input[type="text"]');
   const todoId = li.dataset.id;
+  const isComplete = li.querySelector('input[type="checkbox"]').checked;
 
   if (inputField.readOnly) {
     inputField.readOnly = false;
@@ -92,7 +93,7 @@ function toggleEdit(li, editButton) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ id: todoId, subject: updatedSubject }),
+      body: JSON.stringify({ id: todoId, subject: updatedSubject, complete: isComplete }),
     }).then(response => {
       if (response.ok) {
         inputField.readOnly = true;
