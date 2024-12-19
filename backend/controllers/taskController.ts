@@ -13,16 +13,11 @@ export function createTask(req: Request, res: Response) {
   connection.query<ResultSetHeader>(sql, values, (err, result) => {
     if (err !== null) {
       console.log(err);
-      res.status(StatusCodes.BAD_REQUEST).json({ error: 'Failed to create task' });
+      res.status(StatusCodes.BAD_REQUEST);
       return;
     }
 
-    res.status(StatusCodes.CREATED).json({
-      id: result.insertId,
-      subject: subject,
-      start_date: start_date,
-      completed: false,
-    }).end();
+    res.status(StatusCodes.CREATED).end();
   });
 }
 
@@ -66,16 +61,16 @@ export function updateTask(req: Request, res: Response) {
 
     if (err !== null) {
       console.log(err);
-      res.status(StatusCodes.BAD_REQUEST).json({ error: 'Failed to update task' });
+      res.status(StatusCodes.BAD_REQUEST).end();
       return;
     }
 
     if (task.affectedRows === 0) {
-      res.status(StatusCodes.NOT_FOUND).json({ error: 'Task not found' });
+      res.status(StatusCodes.NOT_FOUND).end();
       return;
     }
 
-    res.status(StatusCodes.OK).json({ message: 'Task updated successfully' }).end();
+    res.status(StatusCodes.OK).end();
   });
 }
 
@@ -88,16 +83,15 @@ export function deleteTask(req: Request, res: Response) {
     const task = result;
 
     if (err !== null) {
-      console.log(err);
-      res.status(StatusCodes.BAD_REQUEST).json({ error: 'Failed to delete task' });
+      res.status(StatusCodes.BAD_REQUEST).end();
       return;
     }
 
     if (task.affectedRows === 0) {
-      res.status(StatusCodes.NOT_FOUND).json({ error: 'Task not found' });
+      res.status(StatusCodes.NOT_FOUND).end();
       return;
     }
 
-    res.status(StatusCodes.OK).json({ message: 'Task deleted successfully' });
+    res.status(StatusCodes.OK).end();
   });
 }

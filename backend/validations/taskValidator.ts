@@ -1,25 +1,42 @@
 import { body } from "express-validator";
 import { validationErrorHandler } from "./validationErrorHandler";
+import { TASKS } from "../constants/databaseInfo";
+
+const validateId = body(TASKS.ID)
+  .notEmpty()
+  .isInt()
+  .withMessage("Valid id require.");
+
+const validateStartDate = body(TASKS.START_DATE)
+  .notEmpty()
+  .isDate()
+  .withMessage("Valid start_date require.");
+
+const validateSubject = body(TASKS.SUBJECT)
+  .notEmpty()
+  .withMessage("Valid subject require.");
+
+const validateComplete = body(TASKS.COMPLETE)
+  .notEmpty()
+  .isBoolean()
+  .withMessage("Valid complete require.");
 
 export const createTaskValidators = [
-  body("date").notEmpty().isDate().withMessage("Valid date require."),
-  body("subject").notEmpty().isString().withMessage("Valid date require."),
+  validateStartDate,
+  validateSubject,
   validationErrorHandler,
 ];
 
 export const getAllTasksValidators = [
-  body("date").notEmpty().isDate().withMessage("Valid date require."),
+  validateStartDate,
   validationErrorHandler,
 ];
 
 export const updateTaskValidators = [
-  body("id").notEmpty().isInt().withMessage("Valid date require."),
-  body("subject").notEmpty().isString().withMessage("Valid date require."),
-  body("completed").notEmpty().isBoolean().withMessage("Valid date require."),
+  validateId,
+  validateSubject,
+  validateComplete,
   validationErrorHandler,
 ];
 
-export const deleteTaskValidators = [
-  body("id").notEmpty().isInt().withMessage("Valid date require."),
-  validationErrorHandler,
-];
+export const deleteTaskValidators = [validateId, validationErrorHandler];

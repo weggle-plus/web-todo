@@ -9,7 +9,8 @@ export function validationErrorHandler(
 ) {
   const error = validationResult(req);
 
-  if (error.isEmpty()) {
+  if (!error.isEmpty()) {
+    console.log(error.array());
     res.status(StatusCodes.BAD_REQUEST).json(error).end();
     return;
   }

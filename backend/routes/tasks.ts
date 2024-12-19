@@ -17,6 +17,6 @@ export default router;
 router
   .route("/")
   .post(createTaskValidators, createTask)
-  .get(getAllTasksValidators, getAllTasks)
+  .get(getAllTasks)
   .put(updateTaskValidators, updateTask)
   .delete(deleteTaskValidators, deleteTask);
