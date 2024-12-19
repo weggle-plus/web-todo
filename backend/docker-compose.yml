@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  mariadb:
+    image: mariadb:latest          # 최신 MariaDB 이미지 사용
+    container_name: mariadb        # 컨테이너 이름 설정
+    environment:
+      MYSQL_ROOT_HOST: '%'      
+      MYSQL_ROOT_PASSWORD: root # root 비밀번호 설정
+      MYSQL_DATABASE: todo_db       # 자동 생성할 데이터베이스 
+    ports:
+      - "3306:3306"                 # 로컬 포트와 컨테이너 포트 매핑
+    volumes:
+      - mariadb_data:/var/lib/mysql # 데이터베이스 데이터 영구 보관
+
+volumes:
+  mariadb_data:                     # 볼륨 설정 (데이터베이스 데이터 유지)
