@@ -36,12 +36,16 @@ class TodoService {
     return await this.todoRepository.create(todoData, userId);
   }
 
-  async getAllUserTodos(userId) {
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw ServiceError.authRequired();
-    }
+  async getUserTodos(userId) {
     return await this.todoRepository.findByUserId(userId);
+  }
+
+  async getTeamTodos(teamId) {
+    const team = await this.teamRepository.findById(teamId);
+    if (!team) {
+      throw ServiceError.teamNotFound();
+    }
+    return await this.todoRepository.findByTeamId(teamId);
   }
 
   async getAllTeamTodos(teamId, userId) {

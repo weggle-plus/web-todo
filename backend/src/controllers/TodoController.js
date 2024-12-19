@@ -42,8 +42,15 @@ class TodoController {
     validateRequest
   ];
 
-  static validateTodoId = [
+  static validateTodoIdParam = [
     param('id')
+      .isInt()
+      .withMessage(VALIDATION_ERROR_MESSAGES.TODO.ID_INVALID),
+    validateRequest
+  ];
+
+  static validateTeamIdParam = [
+    param('teamId')
       .isInt()
       .withMessage(VALIDATION_ERROR_MESSAGES.TODO.ID_INVALID),
     validateRequest
@@ -58,9 +65,9 @@ class TodoController {
     }
   }
 
-  static getAllUserTodos = async (req, res, next) => {
+  static getUserTodos = async (req, res, next) => {
     try {
-      const todos = await TodoController.todoService.getAllUserTodos(req.user.id);
+      const todos = await TodoController.todoService.getUserTodos(req.user.id);
       res.json(todos);
     } catch (error) {
       next(error);
@@ -71,6 +78,24 @@ class TodoController {
     try {
       const todo = await TodoController.todoService.updateTodo(req.user.id, req.params.id, req.body);
       res.json(todo);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static getTeamTodos = async (req, res, next) => {
+    try {
+      const todos = await TodoController.todoService.getTeamTodos(req.params.teamId);
+      res.json(todos);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static createTeamTodo = async (req, res, next) => {
+    try {
+      const todo = await TodoController.todoService.createTeamTodo(req.params.teamId, req.body);
+      res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       next(error);
     }

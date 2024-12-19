@@ -61,7 +61,7 @@ class TeamController {
 
   static createTeam = async (req, res, next) => {
     try {
-      const team = await TeamController.teamService.createTeam(req.body, req.user.id);
+      const team = await TeamController.teamService.createTeam(req.user.id, req.body);
       res.status(StatusCodes.CREATED).json(team);
     } catch (error) {
       next(error);

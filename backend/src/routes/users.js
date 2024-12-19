@@ -20,7 +20,7 @@ router.post('/login',
 router.use(authMiddleware.authenticate);
 
 router.get('/:id', 
-  UserController.validateUserId,
+  UserController.validateUserIdParam,
   async (req, res, next) => {
     await UserController.getProfile(req, res, next);
   }
@@ -34,7 +34,7 @@ router.put('/',
 );
 
 router.delete('/:id', 
-  UserController.validateUserId,
+  UserController.validateUserIdParam,
   async (req, res, next) => {
     await UserController.deleteProfile(req, res, next);
   }

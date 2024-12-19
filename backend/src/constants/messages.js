@@ -37,7 +37,7 @@ const SERVICE_ERROR_MESSAGES = {
     INVITATION_NOT_FOUND: '초대를 찾을 수 없습니다.',
     MEMBER_ALREADY_EXISTS: '이미 팀에 존재하는 멤버입니다.',
     INVITATION_ALREADY_EXISTS: '이미 초대가 존재합니다.',
-    INVALID_ROLE: '유효하지 않은 팀 역할입니다.'
+    INVALID_TEAM_ROLE: '유효하지 않은 팀 역할입니다.'
   }
 }
 

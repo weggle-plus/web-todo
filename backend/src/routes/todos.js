@@ -14,34 +14,49 @@ router.post('/',
 
 router.get('/', 
   async (req, res) => {
-    await todoController.getAllUserTodos(req, res);
+    await todoController.getUserTodos(req, res);
   }
 );
 
 router.get('/:id', 
-  todoController.validateTodoId, 
+  todoController.validateTodoIdParam, 
   async (req, res, next) => {
     await todoController.getTodoById(req, res, next);
   }
 );
 
+router.get('/team/:teamId', 
+  todoController.validateTeamIdParam, 
+  async (req, res, next) => {
+    await todoController.getTeamTodos(req, res, next);
+  }
+);
+
+router.post('/team/:teamId', 
+  todoController.validateTeamIdParam, 
+  async (req, res, next) => {
+    await todoController.createTeamTodo(req, res, next);
+  }
+);
+
+
 router.put('/:id', 
   todoController.validateTodo,
-  todoController.validateTodoId, 
+  todoController.validateTodoIdParam, 
   async (req, res, next) => {
     await todoController.updateTodo(req, res, next);
   }
 );
 
 router.patch('/:id', 
-  todoController.validateTodoId, 
+  todoController.validateTodoIdParam, 
   async (req, res, next) => {
     await todoController.updateTodoStatus(req, res, next);
   }
 );
 
 router.delete('/:id', 
-  todoController.validateTodoId, 
+  todoController.validateTodoIdParam, 
   async (req, res, next) => {
     await todoController.deleteTodo(req, res, next);
   }

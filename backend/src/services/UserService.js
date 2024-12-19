@@ -8,6 +8,14 @@ class UserService {
     this.userRepository = userRepository;
   }
 
+  async validateUserExists(userId) {
+    const user = await this.userRepository.findById(userId);
+    if (!user) {
+      throw ServiceError.userNotFound();
+    }
+    return user;
+  }
+
   async register(userData) {
     if (userData.username) {
       const existingUsername = await this.userRepository.findByUsername(userData.username);
@@ -57,6 +65,8 @@ class UserService {
   }
 
   async updateProfile(userId, updateData) {
+    await this.validateUserExists(userId);
+
     if (updateData.username) {
       const existingUser = await this.userRepository.findByUsername(updateData.username);
       if (existingUser) {
@@ -78,6 +88,7 @@ class UserService {
   }
 
   async deleteProfile(userId) {
+    await this.validateUserExists(userId);
     await this.userRepository.delete(userId);
   }
 }

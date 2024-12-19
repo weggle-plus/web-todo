@@ -37,7 +37,7 @@ class UserController {
     validateRequest
   ];
 
-  static validateUserId = [
+  static validateUserIdParam = [
     param('id')
       .isInt()
       .withMessage(VALIDATION_ERROR_MESSAGES.USER.USER_ID_INVALID)

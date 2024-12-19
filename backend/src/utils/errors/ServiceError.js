@@ -52,7 +52,7 @@ class ServiceError extends Error {
   }
 
   static invalidTeamRole() {
-    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.INVALID_ROLE, StatusCodes.BAD_REQUEST);
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.INVALID_TEAM_ROLE, StatusCodes.BAD_REQUEST);
   }
 }
 

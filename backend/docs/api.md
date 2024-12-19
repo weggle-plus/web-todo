@@ -9,7 +9,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 ### TODO
 
-#### 1. TODO 생성
+#### 1. 유저에 속하는 TODO 생성
 새로운 TODO 항목을 생성합니다.
 
 - **URL:** `/todos`
@@ -134,8 +134,52 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ]
 ```
 
+#### 4. 팀에 속하는 TODO 생성
 
-#### 4. TODO 수정
+- **URL:** `/todos/team/:teamId`
+- **Method:** `POST`
+- **URL 파라미터:** teamId (팀의 고유 식별자)
+
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:**  
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| title | 필수 | TODO 제목 |
+| content | 선택 | TODO 내용 |
+
+```json
+{
+  "title": "팀 할일 제목"
+}
+```
+
+- **성공 응답 (201 Created):**
+```json
+{
+  "message": "팀 할일이 생성되었습니다.",
+  "todo": {
+    "id": "todo_id",
+    "title": "팀 할일 제목"
+  }
+}
+```
+
+- **실패 응답 (400 Bad Request):**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
+
+
+
+#### 5. TODO 수정
 특정 TODO 항목의 내용을 수정합니다.
 
 - **URL:** `/todos/:id`
@@ -180,7 +224,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }  
 ```
 
-#### 5. TODO 상태 변경
+#### 6. TODO 상태 변경
 특정 TODO 항목의 상태만 변경합니다.
 
 - **URL:** `/todos/:id`
@@ -215,7 +259,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }  
 ```
 
-#### 6. TODO 삭제
+#### 7. TODO 삭제
 특정 TODO 항목을 삭제합니다.
 
 - **URL:** `/todos/:id`
@@ -235,6 +279,8 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "error": "구체적인 오류 메시지"
 }  
 ```
+
+
 
 
 ### USER
@@ -431,6 +477,8 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "error": "구체적인 오류 메시지"
 }
 ```
+
+
 
 #### 2. 팀 조회 
 

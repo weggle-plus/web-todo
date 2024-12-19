@@ -7,14 +7,17 @@ class TeamService {
     this.userRepository = userRepository;
   }
 
-  async createTeam(teamData, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
-    const user = await this.userRepository.findByUserId(userId);
-    if (!user) {
-      throw ServiceError.userNotFound();
+  async createTeam(userId, teamData) {
+    if (teamData.role && !Object.values(TEAM_MEMBER_ROLES).includes(teamData.role)) {
+      throw ServiceError.invalidTeamRole();
     }
-    const team = await this.teamRepository.create(teamData);
+
+    const team = await this.teamRepository.create(userId, teamData);
+
+    const role = teamData.role || TEAM_MEMBER_ROLES.MEMBER;
     await this.teamRepository.addMember(team.id, userId, role);
-    return team;
+
+    return await this.teamRepository.findById(team.id);
   }
   
   async inviteMember(teamId, userId) {
