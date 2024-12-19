@@ -53,14 +53,17 @@ function updateEmptyMessage(type: 'todo' | 'done', count: number) {
 
 function createTodoItem(todo: Todo) {
     const li = document.createElement('li');
-    li.className = "todo-item";
+    li.className = 'todo-item';
+
+    const itemTitleGroup = document.createElement('div');
+    itemTitleGroup.className = 'item-title-group';
 
     const checkBox = createCheckbox(todo);
-    li.appendChild(checkBox);
+    itemTitleGroup.appendChild(checkBox);
 
     const todoTitleSpan = document.createElement('span');
     todoTitleSpan.textContent = todo.title;
-    li.appendChild(todoTitleSpan);
+    itemTitleGroup.appendChild(todoTitleSpan);
 
     const buttonGroup = document.createElement('div');
     buttonGroup.className = 'item-button-group';
@@ -71,6 +74,7 @@ function createTodoItem(todo: Todo) {
     const deleteButton = createDeleteButton(todo.id);
     buttonGroup.appendChild(deleteButton);
 
+    li.appendChild(itemTitleGroup);
     li.appendChild(buttonGroup);
 
     return li;
@@ -100,15 +104,18 @@ function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElemen
     }
 
     editButton.addEventListener('click', () => {
+        const itemTitleGroup = li.querySelector('.item-title-group') as HTMLDivElement;
+
         if (editButton.innerText === '수정') {
             editButton.innerText = '완료';
+
+            itemTitleGroup.style.display = 'none';
 
             const inputField = document.createElement('input') as HTMLInputElement;
             inputField.type = 'text';
             inputField.value = todo.title;
 
-            li.insertBefore(inputField, todoTitleSpan);
-            li.removeChild(todoTitleSpan);
+            li.insertBefore(inputField, itemTitleGroup);
         } else {
             const inputField = li.querySelector('input[type="text"]') as HTMLInputElement;
             if (inputField && inputField.value) {
@@ -116,10 +123,10 @@ function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElemen
                 todoTitleSpan.textContent = inputField.value;
             }
 
-            li.insertBefore(todoTitleSpan, inputField);
             li.removeChild(inputField);
 
             editButton.innerText = '수정';
+            itemTitleGroup.style.display='flex';
         }
     });
 

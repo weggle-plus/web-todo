@@ -125,13 +125,17 @@ input[type="text"]:focus {
 
 .todo-item {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    position: relative;
-    gap: 16px;
+    justify-content: space-between;
 }
 
-#done-list .todo-item span {
-    text-decoration: line-through;
+.item-title-group {
+    display: flex;
+    align-items: left;
+    flex-direction: row;
+    gap: 10px;
+    flex: 1;
 }
 
 input[type="checkbox"] {
@@ -153,15 +157,23 @@ input[type="checkbox"]:checked {
 }
 
 .todo-item span {
-    flex: 1;
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+.todo-item input[type="text"]{
+    width: 715px;
+}
+
+#done-list .todo-item span {
+    text-decoration: line-through;
+}
+
 .item-button-group {
     display: flex;
-    gap: 8px;
+    gap: 4px;
 }
 
 #edit-button {
