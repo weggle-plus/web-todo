@@ -13,7 +13,8 @@ button{
   transition: all 0.3s;
 }
 
-input:disabled{
+input:disabled,
+input:read-only{
   border: 0;
 }
 input[type="checkbox"]{
@@ -103,4 +104,7 @@ button.delete:hover{
 .main .doneList li{
   display: flex;
   align-items: center;
+}
+.main .doneList li button.edit{
+  display: none;
 }

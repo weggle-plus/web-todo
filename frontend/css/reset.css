@@ -37,7 +37,8 @@ aside,
 main,
 section,
 article,
-nav {
+nav,
+form {
 	display: block;
 }
 

@@ -58,16 +58,50 @@ function createTodoItem(todo) {
 }
 
 function toggleTodoStatus(li, isChecked) {
+  const todoId = li.dataset.id;
+  const todoList = document.getElementById('todoList');
   const doneList = document.getElementById('doneList');
+  const inputField = li.querySelector('input[type="text"]');
 
   if (isChecked) {
     li.querySelector('.edit').style.display = 'none';
     doneList.appendChild(li);
     li.querySelector('input[type="text"]').readOnly = true;
+
+    fetch(`http://localhost:5555/tasks`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: todoId, subject: inputField.value, complete: true }),
+    }).then(response => {
+      if (!response.ok) {
+        alert('메이데이! 완료 상태 업데이트 오류');
+      }
+    }).catch(error => {
+      console.error('Error:', error);
+      alert('메이데이! 완료 상태 업데이트 중 오류');
+    });
+
   } else {
     li.querySelector('.edit').style.display = 'inline';
-    document.getElementById('todoList').appendChild(li);
-    li.querySelector('input[type="text"]').readOnly = false;
+    todoList.appendChild(li);
+    inputField.readOnly = false;
+
+    fetch(`http://localhost:5555/tasks`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ id: todoId, subject: inputField.value, complete: false }),
+    }).then(response => {
+      if (!response.ok) {
+        alert('메이데이! 완료 상태 업데이트 오류');
+      }
+    }).catch(error => {
+      console.error('Error:', error);
+      alert('메이데이! 완료 상태 업데이트 중 오류');
+    });
   }
   updateEmptyMessage();
 }
@@ -141,8 +175,8 @@ function deleteTodoItem(li) {
 function updateEmptyMessage() {
   const todoList = document.getElementById('todoList');
   const doneList = document.getElementById('doneList');
-  const emptyTodoMessage = todoList.previousElementSibling;
-  const emptyDoneMessage = doneList.previousElementSibling;
+  const emptyTodoMessage = document.querySelector('.todoList .empty');
+  const emptyDoneMessage = document.querySelector('.doneList .empty');
 
   emptyTodoMessage.style.display = todoList.children.length === 0 ? 'block' : 'none';
   emptyDoneMessage.style.display = doneList.children.length === 0 ? 'block' : 'none';
@@ -154,12 +188,19 @@ async function loadTodos() {
     const { tasks } = await response.json();
     tasks.forEach(todo => {
       const li = createTodoItem(todo);
-      document.getElementById('todoList').appendChild(li);
+      if (todo.complete) {
+        document.getElementById('doneList').appendChild(li);
+        li.querySelector('input[type="checkbox"]').checked = true;
+      } else {
+        document.getElementById('todoList').appendChild(li);
+        li.querySelector('input[type="checkbox"]').checked = false;
+      }
     });
   }else {
     const errorMessage = await response.text(); 
     alert(`메이데이! ${errorMessage}`);
   }
+  updateEmptyMessage();
 }
 
 loadTodos();
