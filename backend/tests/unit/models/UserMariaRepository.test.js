@@ -1,6 +1,6 @@
 const UserMariaRepository = require('../../../src/models/mariadb/UserMariaRepository');
 const { UserSchema } = require('../../../src/models/interfaces/UserSchema');
-const { convertToSequelizeSchema } = require('../../../src/models/mariadb/utils/schemaConverter');
+const convertToSequelizeSchema = require('../../../src/models/mariadb/utils/schemaConverter');
 const bcrypt = require('bcrypt');
 const sequelize = require('../../../tests/setup');
 

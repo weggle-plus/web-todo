@@ -9,7 +9,7 @@ const UserSchema = {
     primaryKey: true,
     autoIncrement: true
   },
-  email: {
+  username: {
     type: 'string',
     required: true,
     unique: true
@@ -18,34 +18,45 @@ const UserSchema = {
     type: 'string',
     required: true
   },
-  username: {
-    type: 'string',
-    required: true
-  },
+  // TODO: failedLoginAttempts
   role: {
     type: 'enum',
-    enum: Object.values(USER_ROLES),
+    values: Object.values(USER_ROLES),
     default: USER_ROLES.USER
   },
   profileImage: {
     type: 'string',
+    required: false,
     default: ''
   },
   isActive: {
     type: 'boolean',
+    required: true,
     default: true
   },
-  lastLogin: {
-    type: 'date',
+  lastLoginAt: {
+    type: 'timestamp',
+    required: false,
     default: null
   },
   createdAt: {
-    type: 'date',
-    default: new Date()
+    type: 'timestamp',
+    required: true,
+    default: 'CURRENT_TIMESTAMP'
   },
   updatedAt: {
-    type: 'date',
-    default: new Date()
+    type: 'timestamp',
+    required: true,
+    default: 'CURRENT_TIMESTAMP'
+  },
+  __options: {
+    underscored: true,
+    indexes: [
+      {
+        name: 'idx_users_username',  // 로그인 쿼리 최적화
+        fields: ['username', 'password']
+      }
+    ]
   }
 };
 

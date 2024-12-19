@@ -1,9 +1,38 @@
+const { StatusCodes } = require('http-status-codes');
+const { DATABASE_ERROR_MESSAGES } = require('../../constants/messages');
+
 class DatabaseError extends Error {
-  constructor(message, statusCode = 500) {
+  constructor(message, statusCode = StatusCodes.INTERNAL_SERVER_ERROR) {
     super(message);
     this.name = 'DatabaseError';
     this.statusCode = statusCode;
   }
+  // Todo
+  static todoUpdateFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.TODO.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  static todoDeleteFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.TODO.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  // User
+  static userUpdateFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.USER.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  static userDeleteFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.USER.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  // Team
+  static teamUpdateFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.TEAM.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+
+  static teamDeleteFailed() {
+    return new DatabaseError(DATABASE_ERROR_MESSAGES.TEAM.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+  }
 }
 
-module.exports = DatabaseError; 
+module.exports = DatabaseError;

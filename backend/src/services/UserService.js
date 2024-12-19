@@ -1,66 +1,76 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const ValidationError = require('../utils/errors/ValidationError');
-
+const ServiceError = require('../utils/errors/ServiceError');
+const AuthError = require('../utils/errors/AuthError');
 
 class UserService {
   constructor(userRepository) {
     this.userRepository = userRepository;
   }
 
-  async register(userData) {
-    const existingUser = await this.userRepository.findByEmail(userData.email);
-    if (existingUser) {
-      throw ValidationError.emailAlreadyExists();
-    }
-
-    return await this.userRepository.create(userData);
-  }
-
-  async login(email, password) {
-    const user = await this.userRepository.findByEmail(email);
-    if (!user) {
-      throw ValidationError.invalidEmailOrPassword();
-    }
-
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      throw ValidationError.invalidEmailOrPassword();
-    }
-
-    if (!user.isActive) {
-      throw ValidationError.inactiveAccount();
-    }
-
-    await this.userRepository.updateLastLogin(user.id);
-
-    const token = this._generateToken(user);
-    const { password: _, ...userWithoutPassword } = user.toJSON();
-
-    return {
-      user: userWithoutPassword,
-      token
-    };
-  }
-
-  async getProfile(userId) {
+  async validateUserExists(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw ValidationError.userNotFound();
+      throw ServiceError.userNotFound();
     }
     return user;
   }
 
-  async updateProfile(userId, updateData) {
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw ValidationError.userNotFound();
+  async register(userData) {
+    if (userData.username) {
+      const existingUsername = await this.userRepository.findByUsername(userData.username);
+      if (existingUsername) {
+        throw ServiceError.usernameAlreadyExists();
+      }
     }
 
-    if (updateData.email) {
-      const existingUser = await this.userRepository.findByEmail(updateData.email);
-      if (existingUser && existingUser.id !== userId) {
-        throw ValidationError.emailAlreadyExists();
+    const user = await this.userRepository.create(userData);
+    const token = this._generateToken(user);
+    return {
+      username: user.username,
+      token
+    };
+  }
+
+  async login(username, password) {
+    const user = await this.userRepository.findByUsername(username);
+    if (!user) {
+      throw ServiceError.invalidUsernameOrPassword();
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      throw ServiceError.invalidUsernameOrPassword();
+    }
+
+    await this.userRepository.updateLastLogin(user.id);
+    
+    const token = this._generateToken(user);
+
+    return {
+      username: user.username,
+      token
+    };
+  }
+
+  async getProfile(userId, id) {
+    const user = await this.userRepository.findById(id);
+    if (!user) {
+      throw AuthError.forbidden();
+    }
+    if (user.id !== userId) {
+      throw AuthError.forbidden();
+    }
+    return this.userRepository.formatUserResponse(user);
+  }
+
+  async updateProfile(userId, updateData) {
+    await this.validateUserExists(userId);
+
+    if (updateData.username) {
+      const existingUser = await this.userRepository.findByUsername(updateData.username);
+      if (existingUser) {
+        throw ServiceError.usernameAlreadyExists();
       }
     }
 
@@ -70,13 +80,16 @@ class UserService {
   _generateToken(user) {
     return jwt.sign(
       { 
-        id: user.id,
-        email: user.email,
-        role: user.role
+        username: user.username
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+  }
+
+  async deleteProfile(userId) {
+    await this.validateUserExists(userId);
+    await this.userRepository.delete(userId);
   }
 }
 

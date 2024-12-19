@@ -9,7 +9,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 ### TODO
 
-#### 1. TODO 생성
+#### 1. 유저에 속하는 TODO 생성
 새로운 TODO 항목을 생성합니다.
 
 - **URL:** `/todos`
@@ -25,7 +25,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| title | 선택 | TODO 제목 |
+| title | 필수 | TODO 제목 |
 | content | 선택 | TODO 내용 |
 | status | 선택 | TODO 상태 (in-progress, done) |
 
@@ -44,19 +44,21 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "status": "in-progress",
   "createdAt": "2024-03-15T12:00:00.000Z",
   "updatedAt": "2024-03-15T12:00:00.000Z",
-  "completedAt": null
+  "completedAt": null,
+  "createdBy": 1,
+  "teamId": null
 }  
 ```
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "할 일을 생성하는 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }  
 ```
 
-#### 2. 모든 TODO 조회
-- 등록된 모든 TODO 항목을 조회합니다.
+#### 2. 유저의 모든 TODO 조회
+- 유저에게 소속된 모든 TODO 항목을 조회합니다.
+- (팀 소속 TODO 항목 제외)
 - 정렬순서는 생성일자 오름차순
 
 - **URL:** `/todos`
@@ -66,6 +68,9 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
 | Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:** 
+  - 없음
 
 - **성공 응답 (200 OK):**  
 ```json
@@ -93,44 +98,88 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "할 일들을 조회하는 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 } 
 ```
 
-#### 3. 특정 TODO 조회
-ID를 기반으로 특정 TODO 항목을 조회합니다.
-
-- **URL:** `/todos/:id`
+#### 3. 소속팀의 TODO 조회
+- 유저가 소속된 팀의 모든 TODO 항목을 조회합니다.
+- 정렬순서는 생성일자 오름차순
+- **URL:** `/todos/team/:teamId`
 - **Method:** `GET`
-- **URL 파라미터:** id (TODO의 고유 식별자)
+- **URL 파라미터:** teamId (팀의 고유 식별자)
 - **Request Header:** 
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
 | Authorization | 필수 | Bearer <JWT 토큰> |
 
+- **Request Body:** 
+  - 없음
+
 - **성공 응답 (200 OK):**  
 ```json
-{
-  "id": "todo_id",
-  "title": "할 일 제목",
-  "status": "in-progress",
-  "content": "할 일 내용",
-  "createdAt": "2024-03-15T12:00:00.000Z",
-  "updatedAt": "2024-03-15T12:00:00.000Z",
-  "completedAt": null
-}  
-```
-- **실패 응답 (404 Not Found):**  
-```json
-{
-  "message": "할 일을 조회하는 중 오류가 발생했습니다.",
-  "error": "구체적인 오류 메시지"
-}  
+[
+  {
+    "id": "todo_id1",
+    "title": "팀 할일 1",
+    "status": "in-progress",
+    "content": "할일 내용 1",
+    "createdBy": 1,
+    "teamId": 1,
+    "createdAt": "2024-03-15T12:00:00.000Z",
+    "updatedAt": "2024-03-15T12:00:00.000Z",
+    "completedAt": null
+  }
+]
 ```
 
-#### 4. TODO 수정
+#### 4. 팀에 속하는 TODO 생성
+
+- **URL:** `/todos/team/:teamId`
+- **Method:** `POST`
+- **URL 파라미터:** teamId (팀의 고유 식별자)
+
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:**  
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| title | 필수 | TODO 제목 |
+| content | 선택 | TODO 내용 |
+
+```json
+{
+  "title": "팀 할일 제목"
+}
+```
+
+- **성공 응답 (201 Created):**
+```json
+{
+  "message": "팀 할일이 생성되었습니다.",
+  "todo": {
+    "id": "todo_id",
+    "title": "팀 할일 제목"
+  }
+}
+```
+
+- **실패 응답 (400 Bad Request):**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
+
+
+
+#### 5. TODO 수정
 특정 TODO 항목의 내용을 수정합니다.
 
 - **URL:** `/todos/:id`
@@ -171,12 +220,11 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **실패 응답 (404 Not Found):**  
 ```json
 {
-  "message": "할 일을 업데이트하는 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }  
 ```
 
-#### 5. TODO 상태 변경
+#### 6. TODO 상태 변경
 특정 TODO 항목의 상태만 변경합니다.
 
 - **URL:** `/todos/:id`
@@ -187,7 +235,6 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| Content-Type | 필수 | application/json |
 | Authorization | 필수 | Bearer <JWT 토큰> |
 
 - **Request Body:**  
@@ -208,12 +255,11 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "할 일의 상태를 업데이트하는 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }  
 ```
 
-#### 6. TODO 삭제
+#### 7. TODO 삭제
 특정 TODO 항목을 삭제합니다.
 
 - **URL:** `/todos/:id`
@@ -230,7 +276,6 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **실패 응답 (404 Not Found):**  
 ```json
 {
-  "message": "할 일을 삭제하는 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }  
 ```
@@ -262,31 +307,25 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| email | 필수 | 사용자 이메일 |
 | password | 필수 | 사용자 비밀번호 |
-| username | 선택 | 사용자 이름 |
+| username | 필수 | 사용자 이름 |
 
 ```json
 {
-  "email": "user@example.com",
-  "password": "password123",
-  "username": "user_name"
+  "username": "user_name",
+  "password": "password123!"
 }
 ```
 - **성공 응답 (201 Created):**
 ```json
 {
-  "message": "회원가입이 완료되었습니다.",
-  "user": {
-    "email": "user@example.com",
-    "username": "user_name"
-  }
+  "username": "user_name",
+  "token": "JWT 토큰"
 }
 ```
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "회원가입 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
@@ -306,19 +345,19 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 
 | 필드 | 필수 | 설명 |
 | --- | --- | --- |
-| email | 필수 | 사용자 이메일 |
+| username | 필수 | 사용자 이름 |
 | password | 필수 | 사용자 비밀번호 |
 
 ```json
 {
-  "email": "user@example.com",
+  "username": "user_name",
   "password": "password123"
 }
 ```
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "로그인이 완료되었습니다.",
+  "username": "user_name",
   "token": "JWT 토큰"
 }
 ```
@@ -341,18 +380,12 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "프로필 조회가 완료되었습니다.",
-  "user": {
-    "id": "user_id",
-    "email": "user@example.com",
     "username": "user_name"
-  }
 }
 ```
 - **실패 응답 (401 Unauthorized):**  
 ```json
 {
-  "message": "프로필 조회 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
@@ -360,7 +393,7 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 #### 4. 프로필 업데이트
 사용자의 프로필 정보를 업데이트합니다.
 
-- **URL:** `/users/profile`
+- **URL:** `/users`
 - **Method:** `PUT`
 - **Request Header:** 
 
@@ -385,18 +418,12 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
 - **성공 응답 (200 OK):**
 ```json
 {
-  "message": "프로필 업데이트가 완료되었습니다.",
-  "user": {
-    "id": "user_id",
-    "email": "user@example.com",
-    "username": "updated_user_name"
-  }
+  "username": "updated_user_name"
 }
 ```
 - **실패 응답 (400 Bad Request):**  
 ```json
 {
-  "message": "프로필 업데이트 중 오류가 발생했습니다.",
   "error": "구체적인 오류 메시지"
 }
 ```
@@ -450,6 +477,8 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
   "error": "구체적인 오류 메시지"
 }
 ```
+
+
 
 #### 2. 팀 조회 
 
@@ -694,3 +723,58 @@ ID를 기반으로 특정 TODO 항목을 조회합니다.
   "error": "구체적인 오류 메시지"
 }
 ```
+
+#### 8. 팀 초대
+- **URL:** `/teams/:teamId/invite`
+- **Method:** `POST`
+- **URL 파라미터:** teamId (팀의 고유 식별자)
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:**  
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| userId | 필수 | 초대할 사용자 ID |
+| message | 선택 | 초대 메시지 |
+
+```json
+{
+  "userId": "초대할 사용자 ID",
+  "message": "초대 메시지"  // 선택
+}
+```
+
+- **성공 응답 (200 OK):**
+```json
+{
+  "message": "초대가 전송되었습니다."
+}
+```
+
+#### 9. 팀 초대 수락/거절
+- **URL:** `/teams/:teamId/invite/:action`
+- **Method:** `POST`
+- **URL 파라미터:** 
+  - teamId (팀의 고유 식별자)
+  - action ("accept" 또는 "reject")
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Authorization | 필수 | Bearer <JWT 토큰> |
+
+- **Request Body:** 
+  - 없음
+
+- **성공 응답 (200 OK):**
+```json
+{
+  "message": "초대를 수락하였습니다." // 또는 "초대를 거절하였습니다."
+}
+```
+

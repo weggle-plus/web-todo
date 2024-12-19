@@ -41,15 +41,15 @@ app.use('/todos', todosRouter);
 app.use('/teams', teamsRouter);
 
 // 404 에러 처리 미들웨어
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
 // 에러 처리 미들웨어
 app.use(function(err, req, res, next) {
   const isDevelopment = process.env.NODE_ENV === 'development';
   
-  const statusCode = err.status || 500;
+  const statusCode = err.statusCode || 500;
   
   if (req.accepts('html')) {
     // HTML 요청인 경우 에러 페이지 렌더링

@@ -11,7 +11,7 @@ class UserRepository {
     throw new Error('Method not implemented');
   }
 
-  async findByEmail(email) {  // 이메일로 사용자 조회
+  async findByUsername(username) {  // 로그인 사용자 조회
     throw new Error('Method not implemented');
   }
 
@@ -24,10 +24,6 @@ class UserRepository {
   }
 
   async updateLastLogin(userId) {  // 사용자 고유번호로 마지막 로그인 시간 업데이트
-    throw new Error('Method not implemented');
-  }
-
-  async updatePassword(userId, newPassword) {  // 사용자 고유번호로 비밀번호 업데이트
     throw new Error('Method not implemented');
   }
 }

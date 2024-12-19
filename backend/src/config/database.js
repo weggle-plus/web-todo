@@ -36,7 +36,7 @@ async function initializeDatabase() {
       await sequelize.authenticate(); // DB 연결 확인
 
       if (process.env.NODE_ENV === 'development') {
-        await sequelize.sync({ alter: true }); // 개발 환경: 컬럼 변경 반영
+        await sequelize.sync({ force: true }); // 개발 환경: 컬럼 변경 반영
       } else {
         await sequelize.sync(); // 운영 환경
       }
