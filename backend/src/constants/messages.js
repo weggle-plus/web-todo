@@ -26,13 +26,11 @@ const VALIDATION_ERROR_MESSAGES = {
 const SERVICE_ERROR_MESSAGES = {
   TODO: {
     NOT_FOUND: '할 일을 찾을 수 없습니다.',
-    AUTH_REQUIRED: '인증이 필요합니다.',
   },
   USER: {
     NOT_FOUND: '사용자를 찾을 수 없습니다.',
     EMAIL_ALREADY_EXISTS: '이미 등록된 이메일입니다.',
     INVALID_EMAIL_OR_PASSWORD: '이메일 또는 비밀번호가 올바르지 않습니다.',
-    TODO_NOT_BELONG_TO_USER: '할 일이 사용자에게 속하지 않습니다.'
   },
   TEAM: {
     NOT_FOUND: '팀을 찾을 수 없습니다.',

@@ -3,30 +3,37 @@ const ServiceError = require('../utils/errors/ServiceError');
 
 
 class TodoService {
-  constructor(todoRepository) {
+  constructor(todoRepository, userRepository, teamRepository) {
     this.todoRepository = todoRepository;
+    this.userRepository = userRepository;
+    this.teamRepository = teamRepository;
   }
 
-  async validateTodoExists(id) {
-    const todo = await this.todoRepository.findById(id);
+  async validateTodoExists(todoId) {
+    const todo = await this.todoRepository.findById(todoId);
     if (!todo) {
       throw ServiceError.todoNotFound();
     }
     return todo;
   }
 
-  async createTodo(todoData, userId, teamId = null) {
+  async validateUserExists(userId) {
     const user = await this.userRepository.findById(userId);
     if (!user) {
-      throw ServiceError.authRequired();
+      throw ServiceError.userNotFound();
     }
-    if (teamId) {
-      const team = await this.teamRepository.findById(teamId);
+    return user;
+  }
+
+  async createTodo(userId, todoData) {
+    await this.validateUserExists(userId);
+    if (todoData.teamId) {
+      const team = await this.teamRepository.findById(todoData.teamId);
       if (!team) {
         throw ServiceError.teamNotFound();
       }
     }
-    return await this.todoRepository.create(todoData, userId, teamId);
+    return await this.todoRepository.create(todoData, userId);
   }
 
   async getAllUserTodos(userId) {
@@ -50,11 +57,6 @@ class TodoService {
   }
 
   async updateTodo(userId, todoId, updateData) {
-    const user = await this.userRepository.findById(userId);
-    if (!user) {
-      throw ServiceError.authRequired();
-    }
-
     const todo = await this.validateTodoExists(todoId);
     if (todo.teamId) {
       const isMember = await this.teamRepository.isMember(todo.teamId, userId);
@@ -102,7 +104,7 @@ class TodoService {
     return await this.todoRepository.update(todo.id, updatedTodo);
   }
 
-  async deleteTodo(todoId) {
+  async deleteTodo(userId, todoId) {
     await this.validateTodoExists(todoId);
     return await this.todoRepository.delete(todoId);
   }

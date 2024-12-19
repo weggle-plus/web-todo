@@ -1,5 +1,5 @@
 const { StatusCodes } = require('http-status-codes');
-const { body } = require('express-validator');
+const { body, param } = require('express-validator');
 const UserService = require('../services/UserService');
 const { UserRepositoryFactory } = require('../models/RepositoryFactory');
 const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
@@ -41,6 +41,14 @@ class UserController {
     validateRequest
   ];
 
+  static validateUserId = [
+    param('id')
+      .isInt()
+      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USER_ID_INVALID)
+      .toInt(),
+    validateRequest
+  ];
+
   static validateProfileUpdate = [
     body('username')
       .optional()
@@ -79,7 +87,7 @@ class UserController {
 
   static getProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.getProfile(req.user.id);
+      const user = await UserController.userService.getProfile(req.user.id, req.params.id);
       res.json(user);
     } catch (error) {
       next(error);
@@ -88,7 +96,7 @@ class UserController {
 
   static updateProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.updateProfile(req.user.id, req.body);
+      const user = await UserController.userService.updateProfile(req.user.id, req.params.id, req.body);
       res.json(user);
     } catch (error) {
       next(error);

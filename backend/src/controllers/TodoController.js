@@ -1,13 +1,17 @@
 const { StatusCodes } = require('http-status-codes');
 const { body, param } = require('express-validator');
 const TodoService = require('../services/TodoService');
-const { TodoRepositoryFactory } = require('../models/RepositoryFactory');
+const { TodoRepositoryFactory, UserRepositoryFactory, TeamRepositoryFactory } = require('../models/RepositoryFactory');
 const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
 const { TODO_STATUS } = require('../models/interfaces/TodoSchema');
 const validateRequest = require('../middleware/validateRequest');
 
 class TodoController {
-  static todoService = new TodoService(TodoRepositoryFactory.createRepository());
+  static todoService = new TodoService(
+    TodoRepositoryFactory.createRepository(),
+    UserRepositoryFactory.createRepository(),
+    TeamRepositoryFactory.createRepository()
+  );
 
   static validateTodo = [
     body('title')
@@ -47,7 +51,7 @@ class TodoController {
 
   static createTodo = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.createTodo(req.body);
+      const todo = await TodoController.todoService.createTodo(req.user.id, req.body);
       res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       next(error);
@@ -63,18 +67,9 @@ class TodoController {
     }
   }
 
-  static getTodoById = async (req, res, next) => {
-    try {
-      const todo = await TodoController.todoService.getTodoByTodoId(req.params.id);
-      res.json(todo);
-    } catch (error) {
-      next(error);
-    }
-  }
-
   static updateTodo = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.updateTodo(req.params.id, req.body);
+      const todo = await TodoController.todoService.updateTodo(req.user.id, req.params.id, req.body);
       res.json(todo);
     } catch (error) {
       next(error);
@@ -83,7 +78,7 @@ class TodoController {
 
   static updateTodoStatus = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.updateTodoStatus(req.params.id, req.body.status);
+      const todo = await TodoController.todoService.updateTodoStatus(req.user.id, req.params.id);
       res.json(todo);
     } catch (error) {
       next(error);
@@ -92,7 +87,7 @@ class TodoController {
 
   static deleteTodo = async (req, res, next) => {
     try {
-      await TodoController.todoService.deleteTodo(req.params.id);
+      await TodoController.todoService.deleteTodo(req.user.id, req.params.id);
       res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
       next(error);

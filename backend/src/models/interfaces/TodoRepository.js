@@ -3,7 +3,7 @@ class TodoRepository {
     throw new Error('Method not implemented');
   }
 
-  async findByTodoId(todoId) {  // 특정 할 일 조회
+  async findById(todoId) {  // 특정 할 일 조회
     throw new Error('Method not implemented');
   }
   

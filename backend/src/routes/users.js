@@ -19,20 +19,23 @@ router.post('/login',
 
 router.use(authMiddleware.authenticate);
 
-router.get('/profile', 
+router.get('/:id', 
+  UserController.validateUserId,
   async (req, res, next) => {
     await UserController.getProfile(req, res, next);
   }
 );
 
-router.put('/profile', 
+router.put('/:id', 
+  UserController.validateUserId,
   UserController.validateProfileUpdate, 
   async (req, res, next) => {
     await UserController.updateProfile(req, res, next);
   }
 );
 
-router.delete('/profile', 
+router.delete('/:id', 
+  UserController.validateUserId,
   async (req, res, next) => {
     await UserController.deleteProfile(req, res, next);
   }

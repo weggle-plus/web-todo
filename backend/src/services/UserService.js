@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const ServiceError = require('../utils/errors/ServiceError');
+const AuthError = require('../utils/errors/AuthError');
 
 class UserService {
   constructor(userRepository) {
@@ -28,28 +29,33 @@ class UserService {
     }
 
     await this.userRepository.updateLastLogin(user.id);
-
+    
     const token = this._generateToken(user);
-    const { password: _, ...userWithoutPassword } = user.toJSON();
 
     return {
-      user: userWithoutPassword,
+      user: this.userRepository.formatUserResponse(user.toJSON()),
       token
     };
   }
 
-  async getProfile(userId) {
-    const user = await this.userRepository.findById(userId);
+  async getProfile(userId, id) {
+    const user = await this.userRepository.findById(id);
     if (!user) {
-      throw ServiceError.userNotFound();
+      throw AuthError.forbidden();
+    }
+    if (user.id !== userId) {
+      throw AuthError.forbidden();
     }
     return user;
   }
 
-  async updateProfile(userId, updateData) {
-    const user = await this.userRepository.findById(userId);
+  async updateProfile(userId, id, updateData) {
+    const user = await this.userRepository.findById(id);
     if (!user) {
-      throw ServiceError.userNotFound();
+      throw AuthError.forbidden();
+    }
+    if (user.id !== userId) {
+      throw AuthError.forbidden();
     }
 
     if (updateData.email) {
@@ -65,9 +71,7 @@ class UserService {
   _generateToken(user) {
     return jwt.sign(
       { 
-        id: user.id,
-        email: user.email,
-        role: user.role
+        email: user.email
       },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }

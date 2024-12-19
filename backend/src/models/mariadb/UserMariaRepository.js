@@ -11,6 +11,14 @@ class UserMariaRepository extends UserRepository {
 
   formatUserResponse(user) {
     return {
+      email: user.email,
+      username: user.username,
+      lastLogin: user.lastLogin,
+    };
+  }
+
+  formatUser(user) {
+    return {
       id: user.id,
       email: user.email,
       username: user.username,
@@ -20,30 +28,26 @@ class UserMariaRepository extends UserRepository {
     };
   }
 
-  _excludePassword(user) {
-    const { password, ...userWithoutPassword } = user;
-    return this.formatUserResponse(userWithoutPassword);
-  }
-
   async create(userData) {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const user = await this.User.create({
       ...userData,
       password: hashedPassword
     });
-    return this._excludePassword(user.toJSON());
+    return this.formatUserResponse(user.toJSON());
   }
 
   async findAll() {
     const users = await this.User.findAll();
-    return users.map(user => this._excludePassword(user.toJSON()));
+    return users.map(user => this.formatUser(user.toJSON()));
   }
 
   async findById(userId) {
     const user = await this.User.findByPk(userId);
-    return user ? this._excludePassword(user.toJSON()) : null;
+    return user ? this.formatUser(user.toJSON()) : null;
   }
 
+  // 비밀번호 포함이므로 취급주의
   async findByEmail(email) {
     return await this.User.findOne({ where: { email } });
   }
@@ -56,7 +60,8 @@ class UserMariaRepository extends UserRepository {
       where: { id: userId } 
     });
     if (result[0] === 0) throw DatabaseError.userUpdateFailed();
-    return await this.findById(userId);
+    const updatedUser = await this.findById(userId);
+    return this.formatUserResponse(updatedUser);
   }
 
   async delete(userId) {
@@ -66,7 +71,7 @@ class UserMariaRepository extends UserRepository {
 
   async updateLastLogin(userId) {
     await this.User.update(
-      { lastLogin: new Date() },
+      { lastLoginAt: new Date() },
       { where: { id: userId } }
     );
   }

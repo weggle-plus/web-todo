@@ -41,7 +41,7 @@ class TeamMariaRepository extends TeamRepository {
     return await this.Team.findAll(this.teamOptions);
   }
 
-  async findByTeamId(teamId) {
+  async findById(teamId) {
     const team = await this.Team.findByPk(teamId, this.teamOptions);
     return team ? team : null;
   }

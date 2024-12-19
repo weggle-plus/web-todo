@@ -28,15 +28,16 @@ class TodoMariaRepository extends TodoRepository {
     };
   }
 
-  async create(todoData, userId, teamId = null) {
+  async create(todoData, userId) {
     todoData.createdBy = userId;
-    todoData.teamId = teamId;
     const todo = await this.Todo.create(todoData);
     return this.formatTodoResponse(todo);
   }
 
-  async findByTodoId(todoId) {
-    return await this.Todo.findByPk(todoId);
+  async findById(todoId) {
+    console.log(todoId);
+    const todo = await this.Todo.findByPk(todoId);
+    return todo ? this.formatTodoResponse(todo) : null;
   }
 
   async findByUserId(userId) {
@@ -59,7 +60,7 @@ class TodoMariaRepository extends TodoRepository {
     await this.Todo.update(todoData, { 
       where: { id: todoId } 
     });
-    return await this.findByTodoId(todoId);
+    return await this.findById(todoId);
   }
 
   async delete(todoId) {

@@ -13,8 +13,8 @@ router.post('/',
 );
 
 router.get('/', 
-  async (req, res, next) => {
-    await todoController.getAllUserTodos(req, res, next);
+  async (req, res) => {
+    await todoController.getAllUserTodos(req, res);
   }
 );
 
@@ -33,8 +33,7 @@ router.put('/:id',
   }
 );
 
-router.patch('/:id/status', 
-  todoController.validateTodoStatus,
+router.patch('/:id', 
   todoController.validateTodoId, 
   async (req, res, next) => {
     await todoController.updateTodoStatus(req, res, next);
