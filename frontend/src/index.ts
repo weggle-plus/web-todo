@@ -160,8 +160,6 @@ function updateTodoItemStates(todo: Todo, editButton: HTMLButtonElement, isEditi
 
         if (inputField && inputField.value && inputField.value !== todo.title) {
             updateTodoTitle(todo.id, inputField.value);
-            const titleSpan = li.querySelector('span') as HTMLSpanElement;
-            titleSpan.textContent = inputField.value;
         }
 
         li.querySelector('input[type="text"]')?.remove();
