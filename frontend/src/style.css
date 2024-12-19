@@ -130,6 +130,10 @@ input[type="text"]:focus {
     gap: 16px;
 }
 
+#done-list .todo-item {
+    text-decoration: line-through;
+}
+
 input[type="checkbox"] {
     flex-shrink: 0;
     width: 18px;
