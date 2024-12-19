@@ -95,6 +95,7 @@ function createCheckbox(todo: Todo): HTMLElement {
 
 function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElement): HTMLElement {
     const editButton = document.createElement('button');
+    editButton.className = 'gray-outline-button';
     editButton.id = 'edit-button';
 
     editButton.innerText = '수정';
@@ -126,7 +127,7 @@ function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElemen
             li.removeChild(inputField);
 
             editButton.innerText = '수정';
-            itemTitleGroup.style.display='flex';
+            itemTitleGroup.style.display = 'flex';
         }
     });
 
@@ -135,6 +136,7 @@ function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElemen
 
 function createDeleteButton(id: number): HTMLElement {
     const deleteButton = document.createElement('button');
+    deleteButton.className = 'red-outline-button';
     deleteButton.id = 'delete-button';
     deleteButton.innerText = '삭제';
 

@@ -94,19 +94,8 @@ input[type="text"]:focus {
 }
 
 #add-button {
-    border: none;
-    border-radius: 4px;
-    border-color: #94A3B8;
-    background-color: #0F172A;
-    color: #FFFFFF;
-    padding: 8px, 16px;
     height: 40px;
     width: 88px;
-}
-
-#add-button:hover {
-    background-color: #0F172ACC;
-    transition: 0.2s;
 }
 
 .list-container {
@@ -163,7 +152,7 @@ input[type="checkbox"]:checked {
     text-overflow: ellipsis;
 }
 
-.todo-item input[type="text"]{
+.todo-item input[type="text"] {
     width: 715px;
 }
 
@@ -177,37 +166,13 @@ input[type="checkbox"]:checked {
 }
 
 #edit-button {
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid #94A3B8;
-    border-width: 1px;
-    background-color: transparent;
-    color: #0F172A;
-    padding: 8px, 16px;
     height: 40px;
     width: 60px;
-}
-
-#edit-button:hover {
-    background-color: #94A3B8;
-    color: #FFFFFF;
-    transition: 0.2s;
 }
 
 #delete-button {
-    border: 1px solid #EF4444;
-    border-radius: 4px;
-    background-color: transparent;
-    color: #EF4444;
-    padding: 8px, 16px;
     height: 40px;
     width: 60px;
-}
-
-#delete-button:hover {
-    background-color: #EF4444;
-    color: #FFFFFF;
-    transition: 0.2s;
 }
 
 .section-title {
@@ -265,21 +230,39 @@ input[type="checkbox"]:checked {
     gap: 4px;
 }
 
-.modal-content button {
-    border-radius: 4px;
-    font-size: 16px;
-    padding: 8px 16px;
-    font-size: 16px;
-}
-
-#confirm-delete {
+.gray-filled-button {
     border: none;
     background-color: #0F172A;
     color: #FFFFFF;
 }
 
-#cancel-delete {
+.gray-filled-button:hover {
+    background-color: #0F172ACC;
+    transition: 0.2s;
+}
+
+.gray-outline-button {
     border: 1px solid #94A3B8;
+    border-width: 1px;
     background-color: transparent;
     color: #0F172A;
+    padding: 8px, 16px;
+}
+
+.gray-outline-button:hover {
+    background-color: #94A3B8;
+    color: #FFFFFF;
+    transition: 0.2s;
+}
+
+.red-outline-button {
+    border: 1px solid #EF4444;
+    background-color: transparent;
+    color: #EF4444;
+}
+
+.red-outline-button:hover {
+    background-color: #EF4444;
+    color: #FFFFFF;
+    transition: 0.2s;
 }
