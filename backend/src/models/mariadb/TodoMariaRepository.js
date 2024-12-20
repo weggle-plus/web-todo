@@ -13,30 +13,42 @@ class TodoMariaRepository extends TodoRepository {
     this.UserTeam = UserTeamModel;
   }
 
-  formatTodoResponse(todo) {
+  formatTodo(todoData) {
     return {
-      id: todo.id,
-      title: todo.title,
-      status: todo.status,
-      content: todo.content,
-      createdAt: todo.createdAt,
-      createdBy: todo.createdBy,
-      updatedAt: todo.updatedAt,
-      updatedBy: todo.updatedBy,
-      completedAt: todo.completedAt,
-      teamId: todo.teamId
+      id: todoData.id,
+      title: todoData.title,
+      status: todoData.status,
+      content: todoData.content,
+      createdAt: todoData.createdAt,
+      createdBy: todoData.createdBy,
+      updatedAt: todoData.updatedAt,
+      completedAt: todoData.completedAt,
+      teamId: todoData.teamId
+    };
+  }
+
+
+  formatTodoResponse(todoData) {
+    return {
+      id: todoData.id,
+      title: todoData.title,
+      status: todoData.status,
+      content: todoData.content,
+      createdAt: todoData.createdAt,
+      updatedAt: todoData.updatedAt,
+      completedAt: todoData.completedAt      
     };
   }
 
   async create(todoData, userId) {
     todoData.createdBy = userId;
     const todo = await this.Todo.create(todoData);
-    return this.formatTodoResponse(todo);
+    return this.formatTodo(todo);
   }
 
   async findById(todoId) {
     const todo = await this.Todo.findByPk(todoId);
-    return todo ? this.formatTodoResponse(todo) : null;
+    return todo ? this.formatTodo(todo) : null;
   }
 
   async findByUserId(userId) {
@@ -44,7 +56,7 @@ class TodoMariaRepository extends TodoRepository {
       where: { createdBy: userId, teamId: null },
       order: [['createdAt', 'DESC']]
     });
-    return todos.map(todo => this.formatTodoResponse(todo));
+    return todos.map(todo => this.formatTodo(todo));
   }
 
   async findByTeamId(teamId) {
@@ -52,7 +64,7 @@ class TodoMariaRepository extends TodoRepository {
       where: { teamId: teamId },
       order: [['createdAt', 'DESC']]
     });
-    return todos.map(todo => this.formatTodoResponse(todo));
+    return todos.map(todo => this.formatTodo(todo));
   }
 
   async update(todoId, todoData) {

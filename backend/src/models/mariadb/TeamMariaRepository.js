@@ -2,9 +2,7 @@ const { Team, UserTeam } = require('./TeamMaria');
 const User = require('./UserMaria');
 const { TEAM_MEMBER_ROLES } = require('../interfaces/TeamSchema');
 const TeamRepository = require('../interfaces/TeamRepository');
-const UserRepository = require('../interfaces/UserRepository');
-const ServiceError = require('../../utils/errors/ServiceError');
-const constants = require('../../constants/constants');
+
 
 class TeamMariaRepository extends TeamRepository {
   constructor(UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
@@ -16,7 +14,7 @@ class TeamMariaRepository extends TeamRepository {
       include: [{
         model: this.User,
         as: 'members',
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'createdAt', 'updatedAt'],
         through: {
           attributes: ['role', 'joinedAt']
         },
@@ -70,16 +68,6 @@ class TeamMariaRepository extends TeamRepository {
       invitationStatus: invitation.invitationStatus,
       respondedAt: invitation.respondedAt
     };
-  }
-
-  static async teamValidation(teamId) {
-    if (!teamId) {
-      throw ServiceError.teamNotFound();
-    }
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ServiceError.teamNotFound();
-    }
   }
 
   async create(userId, teamData, options = {}) {
@@ -158,13 +146,6 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async inviteMember(teamId, inviterId, inviteeId, invitationMessage = '') {
-    if (await this.countTeamMembers(teamId) >= constants.TEAM_MEMBER_LIMIT) {
-      throw ServiceError.teamMemberLimitExceeded();
-    }
-    const isMember = await this.isMember(teamId, inviteeId);
-    if (isMember) {
-      throw ServiceError.memberAlreadyExists();
-    }
     await this.TeamInvitation.create({
       teamId,
       inviterId,
@@ -208,14 +189,6 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async isMember(teamId, userId) {
-    const user = await UserRepository.findById(userId);
-    if (!user) {
-      throw ServiceError.userNotFound();
-    }
-    const team = await this.findByTeamId(teamId);
-    if (!team) {
-      throw ServiceError.teamNotFound();
-    }
     const userTeam = await this.UserTeam.findOne({
       where: { teamId, userId }
     });

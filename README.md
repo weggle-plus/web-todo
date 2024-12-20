@@ -35,7 +35,7 @@
 
 # API 명세
 
-[API 명세](https://github.com/PairCraft/web-todo-list/blob/d441504350a29e50b7aeb434e55fcb1fd1d6df58/backend/docs/api.md)
+[API 명세](/backend/docs/api.md)
 
 
 # 설치 및 실행 방법

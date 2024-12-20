@@ -24,30 +24,36 @@ class TodoService {
     return user;
   }
 
-  async createTodo(userId, todoData) {
-    await this.validateUserExists(userId);
-    if (todoData.teamId) {
-      const team = await this.teamRepository.findById(todoData.teamId);
-      if (!team) {
-        throw ServiceError.teamNotFound();
-      }
-    }
-    return await this.todoRepository.create(todoData, userId);
-  }
-
-  async getUserTodos(userId) {
-    return await this.todoRepository.findByUserId(userId);
-  }
-
-  async getTeamTodos(teamId) {
+  async validateTeamExists(teamId) {
     const team = await this.teamRepository.findById(teamId);
     if (!team) {
       throw ServiceError.teamNotFound();
     }
+    return team;
+  }
+
+  async createTodo(userId, todoData) {
+    await this.validateUserExists(userId);
+    if (todoData.teamId) {
+      await this.validateTeamExists(todoData.teamId);
+    }
+    const todo = await this.todoRepository.create(todoData, userId);
+    return this.todoRepository.formatTodoResponse(todo);
+  }
+
+  async getUserTodos(userId) {
+    await this.validateUserExists(userId);
+    return await this.todoRepository.findByUserId(userId);
+  }
+
+  async getTeamTodos(teamId) {
+    await this.validateTeamExists(teamId);
     return await this.todoRepository.findByTeamId(teamId);
   }
 
   async getAllTeamTodos(teamId, userId) {
+    await this.validateUserExists(userId);
+    await this.validateTeamExists(teamId);
     const isMember = await this.teamRepository.isMember(teamId, userId);
     if (!isMember) {
       throw ServiceError.todoNotBelongToUser();
@@ -56,29 +62,34 @@ class TodoService {
   }
 
   async getTodoByTodoId(todoId) {
-    return await this.validateTodoExists(todoId);
+    const todo = await this.validateTodoExists(todoId);
+    return this.todoRepository.formatTodoResponse(todo);
   }
 
   async updateTodo(userId, todoId, updateData) {
+    await this.validateUserExists(userId);
     const todo = await this.validateTodoExists(todoId);
     if (todo.teamId) {
+      await this.validateTeamExists(todo.teamId);
       const isMember = await this.teamRepository.isMember(todo.teamId, userId);
       if (!isMember) {
         throw ServiceError.todoNotBelongToUser();
       }
     } else {
+      console.log(todo.createdBy, userId);
       if (todo.createdBy !== userId) {
         throw ServiceError.todoNotBelongToUser();
       }
     }
-    return this._processUpdate(todo, updateData);
+    const updatedTodo = this._processUpdate(todo, updateData);
+    return this.todoRepository.formatTodoResponse(updatedTodo);
   }
 
   async updateTodoStatus(todoId) {
     const todo = await this.validateTodoExists(todoId);
     const status = todo.status === constants.TODO_STATUS.DONE ? constants.TODO_STATUS.IN_PROGRESS : constants.TODO_STATUS.DONE;
-    
-    return this._processUpdate(todo, { status });
+    const updatedTodo = this._processUpdate(todo, { status })
+    return this.todoRepository.formatTodoResponse(updatedTodo);
   }
 
   async _processUpdate(todo, updates) {
@@ -108,7 +119,18 @@ class TodoService {
   }
 
   async deleteTodo(userId, todoId) {
-    await this.validateTodoExists(todoId);
+    const todo = await this.validateTodoExists(todoId);
+    if (todo.teamId) {
+      const isMember = await this.teamRepository.isMember(todo.teamId, userId);
+      if (!isMember) {
+        throw ServiceError.todoNotBelongToUser();
+      }
+    } else {
+      if (todo.createdBy !== userId) {
+        throw ServiceError.todoNotBelongToUser();
+      }
+    }
+
     return await this.todoRepository.delete(todoId);
   }
 }
