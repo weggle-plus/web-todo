@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // 백엔드 API URL
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3001";
 
 export interface Todo {
   id: number;
@@ -33,6 +33,11 @@ const todoAPI = {
   deleteTodo: async (id: number): Promise<void> => {
     await axios.delete(`${BASE_URL}/${id}`);
   },
+
+  updateTodoStatus: async (id: number, status: boolean): Promise<Todo> => {
+    const response = await axios.put(`${BASE_URL}/${id}`, { status });
+    return response.data;
+  }
 };
 
 export default todoAPI;

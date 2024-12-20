@@ -8,106 +8,92 @@ const useTodoList = () => {
   const [editingTodoId, setEditingTodoId] = useState<number | null>(null);
   const [editingText, setEditingText] = useState<string>("");
 
+  // TODO 데이터를 서버에서 가져오는 함수
+  const fetchTodos = async () => {
+    try {
+      const fetchedTodos = await todoAPI.getTodos();
+      const todosList = fetchedTodos.filter((todo) => !todo.status); // 미완료 항목 분리
+      const doneList = fetchedTodos.filter((todo) => todo.status); // 완료 항목 분리
+      setTodos(todosList);
+      setDone(doneList);
+    } catch (error) {
+      console.error("할 일 데이터를 가져오는 데 실패했습니다:", error);
+    }
+  };
+
+  // 컴포넌트가 처음 마운트될 때 TODO 데이터를 가져옴
   useEffect(() => {
-    const fetchTodos = async () => {
-      try {
-        const fetchedTodos = await todoAPI.getTodos();
-        const todosList = fetchedTodos.filter((todo) => !todo.status); // 미완료 항목
-        const doneList = fetchedTodos.filter((todo) => todo.status); // 완료 항목
-        setTodos(todosList);
-        setDone(doneList);
-      } catch (error) {
-        console.error("Failed to fetch todos:", error);
-      }
-    };
     fetchTodos();
   }, []);
 
+  // 새로운 TODO를 추가하는 함수
   const handleAddTodo = async () => {
     if (inputValue.trim()) {
       try {
-        const newTodo = await todoAPI.addTodo(inputValue, false);
-        setTodos((prevTodos) => [...prevTodos, newTodo]);
+        await todoAPI.addTodo(inputValue, false);
         setInputValue("");
+        await fetchTodos(); // 새 데이터를 서버에서 다시 가져옴
       } catch (error) {
-        console.error("Failed to add todo:", error);
+        console.error("할 일을 추가하는 데 실패했습니다:", error);
       }
     }
   };
 
-  const handleDeleteTodo = async (id: number, isTodo: boolean) => {
+  // TODO 항목을 삭제하는 함수
+  const handleDeleteTodo = async (id: number) => {
     try {
       await todoAPI.deleteTodo(id);
-      if (isTodo) {
-        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-      } else {
-        setDone((prevDone) => prevDone.filter((todo) => todo.id !== id));
-      }
+      await fetchTodos(); // 삭제 후 데이터 동기화
     } catch (error) {
-      console.error("Failed to delete todo:", error);
+      console.error("할 일을 삭제하는 데 실패했습니다:", error);
     }
   };
 
-  const handleToggleTodo = async (id: number, isTodo: boolean) => {
+  // TODO 상태를 토글하는 함수 (완료 ↔ 미완료)
+  const handleToggleTodo = async (id: number) => {
     try {
-      // 기존 todo 항목 찾기
+      // 기존 TODO 항목 찾기
       const existingTodo = [...todos, ...done].find((todo) => todo.id === id);
       if (!existingTodo) return;
-  
-      const updatedTodo = await todoAPI.updateTodo(id, {
-        title: existingTodo.title,  // 기존 제목 유지
-        status: !existingTodo.status, // 상태 반전
-      });
-  
-      // 상태 업데이트
-      if (updatedTodo.status) {
-        setTodos((prev) => prev.filter((todo) => todo.id !== id));
-        setDone((prev) => [...prev, updatedTodo]);
-      } else {
-        setDone((prev) => prev.filter((todo) => todo.id !== id));
-        setTodos((prev) => [...prev, updatedTodo]);
-      }
+
+      // 상태 반전 (완료 ↔ 미완료)
+      const status = !existingTodo.status;
+      await todoAPI.updateTodoStatus(id, status);
+      await fetchTodos(); // 토글 후 데이터 동기화
     } catch (error) {
-      console.error("Failed to toggle todo:", error);
+      console.error("할 일 상태를 변경하는 데 실패했습니다:", error);
     }
   };
-  
+
+  // 수정 모드로 전환하는 함수
   const startEditing = (id: number, text: string) => {
     setEditingTodoId(id);
     setEditingText(text);
   };
 
+  // 수정된 TODO 항목을 저장하는 함수
   const saveEditing = async () => {
     if (editingTodoId !== null) {
       try {
-        // 기존 todo 항목 찾기
+        // 기존 TODO 항목 찾기
         const existingTodo = [...todos, ...done].find((todo) => todo.id === editingTodoId);
         if (!existingTodo) return;
-  
-        const updatedTodo = await todoAPI.updateTodo(editingTodoId, {
-          title: editingText || existingTodo.title, // 새 제목 (없으면 기존 제목 유지)
-          status: existingTodo.status,             // 기존 상태 유지
+
+        // 서버에 수정 요청
+        await todoAPI.updateTodo(editingTodoId, {
+          title: editingText || existingTodo.title, // 제목 수정 (없으면 기존 제목 유지)
+          status: existingTodo.status,             // 상태는 그대로 유지
         });
-  
-        // 상태 업데이트
-        if (updatedTodo.status) {
-          setDone((prev) =>
-            prev.map((todo) => (todo.id === editingTodoId ? updatedTodo : todo))
-          );
-        } else {
-          setTodos((prev) =>
-            prev.map((todo) => (todo.id === editingTodoId ? updatedTodo : todo))
-          );
-        }
-  
         setEditingTodoId(null);
         setEditingText("");
+        await fetchTodos(); // 수정 후 데이터 동기화
       } catch (error) {
-        console.error("Failed to update todo:", error);
+        console.error("할 일 수정을 저장하는 데 실패했습니다:", error);
       }
     }
   };
-  
+
+  // 수정 모드를 취소하는 함수
   const cancelEditing = () => {
     setEditingTodoId(null);
     setEditingText("");
