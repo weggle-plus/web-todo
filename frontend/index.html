@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>todo</title>
+    <link href="/frontend/css/index.css" rel="stylesheet">
+    <script src="/frontend/index.js"></script>
+</head>
+<body>
+    <div id="page">
+        <aside id="sidebar">
+            <div id="menu">
+                <ul id="menu-item">
+                    <li>할일 목록</li>
+                </ul>
+            </div>
+        </aside>
+        <div id="main">
+            <div id="input-field">
+                <input type="text" id="todo-input" placeholder="할 일을 입력해주세요.">
+                <button type="button" onclick="data_submit()" id="submit-button">등록하기</button>
+            </div>
+            <div id="todo-group">
+                <div id="todo-list">
+                    <span class="title">TO DO</span>
+                    <ul id="todo-list-contents">
+                        
+                    </ul>
+                </div>
+                <div id="done-list">
+                    <span class="title">DONE</span>
+                    <ul id="done-list-contents">
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+</body>
+</html>
