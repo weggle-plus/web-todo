@@ -76,7 +76,6 @@ class TodoService {
         throw ServiceError.todoNotBelongToUser();
       }
     } else {
-      console.log(todo.createdBy, userId);
       if (todo.createdBy !== userId) {
         throw ServiceError.todoNotBelongToUser();
       }
@@ -85,8 +84,12 @@ class TodoService {
     return this.todoRepository.formatTodoResponse(updatedTodo);
   }
 
-  async updateTodoStatus(todoId) {
+  async updateTodoStatus(userId, todoId) {
+    await this.validateUserExists(userId);
     const todo = await this.validateTodoExists(todoId);
+    if (todo.createdBy !== userId) {
+      throw ServiceError.todoNotBelongToUser();
+    }
     const status = todo.status === constants.TODO_STATUS.DONE ? constants.TODO_STATUS.IN_PROGRESS : constants.TODO_STATUS.DONE;
     const updatedTodo = this._processUpdate(todo, { status })
     return this.todoRepository.formatTodoResponse(updatedTodo);
