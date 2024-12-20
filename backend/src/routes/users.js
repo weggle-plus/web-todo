@@ -2,13 +2,21 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
 const authMiddleware = require('../middleware/auth.middleware');
-const { validateLogin, validateUserIdParam, validateProfile } = require('../middleware/validateRequest');
+const { validateLogin, validateUserIdParam, validateProfile, validateUsername } = require('../middleware/validateRequest');
 
 // 회원가입
 router.post('/register', 
   validateProfile, 
   async (req, res, next) => {
     await UserController.register(req, res, next);
+  }
+);
+
+// 유저 이름 중복 체크
+router.get('/check-username', 
+  validateUsername, 
+  async (req, res, next) => {
+    await UserController.checkUsername(req, res, next);
   }
 );
 

@@ -35,7 +35,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 } 
 ```
 
-- **성공 응답 (201 Created):**  
+- **성공 응답: 201 Created**  
 ```json
 {
   "id": 3,
@@ -45,12 +45,15 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "updatedAt": "2024-12-20T03:51:35.654Z"
 }
 ```
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
+- **실패 응답: 입력 오류 400 Bad Request, 유저 또는 팀 존재하지 않음 404 Not Found, 인증 실패 401 Unauthorized**  
 ```json
 {
   "error": "구체적인 오류 메시지"
 }  
 ```
+
+
+
 
 #### 2. 유저의 TODO 조회
 - 유저에게 소속된 모든 TODO 항목을 조회합니다.
@@ -68,7 +71,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **Request Body:** 
   - 없음
 
-- **성공 응답 (200 OK):**  
+- **성공 응답: 200 OK**  
 ```json
 [
   {
@@ -267,9 +270,9 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 | --- | --- | --- |
 | Authorization | 필수 | Bearer <JWT 토큰> |
 
-- **성공 응답 (204 No Content):**
+- **성공 응답: 204 No Content**
   - 응답 본문 없음
-- **실패 응답: 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found**  
+- **실패 응답: 인증 실패 401 Unauthorized, 유저 또는 팀 존재하지 않음 404 Not Found, 유저 또는 팀 권한이 없음 403 Forbidden**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -316,10 +319,9 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```json
 {
   "username": "user_name",
-  "token": "JWT 토큰"
 }
 ```
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
+- **실패 응답: 입력 오류 400 Bad Request, 중복된 유저 이름 409 Conflict**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -357,6 +359,13 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "token": "JWT 토큰"
 }
 ```
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
+
 
 #### 3. 프로필 조회
 사용자의 프로필 정보를 조회합니다.
@@ -635,7 +644,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 | --- | --- | --- |
 | Authorization | 필수 | Bearer <JWT 토큰> |
 
-- **성공 응답 (204 No Content):**
+- **성공 응답: 204 No Content**
   - 응답 본문 없음
 - **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
@@ -671,7 +680,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
   - 응답 본문 없음
 
 - **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 팀 또는 유저 404 Not Found**  

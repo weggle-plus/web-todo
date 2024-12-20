@@ -15,6 +15,15 @@ class UserController {
     }
   }
 
+  static checkUsername = async (req, res, next) => {
+    try {
+      const isAvailable = await UserController.userService.isUsernameAvailable(req.body.username);
+      res.json({ isAvailable });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static login = async (req, res, next) => {
     try {
       const { username, password } = req.body;

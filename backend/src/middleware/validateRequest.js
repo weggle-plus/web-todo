@@ -65,6 +65,14 @@ const validateProfile = [
   validateRequest
 ];
 
+const validateUsername = [
+  body('username')
+    .isString()
+    .notEmpty()
+    .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED),
+  validateRequest
+];
+
 const validateLogin = [
   body('username')
     .isString()
@@ -147,6 +155,7 @@ module.exports = {
   validateTodoStatus,
   validateTodoIdParam,
   validateLogin,
+  validateUsername,
   validateUserIdParam,
   validateProfile,
   validateTeam,
