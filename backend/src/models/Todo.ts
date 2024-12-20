@@ -30,7 +30,7 @@ Todo.init(
     sequelize, // 연결된 sequelize 인스턴스
     modelName: 'Todo',
     tableName: 'todo', // 실제 데이터베이스의 테이블 이름
-    timestamps: false,
+    schema: 'Todo_List', // 여기서 스키마 지정
   }
 );
 
