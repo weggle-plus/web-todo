@@ -35,11 +35,11 @@ async function initializeDatabase() {
       const sequelize = require('./mariadb');
       await sequelize.authenticate(); // DB 연결 확인
 
-      if (process.env.NODE_ENV === 'development') {
-        await sequelize.sync({ force: true }); // 개발 환경: 컬럼 변경 반영
-      } else {
-        await sequelize.sync(); // 운영 환경
-      }
+      await sequelize.sync({ 
+        alter: true,      // 기존 테이블 구조 변경 허용
+        force: false,     // 테이블 강제 삭제 방지
+        logging: console.log // 변경사항 로깅
+      });
       console.log('MariaDB 연결 성공');
     }
   } catch (error) {

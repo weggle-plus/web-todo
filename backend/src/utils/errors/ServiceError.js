@@ -43,6 +43,22 @@ class ServiceError extends Error {
     return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.MEMBER_NOT_FOUND, StatusCodes.NOT_FOUND);
   }
 
+  static teamLimitExceeded() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.LIMIT_EXCEEDED, StatusCodes.CONFLICT);
+  }
+
+  static cannotInviteSelf() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.CANNOT_INVITE_SELF, StatusCodes.BAD_REQUEST);
+  }
+
+  static restrictInviteToMembers() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.RESTRICT_INVITE_TO_MEMBERS, StatusCodes.BAD_REQUEST);
+  }
+
+  static invitationAlreadyExists() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.INVITATION_ALREADY_EXISTS, StatusCodes.CONFLICT);
+  }
+
   static teamInvitationNotFound() {
     return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.INVITATION_NOT_FOUND, StatusCodes.NOT_FOUND);
   }
@@ -51,8 +67,20 @@ class ServiceError extends Error {
     return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.MEMBER_ALREADY_EXISTS, StatusCodes.CONFLICT);
   }
 
+  static invalidTeamMemberAction() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.INVALID_TEAM_MEMBER_ACTION, StatusCodes.BAD_REQUEST);
+  }
+
+  static teamMemberLimitExceeded() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.MEMBER_LIMIT_EXCEEDED, StatusCodes.CONFLICT);
+  }
+
   static invalidTeamRole() {
     return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.INVALID_TEAM_ROLE, StatusCodes.BAD_REQUEST);
+  }
+
+  static teamHasMembers() {
+    return new ServiceError(SERVICE_ERROR_MESSAGES.TEAM.HAS_MEMBERS, StatusCodes.CONFLICT);
   }
 }
 

@@ -1,8 +1,8 @@
 const jwt = require('jsonwebtoken');
 const { StatusCodes } = require('http-status-codes');
 const { UserRepositoryFactory } = require('../models/RepositoryFactory');
-const { USER_ROLES } = require('../models/interfaces/UserSchema');
 const { AUTH_ERROR_MESSAGES } = require('../constants/messages');
+const constants = require('../constants/constants');
 
 const userRepository = UserRepositoryFactory.createRepository();
 
@@ -42,7 +42,7 @@ const authMiddleware = {
   },
 
   requireAdmin: (req, res, next) => {
-    if (!req.user || req.user.role !== USER_ROLES.ADMIN) {
+    if (!req.user || req.user.role !== constants.USER_ROLES.ADMIN) {
       return res.status(StatusCodes.FORBIDDEN).json({ message: AUTH_ERROR_MESSAGES.FORBIDDEN });
     }
     next();

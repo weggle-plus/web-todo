@@ -9,7 +9,12 @@ const sequelize = new Sequelize(
     host: config.mariadb.host, 
     port: config.mariadb.port, 
     dialect: 'mysql',
-    logging: false
+    logging: false,
+    dialectOptions: {
+      dateStrings: true,
+      typeCast: true
+    },
+    timezone: '+09:00'
   }
 );
 

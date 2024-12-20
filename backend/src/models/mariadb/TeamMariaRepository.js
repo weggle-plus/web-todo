@@ -2,8 +2,7 @@ const { Team, UserTeam } = require('./TeamMaria');
 const User = require('./UserMaria');
 const { TEAM_MEMBER_ROLES } = require('../interfaces/TeamSchema');
 const TeamRepository = require('../interfaces/TeamRepository');
-const UserRepository = require('../interfaces/UserRepository');
-const ServiceError = require('../../utils/errors/ServiceError');
+
 
 class TeamMariaRepository extends TeamRepository {
   constructor(UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
@@ -15,7 +14,7 @@ class TeamMariaRepository extends TeamRepository {
       include: [{
         model: this.User,
         as: 'members',
-        attributes: ['id', 'username'],
+        attributes: ['id', 'username', 'createdAt', 'updatedAt'],
         through: {
           attributes: ['role', 'joinedAt']
         },
@@ -71,21 +70,7 @@ class TeamMariaRepository extends TeamRepository {
     };
   }
 
-  static async teamValidation(teamId) {
-    if (!teamId) {
-      throw ServiceError.teamNotFound();
-    }
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ServiceError.teamNotFound();
-    }
-  }
-
   async create(userId, teamData, options = {}) {
-    const existingTeam = await this.Team.findOne({ where: { name: teamData.name } });
-    if (existingTeam) {
-      throw ServiceError.teamNameAlreadyExists();
-    }
     teamData.createdBy = userId;
     const team = await this.Team.create(teamData, options);
     return this.formatTeam(team);
@@ -96,33 +81,49 @@ class TeamMariaRepository extends TeamRepository {
     return teams.map(this.formatTeam);
   }
 
+  async countMyTeams(userId) {
+    return await this.UserTeam.count({ where: { userId } });
+  }
+
+  async countTeamMembers(teamId) {
+    return await this.UserTeam.count({ where: { teamId } });
+  }
+
   async findById(teamId) {
     const team = await this.Team.findByPk(teamId, this.teamOptions);
     return team ? this.formatTeamResponse(team) : null;
   }
 
+  async findByName(name) {
+    const team = await this.Team.findOne({ where: { name } });
+    return team ? this.formatTeamResponse(team) : null;
+  }
+
   async findByUserId(userId) {
     const teams = await this.Team.findAll({
-      ...this.teamOptions,
       include: [{
-        ...this.teamOptions.include[0],
-        where: {
-          id: userId
+        model: this.UserTeam,
+        where: { userId },
+        required: true
+      }, {
+        model: this.User,
+        as: 'members',
+        attributes: ['id', 'username'],
+        through: {
+          attributes: ['role', 'joinedAt']
         }
       }]
     });
-    return teams.map(this.formatTeam);
+    
+    return teams.map(team => this.formatTeamResponse(team));
   }
 
-  async update(teamId, updateData) {
+  async update(userId, teamId, updateData) {
+    updateData.updatedBy = userId;
     await this.Team.update(updateData, { where: { id: teamId } });
   }
 
   async delete(teamId) {
-    const team = await this.Team.findByPk(teamId);
-    if (!team) {
-      throw ServiceError.teamNotFound();
-    }
     await this.Team.sequelize.transaction(async (t) => {
       await this.UserTeam.destroy({ 
         where: { teamId }, 
@@ -135,15 +136,16 @@ class TeamMariaRepository extends TeamRepository {
     });
   }
 
+  async findInvitationRecord(teamId, inviteeId) {
+    return await this.TeamInvitation.findOne({ 
+      where: { 
+        teamId, 
+        inviteeId
+      } 
+    });
+  }
+
   async inviteMember(teamId, inviterId, inviteeId, invitationMessage = '') {
-    const user = await UserRepository.findById(inviterId);
-    if (!user) {
-      throw ServiceError.authRequired();
-    }
-    const isMember = await this.isMember(teamId, inviteeId);
-    if (isMember) {
-      throw ServiceError.memberAlreadyExists();
-    }
     await this.TeamInvitation.create({
       teamId,
       inviterId,
@@ -172,6 +174,12 @@ class TeamMariaRepository extends TeamRepository {
     });
   }
 
+  async leaveTeam(teamId, userId) {
+    await this.UserTeam.destroy({
+      where: { teamId, userId }
+    });
+  }
+
   async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
     await this.UserTeam.create({
       teamId,
@@ -181,14 +189,6 @@ class TeamMariaRepository extends TeamRepository {
   }
 
   async isMember(teamId, userId) {
-    const user = await UserRepository.findById(userId);
-    if (!user) {
-      throw ServiceError.userNotFound();
-    }
-    const team = await this.findByTeamId(teamId);
-    if (!team) {
-      throw ServiceError.teamNotFound();
-    }
     const userTeam = await this.UserTeam.findOne({
       where: { teamId, userId }
     });

@@ -1,71 +1,24 @@
 const { StatusCodes } = require('http-status-codes');
-const { body, param } = require('express-validator');
 const UserService = require('../services/UserService');
 const { UserRepositoryFactory } = require('../models/RepositoryFactory');
-const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
-const validateRequest = require('../middleware/validateRequest');
+
 
 class UserController {
   static userService = new UserService(UserRepositoryFactory.createRepository());
-
-  static validateRegister = [
-    body('username')
-      .optional()
-      .isString()
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED)
-      .isLength({ min: 2, max: 30 })
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_LENGTH)
-      .trim(),
-    body('password')
-      .isString()
-      .isLength({ min: 8, max: 64 })
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
-    validateRequest
-  ];
-
-  static validateLogin = [
-    body('username')
-      .isString()
-      .notEmpty()
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED),
-    body('password')
-      .isString()
-      .notEmpty()
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_REQUIRED),
-    validateRequest
-  ];
-
-  static validateUserIdParam = [
-    param('id')
-      .isInt()
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USER_ID_INVALID)
-      .toInt(),
-    validateRequest
-  ];
-
-  static validateProfileUpdate = [
-    body('username')
-      .optional()
-      .isString()
-      .isLength({ min: 2, max: 30 })
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_LENGTH)
-      .trim(),
-    body('password')
-      .optional()
-      .isString()
-      .isLength({ min: 8, max: 64 })
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
-      .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
-      .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
-    validateRequest
-  ];
 
   static register = async (req, res, next) => {
     try {
       const user = await UserController.userService.register(req.body);
       res.status(StatusCodes.CREATED).json(user);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static checkUsername = async (req, res, next) => {
+    try {
+      const isAvailable = await UserController.userService.isUsernameAvailable(req.body.username);
+      res.json({ isAvailable });
     } catch (error) {
       next(error);
     }

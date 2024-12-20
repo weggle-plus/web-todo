@@ -2,16 +2,27 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
 const authMiddleware = require('../middleware/auth.middleware');
+const { validateLogin, validateUserIdParam, validateProfile, validateUsername } = require('../middleware/validateRequest');
 
+// 회원가입
 router.post('/register', 
-  UserController.validateRegister, 
+  validateProfile, 
   async (req, res, next) => {
     await UserController.register(req, res, next);
   }
 );
 
+// 유저 이름 중복 체크
+router.get('/check-username', 
+  validateUsername, 
+  async (req, res, next) => {
+    await UserController.checkUsername(req, res, next);
+  }
+);
+
+// 로그인
 router.post('/login', 
-  UserController.validateLogin, 
+  validateLogin, 
   async (req, res, next) => {
     await UserController.login(req, res, next);
   }
@@ -19,22 +30,25 @@ router.post('/login',
 
 router.use(authMiddleware.authenticate);
 
+// 프로필 조회
 router.get('/:id', 
-  UserController.validateUserIdParam,
+  validateUserIdParam,
   async (req, res, next) => {
     await UserController.getProfile(req, res, next);
   }
 );
 
+// 프로필 업데이트
 router.put('/', 
-  UserController.validateProfileUpdate, 
+  validateProfile, 
   async (req, res, next) => {
     await UserController.updateProfile(req, res, next);
   }
 );
 
+// 프로필 삭제
 router.delete('/:id', 
-  UserController.validateUserIdParam,
+  validateUserIdParam,
   async (req, res, next) => {
     await UserController.deleteProfile(req, res, next);
   }

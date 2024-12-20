@@ -16,19 +16,21 @@ class UserService {
     return user;
   }
 
+  async isUsernameAvailable(username) {
+    const user = await this.userRepository.findByUsername(username);
+    return !user;
+  }
+
   async register(userData) {
     if (userData.username) {
-      const existingUsername = await this.userRepository.findByUsername(userData.username);
-      if (existingUsername) {
+      if (await this.isUsernameAvailable(userData.username)) {
         throw ServiceError.usernameAlreadyExists();
       }
     }
 
     const user = await this.userRepository.create(userData);
-    const token = this._generateToken(user);
     return {
       username: user.username,
-      token
     };
   }
 
@@ -73,8 +75,15 @@ class UserService {
         throw ServiceError.usernameAlreadyExists();
       }
     }
-
-    return await this.userRepository.update(userId, updateData);
+    const user = await this.userRepository.update(userId, updateData);
+    if (updateData.username) {
+      const token = this._generateToken(user);
+      return {
+        username: user.username,
+        token
+      };
+    }
+    return user;
   }
 
   _generateToken(user) {

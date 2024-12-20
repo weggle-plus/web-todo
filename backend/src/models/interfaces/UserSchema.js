@@ -1,7 +1,4 @@
-const USER_ROLES = {
-  USER: 'user',
-  ADMIN: 'admin'
-};
+const constants = require('../../constants/constants');
 
 const UserSchema = {
   id: {
@@ -21,8 +18,8 @@ const UserSchema = {
   // TODO: failedLoginAttempts
   role: {
     type: 'enum',
-    values: Object.values(USER_ROLES),
-    default: USER_ROLES.USER
+    values: Object.values(constants.USER_ROLES),
+    default: constants.USER_ROLES.USER
   },
   profileImage: {
     type: 'string',
@@ -61,6 +58,5 @@ const UserSchema = {
 };
 
 module.exports = {
-  UserSchema,
-  USER_ROLES
+  UserSchema
 }; 
