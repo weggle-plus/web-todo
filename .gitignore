@@ -1,3 +1,4 @@
 .idea
 node_modules
-datebase/
+backend/datebase/todos.db
+backend/.env
