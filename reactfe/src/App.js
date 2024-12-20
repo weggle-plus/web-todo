@@ -10,6 +10,7 @@ function App() {
   const [doneList, setDoneList] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
+  const [editingTodoId, setEditingTodoId] = useState(false);
 
   useEffect(() => {
     getTodoItems();
@@ -56,6 +57,21 @@ function App() {
     setDeleteModal(false);
     setTodoToDelete(null);
   };
+  const startEditing = (todoItemId) => {
+    setEditingTodoId(todoItemId);
+  };
+  const cancelEditing = () => {
+    setEditingTodoId(null);
+  };
+  const updateEditing = async (todoItem) => {
+    try {
+      await apiModules.updateEditing(todoItem);
+      getTodoItems();
+      setEditingTodoId(null);
+    } catch (error) {
+      console.log("error : ", error);
+    }
+  };
 
   return (
     <div className="container">
@@ -71,6 +87,10 @@ function App() {
           todoList={todoList}
           toggleCheckbox={toggleCheckbox}
           deleteTodo={deleteTodo}
+          startEditing={startEditing}
+          cancelEditing={cancelEditing}
+          editingTodoId={editingTodoId}
+          updateEditing={updateEditing}
         />
         <DoneList
           doneList={doneList}

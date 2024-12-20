@@ -1,4 +1,27 @@
-function TodoList({ todoList, toggleCheckbox, deleteTodo }) {
+import { useState } from "react";
+
+function TodoList({
+  todoList,
+  toggleCheckbox,
+  deleteTodo,
+  startEditing,
+  cancelEditing,
+  editingTodoId,
+  updateEditing,
+}) {
+  const [titleEdited, setTitleEdited] = useState("");
+
+  const handleUpdateEditing = (todoItem) => {
+    const updatedTodoItem = {
+      ...todoItem,
+      title: titleEdited,
+    };
+    updateEditing(updatedTodoItem);
+  };
+  const handleInputChange = (e) => {
+    setTitleEdited(e.target.value);
+  };
+
   return (
     <>
       <div className="todo_wrap">
@@ -10,18 +33,44 @@ function TodoList({ todoList, toggleCheckbox, deleteTodo }) {
             todoList.map((item) => {
               return (
                 <div key={item.id} className="todo_item">
-                  <input
-                    type="checkbox"
-                    onChange={() => toggleCheckbox(item)}
-                  ></input>
-                  <label className="todo_item_title">{item.title}</label>
-                  <button className="btn_modify">수정</button>
-                  <button
-                    className="btn_delete"
-                    onClick={() => deleteTodo(item.id)}
-                  >
-                    삭제
-                  </button>
+                  {editingTodoId === item.id ? (
+                    <>
+                      <input
+                        type="text"
+                        defaultValue={item.title}
+                        onChange={handleInputChange}
+                      ></input>
+                      <button onClick={() => handleUpdateEditing(item)}>
+                        완료
+                      </button>
+                      <button
+                        className="btn_modify"
+                        onClick={() => cancelEditing()}
+                      >
+                        취소
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <input
+                        type="checkbox"
+                        onChange={() => toggleCheckbox(item)}
+                      ></input>
+                      <label className="todo_item_title">{item.title}</label>
+                      <button
+                        className="btn_modify"
+                        onClick={() => startEditing(item.id)}
+                      >
+                        수정
+                      </button>
+                      <button
+                        className="btn_delete"
+                        onClick={() => deleteTodo(item.id)}
+                      >
+                        삭제
+                      </button>
+                    </>
+                  )}
                 </div>
               );
             })

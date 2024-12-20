@@ -58,17 +58,14 @@ const checkDone = async (todoItem) => {
   getTodoItems();
 };
 
-const finishEditing = async (todoItem, isEdited) => {
-  if (isEdited) {
-    try {
-      let todoInput = document.getElementById(`title_input_${todoItem.id}`);
-      await axios.put(`http://localhost:4040/todos/${todoItem.id}`, {
-        title: todoInput.value,
-      });
-    } catch (error) {
-      console.log("error : ", error);
-      alert("수정에 실패하였습니다.");
-    }
+const updateEditing = async (todoItem) => {
+  try {
+    await axios.put(`http://localhost:4040/todos/${todoItem.id}`, {
+      title: todoItem.title,
+    });
+  } catch (error) {
+    console.log("error : ", error);
+    alert("수정에 실패하였습니다.");
   }
   getTodoItems();
 };
@@ -78,7 +75,7 @@ const apiModules = {
   addTodoItem,
   deleteTodoItem,
   checkDone,
-  finishEditing,
+  updateEditing,
   clickedItemId,
   todoList,
 };
