@@ -1,6 +1,7 @@
-import React from "react";
-import styles from "./TodoItem.module.css";
-import { TodoItemProps } from "../types";
+import Button from "../common/Button";
+import Input from "../common/Input";
+import styles from "../../styles/TodoItem.module.css";
+import { TodoItemProps } from "../../types/todos";
 
 const TodoItem: React.FC<TodoItemProps> = ({
   item,
@@ -23,49 +24,43 @@ const TodoItem: React.FC<TodoItemProps> = ({
           <>
             <input
               type="checkbox"
-              checked={!isTodo || item.completed}
+              checked={!isTodo || item.completed} // DONE 항목일 경우 체크, TODO 항목은 item.completed 따라감
               onChange={() => handleToggleTodo(item.id, isTodo)}
             />
-            <span
-              className={isTodo ? styles.todoText : styles.doneText}
-            >
+            <span className={isTodo ? styles.todoText : styles.doneText}>
               {item.title}
             </span>
             {isTodo && (
-              <button
-                className={styles.editButton}
+              <Button
+                text="수정"
                 onClick={() => startEditing && startEditing(item.id, item.title)}
-              >
-                수정
-              </button>
+                variant="edit"
+              />
             )}
-            <button
-              className={styles.deleteButton}
+            <Button
+              text="삭제"
               onClick={() => handleDeleteTodo(item.id, isTodo)}
-            >
-              삭제
-            </button>
+              variant="delete"
+            />
           </>
         ) : (
           <>
-            <input
+            <Input
               type="text"
-              value={editingText}
+              value={editingText || ""}
               onChange={(e) => setEditingText && setEditingText(e.target.value)}
-              className={styles.editInput}
+              placeholder="수정할 내용을 입력하세요"
             />
-            <button
-              className={styles.saveButton}
+            <Button
+              text="완료"
               onClick={() => saveEditing && saveEditing()}
-            >
-              완료
-            </button>
-            <button
-              className={styles.cancelButton}
+              variant="save"
+            />
+            <Button
+              text="취소"
               onClick={() => cancelEditing && cancelEditing()}
-            >
-              취소
-            </button>
+              variant="cancel"
+            />
           </>
         )}
       </div>

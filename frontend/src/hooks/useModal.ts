@@ -1,9 +1,5 @@
 import { useState } from "react";
-
-interface ModalState {
-  isOpen: boolean;
-  target: { id: number; isTodo: boolean } | null;
-}
+import { ModalState } from "../types/modal";
 
 const useModal = () => {
   const [modalState, setModalState] = useState<ModalState>({
