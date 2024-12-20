@@ -3,14 +3,29 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import TodoApp from "./pages/TodoApp";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
+import PublicRoute from "./routes/PublicRoute";
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
         <Route
           path="/todo"
           element={
