@@ -30,7 +30,7 @@ Routes → Controllers → Services → Repositories → Database
 ### 주요 디자인 패턴
 
 #### 1. 레포지토리 패턴
-
+- 레포지토리는 데이터 처리와 관련된 작업만 책임지고, 비즈니스 로직은 서비스 계층에서 처리한다.
 ```javascript
 // interfaces/TodoRepository.js
 class TodoRepository {
@@ -41,7 +41,7 @@ class TodoRepository {
 }
 ```
 #### 2. 의존성 주입
-
+- 객체가 특정 클래스에 강하게 의존하지 않도록 함으로써 코드의 유연성과 재사용성을 높인다.
 ```javascript
 class TodoService {
     constructor(todoRepository, userRepository, teamRepository) {

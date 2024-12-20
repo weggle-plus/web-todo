@@ -37,7 +37,7 @@ router.post('/team/:teamId',
   }
 );
 
-
+// TODO 업데이트
 router.put('/:id', 
   validateTodo,
   validateTodoIdParam, 
@@ -46,6 +46,7 @@ router.put('/:id',
   }
 );
 
+// TODO 상태 업데이트
 router.patch('/:id', 
   validateTodoIdParam, 
   async (req, res, next) => {
@@ -53,6 +54,7 @@ router.patch('/:id',
   }
 );
 
+// TODO 삭제
 router.delete('/:id', 
   validateTodoIdParam, 
   async (req, res, next) => {

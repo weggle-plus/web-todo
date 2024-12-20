@@ -38,15 +38,12 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **성공 응답 (201 Created):**  
 ```json
 {
-  "id": "todo_id",
-  "title": "할 일 제목",
+  "id": 3,
+  "title": "할 일 제목3",
   "status": "in-progress",
-  "createdAt": "2024-03-15T12:00:00.000Z",
-  "updatedAt": "2024-03-15T12:00:00.000Z",
-  "completedAt": null,
-  "createdBy": 1,
-  "teamId": null
-}  
+  "createdAt": "2024-12-20T03:51:35.654Z",
+  "updatedAt": "2024-12-20T03:51:35.654Z"
+}
 ```
 - **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
 ```json
@@ -75,22 +72,22 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```json
 [
   {
-    "id": "todo_id1",
-    "title": "할 일 1",
-    "status": "in-progress",
-    "content": "할 일 내용 1",
-    "createdAt": "2024-03-15T12:00:00.000Z",
-    "updatedAt": "2024-03-15T12:00:00.000Z",
-    "completedAt": null
+      "id": 2,
+      "title": "할 일 제목2",
+      "status": "in-progress",
+      "content": null,
+      "createdAt": "2024-12-20 12:50:26",
+      "updatedAt": "2024-12-20 12:50:26",
+      "completedAt": null
   },
   {
-    "id": "todo_id2",
-    "title": "할 일 2",
-    "status": "done",
-    "content": "할 일 내용 2",
-    "createdAt": "2024-03-15T12:30:00.000Z",
-    "updatedAt": "2024-03-15T13:00:00.000Z",
-    "completedAt": "2024-03-15T12:30:00.000Z"
+      "id": 1,
+      "title": "할 일 제목1",
+      "status": "in-progress",
+      "content": null,
+      "createdAt": "2024-12-20 12:48:46",
+      "updatedAt": "2024-12-20 12:48:46",
+      "completedAt": null
   }
 ]  
 ```

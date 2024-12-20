@@ -16,19 +16,21 @@ class UserService {
     return user;
   }
 
+  async isUsernameAvailable(username) {
+    const user = await this.userRepository.findByUsername(username);
+    return !user;
+  }
+
   async register(userData) {
     if (userData.username) {
-      const existingUsername = await this.userRepository.findByUsername(userData.username);
-      if (existingUsername) {
+      if (await this.isUsernameAvailable(userData.username)) {
         throw ServiceError.usernameAlreadyExists();
       }
     }
 
     const user = await this.userRepository.create(userData);
-    const token = this._generateToken(user);
     return {
       username: user.username,
-      token
     };
   }
 
