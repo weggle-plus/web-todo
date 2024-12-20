@@ -1,4 +1,4 @@
-import { fetchData } from "./api";
+import { fetchData, HttpStatus, errorData } from "./api";
 
 interface Todo {
     id: number;
@@ -213,15 +213,30 @@ function closeDeleteModal() {
 // 유저 할일목록 받기
 async function getUserTodos() {
     try {
-        const response = await fetchData<Todo[]>('');
+        const response = await fetchData<Todo[]>('todos', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
         if (response) {
             todos = response;
             renderTodos();
         }
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
+        if (error === HttpStatus.UNAUTHORIZED) {
+            window.location.href = './login.html';
+        } else {
+            alert(error);
         }
+        // if (error instanceof errorData){
+        //     if(error.status === HttpStatus.UNAUTHORIZED){
+        //         window.location.href = './login.html';
+        //     }
+        // }
+        //  else{
+        //     alert(error);
+        // }
     }
 }
 
@@ -231,10 +246,11 @@ async function addUserTodo(title: string) {
     request = { title: title };
 
     try {
-        const response = await fetchData<Todo>('', {
+        const response = await fetchData<Todo>('todos', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(request)
         });
@@ -255,10 +271,10 @@ async function addUserTodo(title: string) {
 // 할 일 상태 변경
 async function updateTodoStatus(id: number) {
     try {
-        let response = await fetchData<Todo>(`${id}`, {
+        let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
@@ -283,10 +299,11 @@ async function updateTodoTitle(id: number, title: string) {
     request = { title: title };
 
     try {
-        let response = await fetchData<Todo>(`${id}`, {
+        let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(request)
         });
@@ -309,8 +326,11 @@ async function updateTodoTitle(id: number, title: string) {
 // 할 일 삭제
 async function deleteTodo(id: number) {
     try {
-        await fetchData(`${id}`, {
-            method: 'DELETE'
+        await fetchData(`todos/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
 
         todos = todos.filter(todo => todo.id !== id);
