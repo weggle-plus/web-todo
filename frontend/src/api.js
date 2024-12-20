@@ -1,3 +1,5 @@
+import axios from "axios";
+
 //axios 호출 관련 함수
 let clickedItemId = null;
 let todoList = [];
@@ -16,7 +18,7 @@ const addTodoItem = async () => {
   let inputTodoElement = document.getElementById("input_todo");
   try {
     let todoTitle = inputTodoElement.value;
-    const response = await axios.post("http://localhost:4040/todos", {
+    await axios.post("http://localhost:4040/todos", {
       title: todoTitle,
     });
     console.log("todo added : ", todoTitle);
@@ -35,9 +37,7 @@ const addTodoItem = async () => {
 
 const deleteTodoItem = async (clickedItemId) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:4040/todos/${clickedItemId}`
-    );
+    await axios.delete(`http://localhost:4040/todos/${clickedItemId}`);
     clickedItemId = null;
     getTodoItems();
   } catch (error) {
@@ -48,12 +48,9 @@ const deleteTodoItem = async (clickedItemId) => {
 
 const checkDone = async (todoItem) => {
   try {
-    const response = await axios.patch(
-      `http://localhost:4040/todos/${todoItem.id}`,
-      {
-        done: !todoItem.done,
-      }
-    );
+    await axios.patch(`http://localhost:4040/todos/${todoItem.id}`, {
+      done: !todoItem.done,
+    });
   } catch (error) {
     console.log("error: ", error);
     alert("체크박스 체크 에러입니다.");
@@ -61,30 +58,26 @@ const checkDone = async (todoItem) => {
   getTodoItems();
 };
 
-const finishEditing = async (todoItem, isEdited) => {
-  if (isEdited) {
-    try {
-      let todoInput = document.getElementById(`title_input_${todoItem.id}`);
-      const response = await axios.put(
-        `http://localhost:4040/todos/${todoItem.id}`,
-        {
-          title: todoInput.value,
-        }
-      );
-    } catch (error) {
-      console.log("error : ", error);
-      alert("수정에 실패하였습니다.");
-    }
+const updateEditing = async (todoItem) => {
+  try {
+    await axios.put(`http://localhost:4040/todos/${todoItem.id}`, {
+      title: todoItem.title,
+    });
+  } catch (error) {
+    console.log("error : ", error);
+    alert("수정에 실패하였습니다.");
   }
   getTodoItems();
 };
 
-export default {
+const apiModules = {
   getTodoItems,
   addTodoItem,
   deleteTodoItem,
   checkDone,
-  finishEditing,
+  updateEditing,
   clickedItemId,
   todoList,
 };
+
+export default apiModules;
