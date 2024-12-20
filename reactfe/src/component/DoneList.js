@@ -1,4 +1,4 @@
-function DoneList({ doneList, toggleCheckbox }) {
+function DoneList({ doneList, toggleCheckbox, deleteTodo }) {
   return (
     <>
       <div className="done_wrap">
@@ -16,7 +16,12 @@ function DoneList({ doneList, toggleCheckbox }) {
                     onChange={() => toggleCheckbox(item)}
                   ></input>
                   <label className="todo_item_title">{item.title}</label>
-                  <button className="btn_delete">삭제</button>
+                  <button
+                    className="btn_delete"
+                    onClick={() => deleteTodo(item.id)}
+                  >
+                    삭제
+                  </button>
                 </div>
               );
             })

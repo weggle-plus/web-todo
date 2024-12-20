@@ -12,6 +12,9 @@ html, body, #root{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+#root {
+  padding: 0 10px;
+}
 
 input[type="text"] {
   flex: 1;
@@ -71,7 +74,6 @@ button {
   min-width: 800px;
   max-width: 1200px;
   height: 100%;
-  padding: 0 100px;
   margin: 0 auto;
 }
 nav {
@@ -157,9 +159,6 @@ section {
   background-color: #00000029;
   justify-content: center;
   align-items: center;
-}
-#modal_container.hidden {
-  display: none;
 }
 .modal_wrap {
   display: flex;

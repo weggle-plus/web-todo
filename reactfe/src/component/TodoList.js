@@ -1,4 +1,4 @@
-function TodoList({ todoList, toggleCheckbox }) {
+function TodoList({ todoList, toggleCheckbox, deleteTodo }) {
   return (
     <>
       <div className="todo_wrap">
@@ -16,7 +16,12 @@ function TodoList({ todoList, toggleCheckbox }) {
                   ></input>
                   <label className="todo_item_title">{item.title}</label>
                   <button className="btn_modify">수정</button>
-                  <button className="btn_delete">삭제</button>
+                  <button
+                    className="btn_delete"
+                    onClick={() => deleteTodo(item.id)}
+                  >
+                    삭제
+                  </button>
                 </div>
               );
             })
