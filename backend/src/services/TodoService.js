@@ -81,7 +81,7 @@ class TodoService {
       }
     }
     const updatedTodo = this._processUpdate(todo, updateData);
-    return this.todoRepository.formatTodoResponse(updatedTodo);
+    return updatedTodo;
   }
 
   async updateTodoStatus(userId, todoId) {
@@ -91,8 +91,8 @@ class TodoService {
       throw ServiceError.todoNotBelongToUser();
     }
     const status = todo.status === constants.TODO_STATUS.DONE ? constants.TODO_STATUS.IN_PROGRESS : constants.TODO_STATUS.DONE;
-    const updatedTodo = this._processUpdate(todo, { status })
-    return this.todoRepository.formatTodoResponse(updatedTodo);
+    const updatedTodo = this._processUpdate(todo, { status });
+    return updatedTodo;
   }
 
   async _processUpdate(todo, updates) {
