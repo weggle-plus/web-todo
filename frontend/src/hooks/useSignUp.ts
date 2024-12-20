@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { authAPI } from "../service/authAPI";
 
 const useSignUp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<{ username?: string; password?: string }>({});
+
+  const navigate = useNavigate();
 
   const validateUsername = () => {
     if (!username.trim()) {
@@ -34,7 +37,7 @@ const useSignUp = () => {
     try {
       await authAPI.signup(username, password);
       alert("회원가입이 성공적으로 완료되었습니다.");
-      window.location.href = "/login";
+      navigate("/login"); // 회원가입 성공 시 로그인 페이지로 이동
     } catch (error: any) {
       setErrors((prev) => ({ ...prev, username: error.response?.data?.error || "회원가입 실패" }));
     }
