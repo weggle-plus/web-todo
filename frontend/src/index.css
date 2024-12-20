@@ -75,6 +75,7 @@ button {
   max-width: 1200px;
   height: 100%;
   margin: 0 auto;
+  justify-content: center;
 }
 nav {
   height: calc(100% - 40px);
