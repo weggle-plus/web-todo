@@ -1,9 +1,13 @@
 const path = require('path');
 
 module.exports = {
-  entry: './src/index.ts', // 엔트리 파일 (TypeScript 진입점)
+  entry: {
+    index: './src/index.ts',
+    login: './src/login.ts',
+    join: './src/join.ts'
+  },// 엔트리 파일 (TypeScript 진입점)
   output: {
-    filename: 'bundle.js', // 번들 파일 이름
+    filename: '[name]_bundle.js', // 번들 파일 이름
     path: path.resolve(__dirname, 'dist'), // 출력 경로
   },
   resolve: {
