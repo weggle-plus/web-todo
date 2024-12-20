@@ -4,7 +4,7 @@ function DeleteCheckModal({ onConfirmDelete, onCancelDelete }) {
       <div className="modal_wrap">
         <span>정말 삭제하시겠습니까?</span>
         <div>
-          <button id="modal_close_true_btn" onClick={() => onConfirmDelete()}>
+          <button onClick={() => onConfirmDelete()}>
             확인
           </button>
           <button

@@ -176,3 +176,6 @@ section {
 .modal_wrap > div {
   text-align: right;
 }
+#modal_close_false_btn{
+  margin-left: 4px;
+}
