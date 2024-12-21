@@ -6,6 +6,7 @@ const BASE_URL = "http://localhost:3000/users"; // 베이스 URL 설정
 export const loginAPI = async (username: string, password: string) => {
   try {
     const response = await axios.post(`${BASE_URL}/login`, { username, password }, { withCredentials: true });
+    console.log(response.data);
     return response.data; // 서버 응답 데이터 반환
   } catch (error) {
     console.error("로그인 요청 실패:", error);

@@ -5,7 +5,7 @@ import Button from "../components/common/Button";
 import styles from "../styles/Login.module.css";
 
 const Login: React.FC = () => {
-  const { login, error } = useAuth();
+  const { login } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
@@ -29,7 +29,6 @@ const Login: React.FC = () => {
         placeholder="아이디를 입력해주세요."
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        error={!!error}
         variant="login"
       />
       <Input
@@ -39,7 +38,7 @@ const Login: React.FC = () => {
         onChange={(e) => setPassword(e.target.value)}
         variant="login"
       />
-      {error && <p className={styles["error-message"]}>{error}</p>}
+
       <Button text="로그인" onClick={handleSubmit} variant="login" />
       <a href="/signup" className={styles["signup-link"]}>
         회원가입
