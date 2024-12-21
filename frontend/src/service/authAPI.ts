@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:3000";
+const BASE_URL = "http://localhost:3000/users";
 
 export const authAPI = {
   signup: async (username: string, password: string) => {
@@ -8,10 +8,10 @@ export const authAPI = {
     return response.data;
   },
 
-  login: async (email: string, password: string) => {
+  login: async (username: string, password: string) => {
     const response = await axios.post(
       `${BASE_URL}/login`,
-      { email, password },
+      { username, password },
       { withCredentials: true } // 쿠키 포함 설정
     );
     return response.data;
