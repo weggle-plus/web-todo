@@ -6,6 +6,7 @@ import DoneList from "./component/DoneList";
 import DeleteCheckModal from "./component/DeleteCheckModal";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Login from "./Login";
+import Join from "./Join";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -82,9 +83,10 @@ function App() {
     <BrowserRouter>
       <div className="container">
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/join" element={<Join />} />
           <Route
-            path="/todo"
+            path="/"
             element={
               isLoggedIn ? (
                 <>

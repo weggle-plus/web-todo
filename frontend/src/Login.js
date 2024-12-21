@@ -1,7 +1,9 @@
 import { useState } from "react";
-import "./login.css";
+import "./login-join.css";
+import { useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     id: "",
     password: "",
@@ -20,24 +22,30 @@ function Login() {
     setIsValidated(validatePassword);
   };
 
+  const HandleClickJoin = () => {
+    navigate("/join");
+  };
+
   return (
-    <div className="login_wrap">
-      <span className="login_title">로그인</span>
-      <div className="login_input_wrap">
+    <div className="login_join_wrap">
+      <span className="login_join_title">로그인</span>
+      <div className="input_wrap">
         <input type="text" className={isValidated ? "" : "input_error"}></input>
         <input
           type="password"
-          minLength="8" 
+          minLength="8"
           onBlur={HandleInputBlur}
           className={isValidated ? "" : "input_error"}
         ></input>
         {!isValidated && (
-          <span className="login_warning">
+          <span className="input_warning">
             아이디와 비밀번호를 확인해주세요.
           </span>
         )}
         <button>로그인</button>
-        <button className="btn_modify">회원가입</button>
+        <button className="btn_modify" onClick={HandleClickJoin}>
+          회원가입
+        </button>
       </div>
     </div>
   );
