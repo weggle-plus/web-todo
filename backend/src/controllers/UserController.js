@@ -36,7 +36,7 @@ class UserController {
 
   static getProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.getProfile(req.user.id, req.params.id);
+      const user = await UserController.userService.getProfile(req.user.id);
       res.json(user);
     } catch (error) {
       next(error);
@@ -47,15 +47,6 @@ class UserController {
     try {
       const user = await UserController.userService.updateProfile(req.user.id, req.body);
       res.json(user);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static logout = async (req, res, next) => {
-    try {
-      await UserController.userService.logout(req.user.id);
-      res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
       next(error);
     }
