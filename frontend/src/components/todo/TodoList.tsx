@@ -1,9 +1,8 @@
-import React from "react";
-import useModal from "../hooks/useModal";
-import Modal from "./Modal";
+import useModal from "../../hooks/useModal";
+import Modal from "../common/Modal";
 import TodoItem from "./TodoItem";
-import styles from "./TodoList.module.css";
-import { TodoListProps } from "../types";
+import styles from "../../styles/TodoList.module.css";
+import { TodoListProps } from "../../types/todos";
 
 const TodoList: React.FC<TodoListProps> = ({
   todos,
@@ -35,7 +34,7 @@ const TodoList: React.FC<TodoListProps> = ({
             <TodoItem
               key={todo.id}
               item={todo}
-              isTodo={true}
+              isTodo
               handleToggleTodo={handleToggleTodo}
               handleDeleteTodo={(id, isTodo) => openModal(id, isTodo)}
               startEditing={startEditing}

@@ -1,51 +1,42 @@
-import React from "react";
-import useTodoList from "./hooks/useTodoList";
-import Sidebar from "./components/Sidebar";
-import TodoInput from "./components/TodoInput";
-import TodoList from "./components/TodoList";
-import "./assets/App.css";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import TodoApp from "./pages/TodoApp";
+import SignUp from "./pages/SignUp";
+import Login from "./pages/Login";
+import PublicRoute from "./routes/PublicRoute";
 
-const App: React.FC = () => {
-  const {
-    todos,
-    done,
-    inputValue,
-    setInputValue,
-    handleAddTodo,
-    handleDeleteTodo,
-    handleToggleTodo,
-    editingTodoId,
-    editingText,
-    setEditingText,
-    startEditing,
-    saveEditing,
-    cancelEditing,
-  } = useTodoList();
-
+function App() {
   return (
-    <div className="app">
-      <Sidebar />
-      <div className="main-content">
-        <TodoInput 
-          inputValue={inputValue} 
-          setInputValue={setInputValue} 
-          handleAddTodo={handleAddTodo} 
+    <Router>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <SignUp />
+            </PublicRoute>
+          }
         />
-        <TodoList 
-          todos={todos} 
-          done={done} 
-          handleToggleTodo={handleToggleTodo} 
-          handleDeleteTodo={handleDeleteTodo}
-          editingTodoId={editingTodoId}
-          editingText={editingText}
-          setEditingText={setEditingText}
-          startEditing={startEditing}
-          saveEditing={saveEditing}
-          cancelEditing={cancelEditing}
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
         />
-      </div>
-    </div>
+        <Route
+          path="/todo"
+          element={
+            <ProtectedRoute>
+              <TodoApp />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
   );
-};
+}
 
 export default App;

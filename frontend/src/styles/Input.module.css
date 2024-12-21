@@ -1,0 +1,32 @@
+.inputField {
+    padding: 10px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    margin-right: 10px;
+    box-sizing: border-box;
+  }
+  
+  .inputField.login {
+    width: 300px;
+    margin-bottom: 1rem;
+    border: 1px solid #ced4da;
+    font-size: 1rem;
+  }
+  
+  .inputField:focus {
+    outline: none;
+    border-color: #495057;
+  }
+  
+  .inputError {
+    border-color: #dc3545;
+    background-color: #f8d7da;
+  }
+  
+  .inputError.login {
+    border-color: #e03131;
+    background-color: #fff5f5;
+  }
+  

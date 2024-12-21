@@ -1,0 +1,59 @@
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.signup-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #212529;
+}
+
+.input-field {
+  width: 300px;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #495057;
+}
+
+.input-error {
+  border-color: #e03131; /* 붉은 테두리 */
+  background-color: #fff5f5; /* 옅은 붉은 배경 */
+}
+
+.input-error:focus {
+  border-color: #c92a2a; /* 포커스 상태에서 더 진한 붉은색 */
+}
+
+.error-message {
+  color: #e03131;
+  font-size: 0.9rem;
+  margin: 8px 0 12px; /* 입력 필드와 버튼 사이에 적절한 간격 */
+}
+
+.button {
+  width: 300px;
+  padding: 10px;
+  background-color: #212529;
+  color: #ffffff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: #343a40;
+}
