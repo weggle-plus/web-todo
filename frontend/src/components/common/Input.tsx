@@ -26,7 +26,9 @@ const Input: React.FC<InputProps> = ({
       onChange={onChange}
       onBlur={onBlur}
       placeholder={placeholder}
-      className={`${styles.inputField} ${error ? styles.inputError : ""} ${styles[variant]}`}
+      className={`${styles.inputField} ${
+        variant === "login" ? styles.login : ""
+      } ${error ? styles.inputError : ""}`}
     />
   );
 };
