@@ -4,6 +4,7 @@ import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
 import dotenv from 'dotenv';
+const cors = require('cors')({origin: true});
 
 dotenv.config();
 const secret = process.env.COOKIE_SECRET || "default-secret-key";
@@ -19,6 +20,7 @@ app.set('views', path.join(__dirname, '../src/views'));
 app.set('view engine', 'pug');
 
 // 미들웨어 설정
+app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
