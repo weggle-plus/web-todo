@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../datebase/db");
+const db = require("../database/db");
 const { StatusCodes } = require("http-status-codes");
 
 router.post("/", (req, res) => {

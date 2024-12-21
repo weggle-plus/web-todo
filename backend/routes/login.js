@@ -2,7 +2,7 @@ const express = require("express");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const router = express.Router();
-const db = require("../datebase/db");
+const db = require("../database/db");
 
 dotenv.config();
 

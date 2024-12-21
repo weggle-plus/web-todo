@@ -1,20 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../datebase/db");
+const db = require("../database/db");
 const { StatusCodes } = require("http-status-codes");
-const { extractUserIdFromToken } = require("../middleware/token");
+const { checkUserId } = require("../middleware/token");
 
-router.get("/", (req, res) => {
-  const userId = extractUserIdFromToken(req.headers.authorization);
+router.get("/", checkUserId, (req, res) => {
   const sql = `SELECT * FROM todos WHERE user_id = ?`;
-  console.log("Request Headers:", req.headers);
-  console.log(req.headers.authorization);
 
-  if(!userId) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: "userId is missing"})
-  }
-
-  db.all(sql, [userId], (err, rows) => {
+  db.all(sql, [req.userId], (err, rows) => {
     if (err) {
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -24,14 +17,9 @@ router.get("/", (req, res) => {
   });
 });
 
-router.post("/", (req, res) => {
-  const userId = extractUserIdFromToken(req.headers.authorization);
+router.post("/", checkUserId, (req, res) => {
   const { title } = req.body;
   const sql = `INSERT INTO todos (title, user_id) VALUES (?, ?)`;
-
-  if(!userId) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: "userId is missing"})
-  }
 
   if (!title || !title.trim()) {
     return res
@@ -39,7 +27,7 @@ router.post("/", (req, res) => {
       .json({ message: "Invalid input format" });
   }
 
-  db.run(sql, [title, userId], (err) => {
+  db.run(sql, [title, req.userId], (err) => {
     if (err) {
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -51,17 +39,12 @@ router.post("/", (req, res) => {
   });
 });
 
-router.patch("/:id", (req, res) => {
-  const userId = extractUserIdFromToken(req.headers.authorization);
+router.patch("/:id", checkUserId, (req, res) => {
   const { id } = req.params;
   const { done } = req.body;
-  const sql = `UPDATE todos SET done = ? WHERE id = ?`;
+  const sql = `UPDATE todos SET done = ? WHERE id = ? AND user_id = ?`;
 
-  if(!userId) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: "userId is missing"})
-  }
-
-  db.get(`SELECT * FROM todos WHERE id = ? AND user_id = ?`, [id, userId], (err, row) => {
+  db.get(`SELECT * FROM todos WHERE id = ? AND user_id = ?`, [id, req.userId], (err, row) => {
     if (err) {
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -73,7 +56,7 @@ router.patch("/:id", (req, res) => {
         .json({ message: "TO DO id not found" });
     }
 
-    db.run(sql, [done, id], function (err) {
+    db.run(sql, [done, id, req.userId], function (err) {
       if (err) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -85,15 +68,10 @@ router.patch("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
-  const userId = extractUserIdFromToken(req.headers.authorization);
+router.put("/:id", checkUserId, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
   const sql = `UPDATE todos SET title = ? WHERE id = ? AND user_id = ?`;
-
-  if(!userId) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: "userId is missing"})
-  }
 
   if (!title || !title.trim()) {
     return res
@@ -101,7 +79,7 @@ router.put("/:id", (req, res) => {
       .json({ message: "Invalid input format" });
   }
 
-  db.get(`SELECT * FROM todos WHERE id = ? AND user_id = ?`, [id, userId], (err, row) => {
+  db.get(`SELECT * FROM todos WHERE id = ? AND user_id = ?`, [id, req.userId], (err, row) => {
     if (err) {
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -114,7 +92,7 @@ router.put("/:id", (req, res) => {
         .json({ message: "TO DO id not found" });
     }
 
-    db.run(sql, [title, id, userId], function (err) {
+    db.run(sql, [title, id, req.userId], function (err) {
       if (err) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -126,16 +104,11 @@ router.put("/:id", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
-  const userId = extractUserIdFromToken(req.headers.authorization);
+router.delete("/:id", checkUserId, (req, res) => {
   const { id } = req.params;
   const sql = `DELETE FROM todos WHERE id = ? AND user_id = ?`;
 
-  if(!userId) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({ message: "userId is missing"})
-  }
-
-  db.get(`SELECT * FROM todos WHERE id = ? AND user_id = ?`, [id, userId], (err, row) => {
+  db.get(`SELECT * FROM todos WHERE id = ? AND user_id = ?`, [id, req.userId], (err, row) => {
     if (err) {
       return res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
@@ -148,7 +121,7 @@ router.delete("/:id", (req, res) => {
         .json({ message: "TO DO id not found" });
     }
 
-    db.run(sql, [id, userId], function (err) {
+    db.run(sql, [id, req.userId], function (err) {
       if (err) {
         return res
           .status(StatusCodes.INTERNAL_SERVER_ERROR)

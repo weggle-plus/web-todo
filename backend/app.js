@@ -4,7 +4,7 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
-require("./datebase/init.js");
+require("./database/init.js");
 
 const todosRouter = require("./routes/todos");
 const usersRouter = require("./routes/users");
