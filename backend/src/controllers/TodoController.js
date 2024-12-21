@@ -22,7 +22,25 @@ class TodoController {
   static getUserTodos = async (req, res, next) => {
     try {
       const todos = await TodoController.todoService.getUserTodos(req.user.id);
-      res.json(todos);
+      res.status(StatusCodes.OK).json(todos);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static getTeamTodos = async (req, res, next) => {
+    try {
+      const todos = await TodoController.todoService.getTeamTodos(req.user.id, req.params.teamId);
+      res.status(StatusCodes.OK).json(todos);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static createTeamTodo = async (req, res, next) => {
+    try {
+      const todo = await TodoController.todoService.createTeamTodo(req.user.id, req.params.teamId, req.body);
+      res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       next(error);
     }
@@ -31,25 +49,7 @@ class TodoController {
   static updateTodo = async (req, res, next) => {
     try {
       const todo = await TodoController.todoService.updateTodo(req.user.id, req.params.id, req.body);
-      res.json(todo);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static getTeamTodos = async (req, res, next) => {
-    try {
-      const todos = await TodoController.todoService.getTeamTodos(req.params.teamId);
-      res.json(todos);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static createTeamTodo = async (req, res, next) => {
-    try {
-      const todo = await TodoController.todoService.createTeamTodo(req.params.teamId, req.body);
-      res.status(StatusCodes.CREATED).json(todo);
+      res.status(StatusCodes.OK).json(todo);
     } catch (error) {
       next(error);
     }
@@ -58,7 +58,7 @@ class TodoController {
   static updateTodoStatus = async (req, res, next) => {
     try {
       const todo = await TodoController.todoService.updateTodoStatus(req.user.id, req.params.id);
-      res.json(todo);
+      res.status(StatusCodes.OK).json(todo);
     } catch (error) {
       next(error);
     }

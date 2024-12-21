@@ -93,6 +93,12 @@ const TeamInvitationSchema = {
     required: true,
     references: 'users.id'
   },
+  role: {
+    type: 'enum',
+    values: Object.values(constants.TEAM_MEMBER_ROLES),
+    required: false,
+    default: constants.TEAM_MEMBER_ROLES.MEMBER
+  },
   invitationMessage: {
     type: 'text',
     required: false,

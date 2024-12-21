@@ -39,7 +39,7 @@ class TeamRepository {
     throw new Error('Method not implemented');
   }
 
-  async acceptInvitation(teamId, inviteeId) {
+  async acceptInvitation(teamId, inviteeId, role) {
     throw new Error('Method not implemented');
   }
 

@@ -136,15 +136,6 @@ class TeamMariaRepository extends TeamRepository {
     });
   }
 
-  async findInvitationRecord(teamId, inviteeId) {
-    return await this.TeamInvitation.findOne({ 
-      where: { 
-        teamId, 
-        inviteeId
-      } 
-    });
-  }
-
   async inviteMember(teamId, inviterId, inviteeId, invitationMessage = '') {
     await this.TeamInvitation.create({
       teamId,
@@ -155,13 +146,25 @@ class TeamMariaRepository extends TeamRepository {
     });
   } 
 
-  async acceptInvitation(teamId, inviteeId) {
-    await this.addMember(teamId, inviteeId);
-    await this.TeamInvitation.update({
-      invitationStatus: 'accepted',
-      respondedAt: new Date()
-    }, {
-      where: { teamId, inviteeId }
+  async findInvitationRecord(teamId, inviteeId) {
+    return await this.TeamInvitation.findOne({ 
+      where: { 
+        teamId, 
+        inviteeId
+      } 
+    });
+  }
+
+  async acceptInvitation(teamId, inviteeId, role = TEAM_MEMBER_ROLES.MEMBER) {
+    await this.Team.sequelize.transaction(async (t) => {
+      await this.addMember(teamId, inviteeId, role, { transaction: t });
+      await this.TeamInvitation.update({
+        invitationStatus: 'accepted',
+        respondedAt: new Date()
+      }, {
+        where: { teamId, inviteeId },
+        transaction: t
+      });
     });
   }
 
@@ -180,12 +183,12 @@ class TeamMariaRepository extends TeamRepository {
     });
   }
 
-  async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
+  async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER, options = {}) {
     await this.UserTeam.create({
       teamId,
       userId,
       role
-    });
+    }, options);
   }
 
   async isMember(teamId, userId) {

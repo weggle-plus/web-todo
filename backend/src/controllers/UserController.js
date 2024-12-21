@@ -52,15 +52,6 @@ class UserController {
     }
   }
 
-  static logout = async (req, res, next) => {
-    try {
-      await UserController.userService.logout(req.user.id);
-      res.status(StatusCodes.NO_CONTENT).send();
-    } catch (error) {
-      next(error);
-    }
-  }
-
   static deleteProfile = async (req, res, next) => {
     try {
       await UserController.userService.deleteProfile(req.user.id);

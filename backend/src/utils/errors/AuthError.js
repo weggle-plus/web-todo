@@ -8,16 +8,52 @@ class AuthError extends Error {
     this.statusCode = statusCode;
   }
 
+  /**
+   * 인증 실패 에러
+   * @returns {AuthError} 상태 코드 401 (UNAUTHORIZED)를 가진 AuthError
+   */
   static unauthorized() {
     return new AuthError(AUTH_ERROR_MESSAGES.UNAUTHORIZED, StatusCodes.UNAUTHORIZED);
   }
 
+  /**
+   * 토큰이 유효하지 않은 경우 에러
+   * @returns {AuthError} 상태 코드 401 (UNAUTHORIZED)를 가진 AuthError
+   */
   static invalidToken() {
     return new AuthError(AUTH_ERROR_MESSAGES.INVALID_TOKEN, StatusCodes.UNAUTHORIZED);
   }
 
+  /**
+   * 권한이 없는 경우 에러
+   * @returns {AuthError} 상태 코드 403 (FORBIDDEN)를 가진 AuthError
+   */
   static forbidden() {
     return new AuthError(AUTH_ERROR_MESSAGES.FORBIDDEN, StatusCodes.FORBIDDEN);
+  }
+
+  /**
+   * 유저 이름이 이미 존재하는 경우 에러
+   * @returns {AuthError} 상태 코드 409 (CONFLICT)를 가진 AuthError
+   */
+  static usernameAlreadyExists() {
+    return new AuthError(AUTH_ERROR_MESSAGES.USERNAME_ALREADY_EXISTS, StatusCodes.CONFLICT);
+  }
+
+  /**
+   * 유저 또는 팀 권한이 없음 에러
+   * @returns {AuthError} 상태 코드 401 (UNAUTHORIZED)를 가진 AuthError
+   */ 
+  static invalidUsernameOrPassword() {
+    return new AuthError(AUTH_ERROR_MESSAGES.INVALID_USERNAME_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
+  }
+
+  /**
+   * 멤버가 아닌 사용자의 초대 제한 에러
+   * @returns {AuthError} 상태 코드 401 (UNAUTHORIZED)를 가진 AuthError
+   */ 
+  static restrictInviteToMembers() {
+    return new AuthError(AUTH_ERROR_MESSAGES.RESTRICT_INVITE_TO_MEMBERS, StatusCodes.UNAUTHORIZED);
   }
 }
 

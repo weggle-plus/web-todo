@@ -1,5 +1,4 @@
 // 필요한 외부 모듈 불러오기
-const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');

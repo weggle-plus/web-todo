@@ -35,7 +35,6 @@ const SERVICE_ERROR_MESSAGES = {
   USER: {
     NOT_FOUND: '사용자를 찾을 수 없습니다.',
     USERNAME_ALREADY_EXISTS: '이미 등록된 사용자 이름입니다.',
-    INVALID_USERNAME_OR_PASSWORD: '사용자 이름 또는 비밀번호가 올바르지 않습니다.',
   },
   TEAM: {
     NOT_FOUND: '팀을 찾을 수 없습니다.',
@@ -49,7 +48,7 @@ const SERVICE_ERROR_MESSAGES = {
     CANNOT_INVITE_SELF: '자신을 초대할 수 없습니다.',
     INVALID_TEAM_ROLE: '유효하지 않은 팀 역할입니다.',
     HAS_MEMBERS: '팀원이 존재하여 삭제할 수 없습니다.',
-    RESTRICT_INVITE_TO_MEMBERS: '초대는 팀원만 가능합니다.'
+    
   }
 };
 
@@ -57,7 +56,9 @@ const SERVICE_ERROR_MESSAGES = {
 const AUTH_ERROR_MESSAGES = {
   UNAUTHORIZED: '인증이 필요합니다.',
   INVALID_TOKEN: '유효하지 않은 토큰입니다.',
-  FORBIDDEN: '권한이 없습니다.'
+  FORBIDDEN: '권한이 없습니다.',
+  INVALID_USERNAME_OR_PASSWORD: '사용자 이름 또는 비밀번호가 올바르지 않습니다.',
+  RESTRICT_INVITE_TO_MEMBERS: '초대는 팀원만 가능합니다.'
 };
 
 // 데이터베이스 관련 에러 메시지

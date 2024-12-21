@@ -116,7 +116,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **Request Body:** 
   - 없음
 
-- **성공 응답 (200 OK):**  
+- **성공 응답: 200 OK**  
 ```json
 [
   {
@@ -131,6 +131,12 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
     "completedAt": null
   }
 ]
+```
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 유저 또는 팀 404 Not Found, 유저 또는 팀 권한이 없음 403 Forbidden**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
 ```
 
 #### 4. 팀의 TODO 생성
@@ -204,7 +210,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "title": "수정된 할 일 제목"
 }  
 ```
-- **성공 응답 (200 OK):**  
+- **성공 응답: 200 OK**  
 ```json
 {
   "id": "todo_id",
@@ -216,7 +222,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "completedAt": "2024-03-15T12:30:00.000Z"
 }  
 ```
-- **실패 응답 : 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found, 유저 또는 팀 권한이 없음 403 Forbidden**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -239,7 +245,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **Request Body:**  
   - 없음
 
-- **성공 응답 (200 OK):**  
+- **성공 응답: 200 OK**  
 ```json
 {
   "id": "todo_id",
@@ -251,7 +257,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "completedAt": "2024-03-15T12:30:00.000Z"
 }  
 ```
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 TODO 404 Not Found, 유저 또는 팀 권한이 없음 403 Forbidden**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -315,7 +321,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "password": "password123!"
 }
 ```
-- **성공 응답 (201 Created):**
+- **성공 응답: 201 Created**
 ```json
 {
   "username": "user_name",
@@ -328,7 +334,44 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-#### 2. 로그인
+#### 2. 유저 이름 중복 체크
+- 유저 이름이 중복되는지 체크합니다.
+
+- **URL:** `/users/check-username`
+- **Method:** `GET`
+- **Request Header:** 
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| Content-Type | 필수 | application/json |
+
+- **Request Body:**  
+
+| 필드 | 필수 | 설명 |
+| --- | --- | --- |
+| username | 필수 | 유저 이름 |
+
+```json
+{
+  "username": "user_name"
+}
+```
+
+- **성공 응답: 200 OK**
+```json
+{
+  "isAvailable": true  // 중복되지 않은 경우 true, 중복된 경우 false
+}
+```
+
+- **실패 응답: 입력 오류 400 Bad Request**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
+
+#### 3. 로그인
 사용자 인증을 수행하고 JWT 토큰을 발급합니다.
 
 - **URL:** `/users/login`
@@ -352,7 +395,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   "password": "password123"
 }
 ```
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
 ```json
 {
   "username": "user_name",
@@ -367,7 +410,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```
 
 
-#### 3. 프로필 조회
+#### 4. 프로필 조회
 사용자의 프로필 정보를 조회합니다.
 
 - **URL:** `/users/:userId`
@@ -382,20 +425,20 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **Request Body:** 
   - 요청 본문 없음
 
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
 ```json
 {
     "username": "user_name"
 }
 ```
-- **실패 응답 (401 Unauthorized):**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 존재하지 않는 유저 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
 }
 ```
 
-#### 4. 프로필 업데이트
+#### 5. 프로필 업데이트
 - 사용자의 프로필 정보를 업데이트합니다.
 - 아이디 변경 시 토큰도 재발급해야 합니다.
 
@@ -421,13 +464,13 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
 ```json
 {
   "username": "updated_user_name"
 }
 ```
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 존재하지 않는 유저 404 Not Found**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 존재하지 않는 유저 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -470,7 +513,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **성공 응답 (201 Created):**
+- **성공 응답: 201 Created**
 ```json
 {
   "message": "팀이 생성되었습니다.",
@@ -507,7 +550,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 | --- | --- | --- |
 | Authorization | 필수 | Bearer <JWT 토큰> |
 
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
 ```json
 {
   "id": "team_id",
@@ -525,7 +568,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **실패 응답: 인증 실패 401 Unauthorized, 존재하지 않는 팀 404 Not Found**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 존재하지 않는 팀 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -546,7 +589,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **Request Body:** 
   - 없음
 
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
 ```json
 [
   {
@@ -579,9 +622,15 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
   }
 ]
 ```
+- **실패 응답: 인증 실패 401 Unauthorized, 존재하지 않는 팀 404 Not Found**  
+```json
+{
+  "error": "구체적인 오류 메시지"
+}
+```
 
 #### 4. 팀 업데이트
-
+- 팀 이름, 팀 설명을 업데이트합니다.
 - **URL:** `/teams/:teamId`
 - **Method:** `PUT`
 - **URL 파라미터:** teamId (팀의 고유 식별자)
@@ -607,7 +656,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **성공 응답 (200 OK):**
+- **성공 응답: 200 OK**
 ```json
 {
   "id": "team_id",
@@ -626,7 +675,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 존재하지 않는 팀 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -646,7 +695,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 - **성공 응답: 204 No Content**
   - 응답 본문 없음
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized**  
+- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 존재하지 않는 팀 404 Not Found, 팀에 멤버가 존재하는 경우 409 Conflict**  
 ```json
 {
   "error": "구체적인 오류 메시지"
@@ -718,7 +767,7 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 - **성공 응답 : 200 OK**
   - 응답 본문 없음
 
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 팀 또는 사용자 없음 404 Not Found**  
+- **실패 응답: 입력 오류, action 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 팀 또는 사용자 없음 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"

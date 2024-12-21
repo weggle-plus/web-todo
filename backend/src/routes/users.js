@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
 const authMiddleware = require('../middleware/auth.middleware');
-const { validateLogin, validateUserIdParam, validateProfile, validateUsername } = require('../middleware/validateRequest');
+const { validateRegister, validateLogin, validateUserIdParam, validateProfile, validateUsername } = require('../middleware/validateRequest');
 
 // 회원가입
 router.post('/register', 
-  validateProfile, 
+  validateRegister, 
   async (req, res, next) => {
     await UserController.register(req, res, next);
   }
