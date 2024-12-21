@@ -1,24 +1,63 @@
-var todoId = 1;
+
 var todoListArray=[];
 var todoList_contents_html = "";
 var doneList_contents_html = "";
 
-function data_submit(){
-    let todo_content={
-        id : todoId,
+
+const url = "http://localhost:1234/";
+
+
+async function getTodoList(){
+  todoListArray = [];
+  const response = await fetch(url,{
+    method: "GET",
+    mode:"cors",
+  }).then((response) => response.json())
+  .then(data =>{
+    data.forEach(element => {
+      let todo_content={
+        id : 0,
         content : "",
         isDone : false
     }
-    todoId++;
-    todo_content.content=document.getElementById('todo-input').value;
+    todo_content.id=element.id;
+    todo_content.content=element.contents;
+    todo_content.isDone=element.isDone;
+    console.log(element);
+    todoListArray.push(todo_content);
+  })
+
+  
+
+
+});
+}
+
+
+async function data_submit(){
+
+
+    todo_content=document.getElementById('todo-input').value;
     document.getElementById('todo-input').value = "";
     console.log(todo_content);
-    todoListArray.push(todo_content);
+  console.log(typeof(todo_content));
+    await fetch(url, {
+      method: "POST",
+      mode: "cors",
+      body: JSON.stringify({
+        "contents" : todo_content,
+      }),
+    })
+    .then((response) => response.json())
+    .then((result) => console.log(result));
+
+    //todoListArray.push(todo_content);
     make_list();
 }
 
 
-function make_list(){
+async function make_list(){
+  await getTodoList();
     todoList_contents_html = "";
     doneList_contents_html = "";
     todoListArray.forEach(element => {
@@ -32,15 +71,15 @@ function makeContent(id,content,isDone){
     if(!isDone){
         let todoList_content = `<div class="todo-content-div"><input type="checkbox" id="todo-content${id}" value=${id} onclick="check(event)"/>` 
         + `<label for="todo-content${id}">${content}</label>`
-        + `<button id="todo-content${id}" class="content-modify-button" onclick="modifyContent(this.id)">수정</button>`
-        + `<button id="todo-content${id}" class="content-delete-button" onclick="deleteContent(this.id)">삭제</button> </div>`;
+        + `<button id="${id}" class="content-modify-button" onclick="modifyContent(this.id)">수정</button>`
+        + `<button id="${id}" class="content-delete-button" onclick="deleteContent(this.id)">삭제</button> </div>`;
         todoList_contents_html += todoList_content;
         
     }
     else{
         let doneList_content = `<div class="done-content-div"><input type="checkbox" id="todo-content${id}" value=${id} onclick="check(event)" checked/>` 
         + `<label for="todo-content${id}">${content}</label>`
-        + `<button id="todo-content${id}" class="content-delete-button" onclick="deleteContent(this.id)">삭제</button></div>`;
+        + `<button id="${id}" class="content-delete-button" onclick="deleteContent(this.id)">삭제</button></div>`;
         doneList_contents_html += doneList_content;
         
     }
@@ -80,6 +119,11 @@ function modifyContent(clickedId){
 
 }
 
-function deleteContent(clickedId){
-
+async function deleteContent(clickedId){
+  fetch(`${url}${clickedId}`, {
+    method: 'DELETE',
+  }).then(response => response.json())
+    .then(data => console.log(data))
 }
+
+make_list();
