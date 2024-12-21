@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { authAPI } from "../service/authAPI";
+import { loginAPI } from "../service/authAPI";
 
 const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -20,7 +20,7 @@ const useAuth = () => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await authAPI.login(email, password);
+      const response = await loginAPI(email, password);
       const token = response.token;
       if (token) {
         localStorage.setItem("token", token);

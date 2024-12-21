@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { authAPI } from "../service/authAPI";
+import { useNavigate } from "react-router-dom";
+import { signUpAPI } from "../service/authAPI";
 
 const useSignUp = () => {
   const [username, setUsername] = useState("");
@@ -10,6 +11,8 @@ const useSignUp = () => {
     password: null as string | null,
     confirmPassword: null as string | null, // 재입력 에러 상태 추가
   });
+
+  const navigate = useNavigate();
 
   // 아이디 검증
   const validateUsername = () => {
@@ -59,8 +62,9 @@ const useSignUp = () => {
     }
 
     try {
-      await authAPI.signUp({ username, password });
+      await signUpAPI({ username, password });
       alert("회원가입이 완료되었습니다.");
+      navigate("/login");
     } catch (error) {
       console.error("회원가입 실패:", error);
       alert("회원가입 중 문제가 발생했습니다.");
