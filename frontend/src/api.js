@@ -26,7 +26,7 @@ const getTodoItems = async () => {
   try {
     const response = await axios.get("http://localhost:4040/todos", {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     });
     return (todoList = response.data);
@@ -48,7 +48,7 @@ const addTodoItem = async () => {
       },
       {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -72,7 +72,7 @@ const deleteTodoItem = async (clickedItemId) => {
   try {
     await axios.delete(`http://localhost:4040/todos/${clickedItemId}`, {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
       },
     });
     clickedItemId = null;
@@ -93,7 +93,7 @@ const checkDone = async (todoItem) => {
       },
       {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
@@ -114,7 +114,7 @@ const updateEditing = async (todoItem) => {
       },
       {
         headers: {
-          Authorization: token,
+          Authorization: `Bearer ${token}`,
         },
       }
     );
