@@ -1,8 +1,18 @@
 import axios from "axios";
 
-//axios 호출 관련 함수
 let clickedItemId = null;
 let todoList = [];
+
+const login = async (loginData) => {
+  try {
+    const response = await axios.post("http://localhost:4040/login", {
+      userId: loginData.id,
+      password: loginData.password,
+    });
+  } catch (error) {
+    alert(error.response.data.message);
+  }
+};
 
 const getTodoItems = async () => {
   try {
@@ -71,6 +81,7 @@ const updateEditing = async (todoItem) => {
 };
 
 const apiModules = {
+  login,
   getTodoItems,
   addTodoItem,
   deleteTodoItem,
