@@ -1,21 +1,23 @@
 const db = require("./db");
 
-// TO DO 테이블 생성
 db.serialize(() => {
   db.run(
     `
     CREATE TABLE IF NOT EXISTS todos (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       title VARCHAR(200) NOT NULL,
-      done BOOLEAN NOT NULL DEFAULT 0
+      done BOOLEAN NOT NULL DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP, 
+      updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      user_id TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
   `,
     (err) => {
       if (err) {
         console.error("Error creating table:", err.message);
-      } else {
-        console.log("Table created successfully.");
       }
+      console.log("todos Table is ready");
     }
   );
 
