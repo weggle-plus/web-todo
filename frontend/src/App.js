@@ -4,17 +4,29 @@ import apiModules from "./api";
 import { useEffect, useState } from "react";
 import DoneList from "./component/DoneList";
 import DeleteCheckModal from "./component/DeleteCheckModal";
+import { Route, Routes, useNavigate } from "react-router-dom";
+import Login from "./Login";
+import Join from "./Join";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [todoList, setTodoList] = useState([]);
   const [doneList, setDoneList] = useState([]);
   const [deleteModal, setDeleteModal] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
   const [editingTodoId, setEditingTodoId] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    getTodoItems();
-  }, []);
+    const token =
+      localStorage !== undefined ? localStorage.getItem("token") : null;
+    if (token) {
+      setIsLoggedIn(true);
+    }
+    if (isLoggedIn) {
+      getTodoItems();
+    }
+  }, [isLoggedIn]);
 
   const getTodoItems = () => {
     apiModules.getTodoItems().then((items) => {
@@ -72,38 +84,62 @@ function App() {
       console.log("error : ", error);
     }
   };
+  const handleClickLogout = () => {
+    if (localStorage !== undefined) {
+      localStorage.removeItem("token");
+      navigate("/login");
+    }
+  };
 
   return (
     <div className="container">
-      <nav>
-        <div className="nav_todo">할 일 목록</div>
-      </nav>
-      <section>
-        <Input
-          addTodoItem={apiModules.addTodoItem}
-          getTodoItems={getTodoItems}
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/join" element={<Join />} />
+        <Route
+          path="/"
+          element={
+            isLoggedIn ? (
+              <>
+                <nav>
+                  <div className="nav_todo">할 일 목록</div>
+                  <button className="btn_modify" onClick={handleClickLogout}>
+                    로그아웃
+                  </button>
+                </nav>
+                <section>
+                  <Input
+                    addTodoItem={apiModules.addTodoItem}
+                    getTodoItems={getTodoItems}
+                  />
+                  <TodoList
+                    todoList={todoList}
+                    toggleCheckbox={toggleCheckbox}
+                    deleteTodo={deleteTodo}
+                    startEditing={startEditing}
+                    cancelEditing={cancelEditing}
+                    editingTodoId={editingTodoId}
+                    updateEditing={updateEditing}
+                  />
+                  <DoneList
+                    doneList={doneList}
+                    toggleCheckbox={toggleCheckbox}
+                    deleteTodo={deleteTodo}
+                  />
+                  {deleteModal && (
+                    <DeleteCheckModal
+                      onConfirmDelete={onConfirmDelete}
+                      onCancelDelete={onCancelDelete}
+                    />
+                  )}
+                </section>
+              </>
+            ) : (
+              <Login setIsLoggedIn={setIsLoggedIn} />
+            )
+          }
         />
-        <TodoList
-          todoList={todoList}
-          toggleCheckbox={toggleCheckbox}
-          deleteTodo={deleteTodo}
-          startEditing={startEditing}
-          cancelEditing={cancelEditing}
-          editingTodoId={editingTodoId}
-          updateEditing={updateEditing}
-        />
-        <DoneList
-          doneList={doneList}
-          toggleCheckbox={toggleCheckbox}
-          deleteTodo={deleteTodo}
-        />
-        {deleteModal && (
-          <DeleteCheckModal
-            onConfirmDelete={onConfirmDelete}
-            onCancelDelete={onCancelDelete}
-          />
-        )}
-      </section>
+      </Routes>
     </div>
   );
 }
