@@ -5,10 +5,13 @@ JWT를 이용한 TODO 프로젝트
 ### 시연 영상
 
 - 회원 가입
+![signup](https://github.com/user-attachments/assets/64702543-bb0a-4c9c-8f15-21db75b8228b)
 
 - 로그인
+![login](https://github.com/user-attachments/assets/20e193bd-c540-48c0-946d-0b1bd57c7647)
 
 - 할 일 목록
+![todo](https://github.com/user-attachments/assets/c0db21ab-5018-447c-8958-3cf68b5efc74)
 
 ### 구현 기능
 
