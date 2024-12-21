@@ -36,7 +36,7 @@ class UserController {
 
   static getProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.getProfile(req.user.id, req.params.id);
+      const user = await UserController.userService.getProfile(req.user.id);
       res.json(user);
     } catch (error) {
       next(error);

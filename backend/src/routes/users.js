@@ -12,14 +12,6 @@ router.post('/register',
   }
 );
 
-// 유저 이름 중복 체크
-router.get('/check-username', 
-  validateUsername, 
-  async (req, res, next) => {
-    await UserController.checkUsername(req, res, next);
-  }
-);
-
 // 로그인
 router.post('/login', 
   validateLogin, 
@@ -31,8 +23,7 @@ router.post('/login',
 router.use(authMiddleware.authenticate);
 
 // 프로필 조회
-router.get('/:id', 
-  validateUserIdParam,
+router.get('/', 
   async (req, res, next) => {
     await UserController.getProfile(req, res, next);
   }

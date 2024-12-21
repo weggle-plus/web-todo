@@ -334,44 +334,8 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 }
 ```
 
-#### 2. 유저 이름 중복 체크
-- 유저 이름이 중복되는지 체크합니다.
 
-- **URL:** `/users/check-username`
-- **Method:** `GET`
-- **Request Header:** 
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| Content-Type | 필수 | application/json |
-
-- **Request Body:**  
-
-| 필드 | 필수 | 설명 |
-| --- | --- | --- |
-| username | 필수 | 유저 이름 |
-
-```json
-{
-  "username": "user_name"
-}
-```
-
-- **성공 응답: 200 OK**
-```json
-{
-  "isAvailable": true  // 중복되지 않은 경우 true, 중복된 경우 false
-}
-```
-
-- **실패 응답: 입력 오류 400 Bad Request**  
-```json
-{
-  "error": "구체적인 오류 메시지"
-}
-```
-
-#### 3. 로그인
+#### 2. 로그인
 사용자 인증을 수행하고 JWT 토큰을 발급합니다.
 
 - **URL:** `/users/login`
@@ -410,12 +374,11 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```
 
 
-#### 4. 프로필 조회
+#### 3. 프로필 조회
 사용자의 프로필 정보를 조회합니다.
 
-- **URL:** `/users/:userId`
+- **URL:** `/users`
 - **Method:** `GET`
-- **URL 파라미터:** userId (사용자의 고유 식별자)
 - **Request Header:** 
 
 | 필드 | 필수 | 설명 |
@@ -431,14 +394,14 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
     "username": "user_name"
 }
 ```
-- **실패 응답: 입력 오류 400 Bad Request, 인증 실패 401 Unauthorized, 권한이 없음 403 Forbidden, 존재하지 않는 유저 404 Not Found**  
+- **실패 응답: 인증 실패 401 Unauthorized, 존재하지 않는 유저 404 Not Found**  
 ```json
 {
   "error": "구체적인 오류 메시지"
 }
 ```
 
-#### 5. 프로필 업데이트
+#### 4. 프로필 업데이트
 - 사용자의 프로필 정보를 업데이트합니다.
 - 아이디 변경 시 토큰도 재발급해야 합니다.
 

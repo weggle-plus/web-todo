@@ -85,14 +85,8 @@ class UserService {
    * @returns {Promise<Object>} 유저 객체
    * @throws {AuthError} (401 Unauthorized, 403 Forbidden)
    */
-  async getProfile(userId, id) {
-    const user = await this.userRepository.findById(id);
-    if (!user) {
-      throw AuthError.forbidden();
-    }
-    if (user.id !== userId) {
-      throw AuthError.forbidden();
-    }
+  async getProfile(userId) {
+    const user = await this.userRepository.findById(userId);
     return this.userRepository.formatUserResponse(user);
   }
 

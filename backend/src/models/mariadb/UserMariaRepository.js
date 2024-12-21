@@ -1,7 +1,6 @@
 const User = require('./UserMaria');
 const bcrypt = require('bcrypt');
 const UserRepository = require('../interfaces/UserRepository');
-const DatabaseError = require('../../utils/errors/DatabaseError');
 
 class UserMariaRepository extends UserRepository {
   constructor(UserModel = User) {
@@ -54,10 +53,9 @@ class UserMariaRepository extends UserRepository {
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
-    const result = await this.User.update(updateData, { 
+    await this.User.update(updateData, { 
       where: { id: userId } 
     });
-    if (result[0] === 0) throw DatabaseError.userUpdateFailed();
     const updatedUser = await this.findById(userId);
     return this.formatUserResponse(updatedUser);
   }
