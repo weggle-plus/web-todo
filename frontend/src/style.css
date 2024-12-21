@@ -36,7 +36,8 @@
     flex-shrink: 0;
     gap: 8px;
     position: relative;
-    width: 240px;
+    height: 100%;
+    width: auto;
 }
 
 .menu-item {
@@ -44,6 +45,7 @@
     align-items: center;
     position: relative;
     width: 240px;
+    height: auto;
     padding: 8px 16px;
     cursor: pointer;
     background-color: #E2E8F0;
@@ -77,8 +79,8 @@
 }
 
 input[type="text"] {
-    width: 100%;
-    height: 40px;
+    width: 855px;
+    height: auto;
     padding: 8px 16px;
     border: 1px solid #D4D4D8;
     border-radius: 4px;
@@ -94,19 +96,8 @@ input[type="text"]:focus {
 }
 
 #add-button {
-    border: none;
-    border-radius: 4px;
-    border-color: #94A3B8;
-    background-color: #0F172A;
-    color: #FFFFFF;
-    padding: 8px, 16px;
     height: 40px;
     width: 88px;
-}
-
-#add-button:hover {
-    background-color: #0F172ACC;
-    transition: 0.2s;
 }
 
 .list-container {
@@ -125,9 +116,17 @@ input[type="text"]:focus {
 
 .todo-item {
     display: flex;
+    flex-direction: row;
     align-items: center;
-    position: relative;
-    gap: 16px;
+    justify-content: space-between;
+}
+
+.item-title-group {
+    display: flex;
+    align-items: left;
+    flex-direction: row;
+    gap: 10px;
+    flex: 1;
 }
 
 input[type="checkbox"] {
@@ -149,49 +148,33 @@ input[type="checkbox"]:checked {
 }
 
 .todo-item span {
-    flex: 1;
+    width: 100%;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
+.todo-item input[type="text"] {
+    width: 715px;
+}
+
+#done-list .todo-item span {
+    text-decoration: line-through;
+}
+
 .item-button-group {
     display: flex;
-    gap: 8px;
+    gap: 4px;
 }
 
 #edit-button {
-    box-sizing: border-box;
-    border-radius: 4px;
-    border: 1px solid #94A3B8;
-    border-width: 1px;
-    background-color: transparent;
-    color: #0F172A;
-    padding: 8px, 16px;
     height: 40px;
     width: 60px;
-}
-
-#edit-button:hover {
-    background-color: #94A3B8;
-    color: #FFFFFF;
-    transition: 0.2s;
 }
 
 #delete-button {
-    border: 1px solid #EF4444;
-    border-radius: 4px;
-    background-color: transparent;
-    color: #EF4444;
-    padding: 8px, 16px;
     height: 40px;
     width: 60px;
-}
-
-#delete-button:hover {
-    background-color: #EF4444;
-    color: #FFFFFF;
-    transition: 0.2s;
 }
 
 .section-title {
@@ -249,21 +232,55 @@ input[type="checkbox"]:checked {
     gap: 4px;
 }
 
-.modal-content button {
-    border-radius: 4px;
-    font-size: 16px;
-    padding: 8px 16px;
-    font-size: 16px;
-}
-
-#confirm-delete {
+.gray-filled-button {
     border: none;
     background-color: #0F172A;
     color: #FFFFFF;
 }
 
-#cancel-delete {
+.gray-filled-button:hover {
+    background-color: #0F172ACC;
+    transition: 0.2s;
+}
+
+.gray-outline-button {
     border: 1px solid #94A3B8;
+    border-width: 1px;
     background-color: transparent;
     color: #0F172A;
+    padding: 8px, 16px;
+}
+
+.gray-outline-button:hover {
+    background-color: #94A3B8;
+    color: #FFFFFF;
+    transition: 0.2s;
+}
+
+.red-outline-button {
+    border: 1px solid #EF4444;
+    background-color: transparent;
+    color: #EF4444;
+}
+
+.red-outline-button:hover {
+    background-color: #EF4444;
+    color: #FFFFFF;
+    transition: 0.2s;
+}
+
+.login-input-group{
+    display: flex;
+    flex-direction: column;
+}
+
+.login-button-group{
+    display: flex;
+    flex-direction: column;
+    width: 150px;
+}
+
+.join-input-group{
+    display: flex;
+    flex-direction: column;
 }

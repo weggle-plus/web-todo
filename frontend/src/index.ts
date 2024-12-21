@@ -1,4 +1,4 @@
-import { fetchData } from "./api";
+import { fetchData, HttpStatus, errorData } from "./api";
 
 interface Todo {
     id: number;
@@ -53,24 +53,28 @@ function updateEmptyMessage(type: 'todo' | 'done', count: number) {
 
 function createTodoItem(todo: Todo) {
     const li = document.createElement('li');
-    li.className = "todo-item";
+    li.className = 'todo-item';
+
+    const itemTitleGroup = document.createElement('div');
+    itemTitleGroup.className = 'item-title-group';
 
     const checkBox = createCheckbox(todo);
-    li.appendChild(checkBox);
+    itemTitleGroup.appendChild(checkBox);
 
     const todoTitleSpan = document.createElement('span');
     todoTitleSpan.textContent = todo.title;
-    li.appendChild(todoTitleSpan);
+    itemTitleGroup.appendChild(todoTitleSpan);
 
     const buttonGroup = document.createElement('div');
     buttonGroup.className = 'item-button-group';
 
-    const editButton = createEditButton(todo, li, todoTitleSpan);
+    const editButton = createEditButton(todo);
     buttonGroup.appendChild(editButton);
 
     const deleteButton = createDeleteButton(todo.id);
     buttonGroup.appendChild(deleteButton);
 
+    li.appendChild(itemTitleGroup);
     li.appendChild(buttonGroup);
 
     return li;
@@ -83,59 +87,106 @@ function createCheckbox(todo: Todo): HTMLElement {
 
     checkBox.addEventListener('change', () => {
         updateTodoStatus(todo.id);
-        renderTodos();
     });
 
     return checkBox;
 }
 
-function createEditButton(todo: Todo, li: HTMLElement, todoTitleSpan: HTMLElement): HTMLElement {
-    const editButton = document.createElement('button');
-    editButton.id = 'edit-button';
+function createInputField(value?: string): HTMLInputElement {
+    const inputField = document.createElement('input');
+    inputField.type = 'text';
+    if (value) {
+        inputField.value = value;
+    }
 
-    editButton.innerText = '수정';
+    return inputField;
+}
+
+function createButton(className: string, id: string, text: string): HTMLButtonElement {
+    const button = document.createElement('button');
+    button.className = className;
+    button.id = id;
+    button.innerText = text;
+
+    return button;
+}
+
+// 기본적으로는 수정버튼이지만 수정중일 때는 완료버튼이 된다.
+function createEditButton(todo: Todo): HTMLElement {
+    const editButton = createButton('gray-outline-button', 'edit-button', '수정');
 
     if (todo.status === 'done') {
         editButton.style.display = 'none';
     }
 
     editButton.addEventListener('click', () => {
-        if (editButton.innerText === '수정') {
-            editButton.innerText = '완료';
+        // 수정버튼인 상태에서 클릭 => isEditing: true
+        const isEditing = editButton.innerText === '수정';
 
-            const inputField = document.createElement('input') as HTMLInputElement;
-            inputField.type = 'text';
-            inputField.value = todo.title;
-
-            li.insertBefore(inputField, todoTitleSpan);
-            li.removeChild(todoTitleSpan);
-        } else {
-            const inputField = li.querySelector('input[type="text"]') as HTMLInputElement;
-            if (inputField && inputField.value) {
-                updateTodoTitle(todo.id, inputField.value);
-                todoTitleSpan.textContent = inputField.value;
-            }
-
-            li.insertBefore(todoTitleSpan, inputField);
-            li.removeChild(inputField);
-
-            editButton.innerText = '수정';
-        }
+        updateTodoItemStates(todo, editButton, isEditing);
     });
 
     return editButton;
 }
 
+// 기본적으로는 삭제버튼이지만 수정중일 때는 취소버튼이 된다.
 function createDeleteButton(id: number): HTMLElement {
-    const deleteButton = document.createElement('button');
-    deleteButton.id = 'delete-button';
-    deleteButton.innerText = '삭제';
+    const deleteButton = createButton('red-outline-button', 'delete-button', '삭제');
 
     deleteButton.addEventListener("click", () => {
-        openDeleteModal(id);
+        if (deleteButton.innerText === '취소') {
+            setTodoItemDefault(deleteButton)
+        } else {
+            openDeleteModal(id);
+        }
     })
 
     return deleteButton;
+}
+
+function updateTodoItemStates(todo: Todo, editButton: HTMLButtonElement, isEditing: boolean) {
+
+    const li = editButton.closest('li') as HTMLLIElement;
+    const itemTitleGroup = li.querySelector('.item-title-group') as HTMLDivElement;
+    const deleteButton = li.querySelector('#delete-button') as HTMLButtonElement;
+
+    updateTodoItemButtonStates(editButton, deleteButton, isEditing);
+
+    if (isEditing) {
+        itemTitleGroup.style.display = 'none';
+        li.insertBefore(createInputField(todo.title), itemTitleGroup);
+    } else {
+        const inputField = li.querySelector('input[type="text"]') as HTMLInputElement;
+
+        if (inputField && inputField.value && inputField.value !== todo.title) {
+            updateTodoTitle(todo.id, inputField.value);
+        }
+
+        li.querySelector('input[type="text"]')?.remove();
+        itemTitleGroup.style.display = 'flex';
+    }
+}
+
+// 투두 아이템 버튼 상태 변경
+function updateTodoItemButtonStates(editButton: HTMLButtonElement, deleteButton: HTMLButtonElement, isEditing: boolean) {
+    editButton.innerText = isEditing ? '완료' : '수정';
+    editButton.className = isEditing ? 'gray-filled-button' : 'gray-outline-button';
+
+    deleteButton.innerText = isEditing ? '취소' : '삭제';
+    deleteButton.className = isEditing ? 'gray-outline-button' : 'red-outline-button';
+}
+
+function setTodoItemDefault(deleteButton: HTMLButtonElement) {
+    const li = deleteButton.closest('li') as HTMLLIElement;
+
+    const editButton = li.querySelector('#edit-button') as HTMLButtonElement;
+    const itemTitleGroup = li.querySelector('.item-title-group') as HTMLDivElement;
+
+    // 상태 복구
+    updateTodoItemButtonStates(editButton, deleteButton, false);
+
+    li.querySelector('input[type="text"]')?.remove();
+    itemTitleGroup.style.display = 'flex';
 }
 
 modal.addEventListener("click", async (event) => {
@@ -162,15 +213,30 @@ function closeDeleteModal() {
 // 유저 할일목록 받기
 async function getUserTodos() {
     try {
-        const response = await fetchData<Todo[]>('');
+        const response = await fetchData<Todo[]>('todos', {
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+        });
+
         if (response) {
             todos = response;
             renderTodos();
         }
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
+        if (error === HttpStatus.UNAUTHORIZED) {
+            window.location.href = './login.html';
+        } else {
+            alert(error);
         }
+        // if (error instanceof errorData){
+        //     if(error.status === HttpStatus.UNAUTHORIZED){
+        //         window.location.href = './login.html';
+        //     }
+        // }
+        //  else{
+        //     alert(error);
+        // }
     }
 }
 
@@ -180,10 +246,11 @@ async function addUserTodo(title: string) {
     request = { title: title };
 
     try {
-        const response = await fetchData<Todo>('', {
+        const response = await fetchData<Todo>('todos', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(request)
         });
@@ -204,10 +271,10 @@ async function addUserTodo(title: string) {
 // 할 일 상태 변경
 async function updateTodoStatus(id: number) {
     try {
-        let response = await fetchData<Todo>(`${id}`, {
+        let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             }
         });
 
@@ -232,10 +299,11 @@ async function updateTodoTitle(id: number, title: string) {
     request = { title: title };
 
     try {
-        let response = await fetchData<Todo>(`${id}`, {
+        let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
             body: JSON.stringify(request)
         });
@@ -258,8 +326,11 @@ async function updateTodoTitle(id: number, title: string) {
 // 할 일 삭제
 async function deleteTodo(id: number) {
     try {
-        await fetchData(`${id}`, {
-            method: 'DELETE'
+        await fetchData(`todos/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
 
         todos = todos.filter(todo => todo.id !== id);
