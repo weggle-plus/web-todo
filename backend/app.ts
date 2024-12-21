@@ -16,7 +16,7 @@ import usersRouter from './src/routes/users';
 const app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, '../src/views'));
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // 미들웨어 설정

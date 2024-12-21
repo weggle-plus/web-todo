@@ -5,8 +5,8 @@ const sequelize = new Sequelize({
   dialect: 'mysql',  
   host: 'localhost', 
   username: 'root',  
-  password: 'root', 
-  database: 'Todo_List', 
+  password: 'password', 
+  database: 'todo_db', 
   logging: false, 
 });
 
