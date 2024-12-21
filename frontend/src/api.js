@@ -12,18 +12,23 @@ const login = async (loginData) => {
   }
 };
 
-const join = async(joinData) => {
+const join = async (joinData) => {
   try {
     const response = await axios.post("http://localhost:4040/signup", joinData);
     return response.data;
-  } catch(error) {
+  } catch (error) {
     throw error;
   }
-}
+};
 
 const getTodoItems = async () => {
+  const token = localStorage.getItem("token");
   try {
-    const response = await axios.get("http://localhost:4040/todos");
+    const response = await axios.get("http://localhost:4040/todos", {
+      headers: {
+        Authorization: token,
+      },
+    });
     return (todoList = response.data);
   } catch (error) {
     console.log("error : ", error);
@@ -33,11 +38,20 @@ const getTodoItems = async () => {
 
 const addTodoItem = async () => {
   let inputTodoElement = document.getElementById("input_todo");
+  const token = localStorage.getItem("token");
   try {
     let todoTitle = inputTodoElement.value;
-    await axios.post("http://localhost:4040/todos", {
-      title: todoTitle,
-    });
+    await axios.post(
+      "http://localhost:4040/todos",
+      {
+        title: todoTitle,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
     console.log("todo added : ", todoTitle);
     inputTodoElement.value = "";
     getTodoItems();
@@ -53,8 +67,14 @@ const addTodoItem = async () => {
 };
 
 const deleteTodoItem = async (clickedItemId) => {
+  const token = localStorage.getItem("token");
+
   try {
-    await axios.delete(`http://localhost:4040/todos/${clickedItemId}`);
+    await axios.delete(`http://localhost:4040/todos/${clickedItemId}`, {
+      headers: {
+        Authorization: token,
+      },
+    });
     clickedItemId = null;
     getTodoItems();
   } catch (error) {
@@ -64,10 +84,19 @@ const deleteTodoItem = async (clickedItemId) => {
 };
 
 const checkDone = async (todoItem) => {
+  const token = localStorage.getItem("token");
   try {
-    await axios.patch(`http://localhost:4040/todos/${todoItem.id}`, {
-      done: !todoItem.done,
-    });
+    await axios.patch(
+      `http://localhost:4040/todos/${todoItem.id}`,
+      {
+        done: !todoItem.done,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
   } catch (error) {
     console.log("error: ", error);
     alert("체크박스 체크 에러입니다.");
@@ -76,10 +105,19 @@ const checkDone = async (todoItem) => {
 };
 
 const updateEditing = async (todoItem) => {
+  const token = localStorage.getItem("token");
   try {
-    await axios.put(`http://localhost:4040/todos/${todoItem.id}`, {
-      title: todoItem.title,
-    });
+    await axios.put(
+      `http://localhost:4040/todos/${todoItem.id}`,
+      {
+        title: todoItem.title,
+      },
+      {
+        headers: {
+          Authorization: token,
+        },
+      }
+    );
   } catch (error) {
     console.log("error : ", error);
     alert("수정에 실패하였습니다.");
