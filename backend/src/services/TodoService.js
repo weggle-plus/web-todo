@@ -1,54 +1,31 @@
-const { TODO_STATUS } = require('../models/interfaces/TodoSchema');
-const ValidationError = require('../utils/errors/ValidationError');
-
+const constants = require('../constants/constants');
 
 class TodoService {
   constructor(todoRepository) {
     this.todoRepository = todoRepository;
   }
 
-  validateStatus(status) {
-    if (status && !Object.values(TODO_STATUS).includes(status)) {
-      throw ValidationError.todoStatusInvalid();
-    }
+  async createTodo(todo) {
+    return this.todoRepository.create(todo);
   }
 
-  async validateTodoExists(id) {
-    const todo = await this.todoRepository.findById(id);
-    if (!todo) {
-      throw ValidationError.todoNotFound();
-    }
-    return todo;
+  async getTodos() {
+    return this.todoRepository.findAll();
   }
 
-  async createTodo(todoData) {
-    if (todoData.status) {
-      this.validateStatus(todoData.status);
-    }
-    return await this.todoRepository.create(todoData);
+  async updateTodo(todoId, updateData) {
+    const todo = await this.todoRepository.findById(todoId);
+    const updatedTodo = this._processUpdate(todo, updateData);
+
+    return updatedTodo;
   }
 
-  async getAllTodos() {
-    return await this.todoRepository.findAll();
-  }
+  async updateTodoStatus(todoId) {
+    const todo = await this.todoRepository.findById(todoId);
+    const status = todo.status === constants.TODO_STATUS.DONE ? constants.TODO_STATUS.IN_PROGRESS : constants.TODO_STATUS.DONE;
+    const updatedTodo = this._processUpdate(todo, { status })
 
-  async getTodoById(id) {
-    return await this.validateTodoExists(id);
-  }
-
-  async updateTodo(id, updateData) {
-    const todo = await this.validateTodoExists(id);
-    if (updateData.status) {
-      this.validateStatus(updateData.status);
-    }
-    return this._processUpdate(todo, updateData);
-  }
-
-  async updateTodoStatus(id) {
-    const todo = await this.validateTodoExists(id);
-    const status = todo.status === TODO_STATUS.DONE ? TODO_STATUS.IN_PROGRESS : TODO_STATUS.DONE;
-    
-    return this._processUpdate(todo, { status });
+    return updatedTodo;
   }
 
   async _processUpdate(todo, updates) {
@@ -67,20 +44,18 @@ class TodoService {
     };
 
     const newStatus = updates.status || todo.status;
-    if (newStatus === TODO_STATUS.DONE) {
+    if (newStatus === constants.TODO_STATUS.DONE) {
       if (!todo.completedAt) {
         updatedTodo.completedAt = new Date();
       }
     } else {
       updatedTodo.completedAt = null;
     }
-
     return await this.todoRepository.update(todo.id, updatedTodo);
   }
 
-  async deleteTodo(id) {
-    await this.validateTodoExists(id);
-    return await this.todoRepository.delete(id);
+  async deleteTodo(todoId) {
+    return await this.todoRepository.delete(todoId);
   }
 }
 

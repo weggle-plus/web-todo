@@ -12,9 +12,7 @@ dotenv.config();
 
 // 라우터 모듈 불러오기
 const indexRouter = require('./src/routes/index');
-const usersRouter = require('./src/routes/users');
 const todosRouter = require('./src/routes/todos');
-const teamsRouter = require('./src/routes/teams');
 
 // Express 애플리케이션 생성
 const app = express();
@@ -36,9 +34,7 @@ initializeDatabase().catch(console.error);
 
 // 라우터 설정
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
 app.use('/todos', todosRouter);
-app.use('/teams', teamsRouter);
 
 // 404 에러 처리 미들웨어
 app.use(function(req, res, next) {
