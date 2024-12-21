@@ -1,0 +1,29 @@
+.inputContainer {
+  display: flex;
+  gap: 10px; /* 입력 필드와 버튼 사이의 간격 */
+  margin-bottom: 20px;
+}
+
+.inputField {
+  flex: 1;
+  padding: 10px;
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #ccc;
+  border-radius: 8px; /* 경계선 둥글게 */
+  font-size: 16px;
+}
+
+.addButton {
+  padding: 10px 20px;
+  background-color: #000; /* 검은색 배경 */
+  color: #fff; /* 흰색 글자 */
+  border: none;
+  border-radius: 8px; /* 버튼도 둥근 경계선 */
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.addButton:hover {
+  background-color: #333; /* 호버 시 조금 더 어두운 검정 */
+}
