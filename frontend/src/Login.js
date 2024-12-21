@@ -3,7 +3,7 @@ import "./login-join.css";
 import { useNavigate } from "react-router-dom";
 import apiModules from "./api";
 
-function Login() {
+function Login({ setIsLoggedIn }) {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState({
     id: "",
@@ -34,8 +34,19 @@ function Login() {
     setIsValidated(validatePassword);
   };
 
-  const HandleClickLogin = () => {
-    apiModules.login(inputs);
+  const HandleClickLogin = async () => {
+    if (isValidated) {
+      try {
+        const response = await apiModules.login(inputs);
+        if (response) {
+          setIsLoggedIn(true);
+          localStorage.setItem("token", response.token);
+          navigate("/");
+        }
+      } catch (error) {
+        alert(error);
+      }
+    }
   };
 
   const HandleClickJoin = () => {

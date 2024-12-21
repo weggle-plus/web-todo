@@ -17,6 +17,11 @@ function App() {
   const [editingTodoId, setEditingTodoId] = useState(false);
 
   useEffect(() => {
+    const token =
+      localStorage !== undefined ? localStorage.getItem("token") : null;
+    if (token) {
+      setIsLoggedIn(true);
+    }
     if (isLoggedIn) {
       getTodoItems();
     }
@@ -121,7 +126,7 @@ function App() {
                   </section>
                 </>
               ) : (
-                <Login />
+                <Login setIsLoggedIn={setIsLoggedIn} />
               )
             }
           />

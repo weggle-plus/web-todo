@@ -5,12 +5,10 @@ let todoList = [];
 
 const login = async (loginData) => {
   try {
-    const response = await axios.post("http://localhost:4040/login", {
-      userId: loginData.id,
-      password: loginData.password,
-    });
+    const response = await axios.post("http://localhost:4040/login", loginData);
+    return response.data;
   } catch (error) {
-    alert(error.response.data.message);
+    throw error;
   }
 };
 
