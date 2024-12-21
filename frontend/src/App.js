@@ -87,6 +87,7 @@ function App() {
   const handleClickLogout = () => {
     if (localStorage !== undefined) {
       localStorage.removeItem("token");
+      setIsLoggedIn(false);
       navigate("/login");
     }
   };
@@ -94,7 +95,10 @@ function App() {
   return (
     <div className="container">
       <Routes>
-        <Route path="/login" element={<Login />} />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
         <Route path="/join" element={<Join />} />
         <Route
           path="/"
