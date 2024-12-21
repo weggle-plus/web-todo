@@ -1,7 +1,6 @@
 const { config } = require('../config/database');
 const TodoMariaRepository = require('./mariadb/TodoMariaRepository');
 const UserMariaRepository = require('./mariadb/UserMariaRepository');
-const TeamMariaRepository = require('./mariadb/TeamMariaRepository');
 
 
 class BaseRepositoryFactory {
@@ -29,14 +28,7 @@ class UserRepositoryFactory extends BaseRepositoryFactory {
   }
 }
 
-class TeamRepositoryFactory extends BaseRepositoryFactory {
-  static createRepository() {
-    return super.createRepository(TeamMariaRepository); // TODO: 몽고 버전 추가
-  }
-}
-
 module.exports = {
   TodoRepositoryFactory,
-  UserRepositoryFactory,
-  TeamRepositoryFactory
+  UserRepositoryFactory
 };

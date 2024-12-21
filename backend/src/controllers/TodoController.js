@@ -1,13 +1,12 @@
 const { StatusCodes } = require('http-status-codes');
 const TodoService = require('../services/TodoService');
-const { TodoRepositoryFactory, UserRepositoryFactory, TeamRepositoryFactory } = require('../models/RepositoryFactory');
+const { TodoRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
 
 
 class TodoController {
   static todoService = new TodoService(
     TodoRepositoryFactory.createRepository(),
-    UserRepositoryFactory.createRepository(),
-    TeamRepositoryFactory.createRepository()
+    UserRepositoryFactory.createRepository()
   );
 
   static createTodo = async (req, res, next) => {
@@ -28,23 +27,6 @@ class TodoController {
     }
   }
 
-  static getTeamTodos = async (req, res, next) => {
-    try {
-      const todos = await TodoController.todoService.getTeamTodos(req.user.id, req.params.teamId);
-      res.status(StatusCodes.OK).json(todos);
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  static createTeamTodo = async (req, res, next) => {
-    try {
-      const todo = await TodoController.todoService.createTeamTodo(req.user.id, req.params.teamId, req.body);
-      res.status(StatusCodes.CREATED).json(todo);
-    } catch (error) {
-      next(error);
-    }
-  }
 
   static updateTodo = async (req, res, next) => {
     try {

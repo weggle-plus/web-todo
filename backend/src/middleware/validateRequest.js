@@ -109,59 +109,8 @@ const validateUserIdParam = [
   validateRequest
 ];
 
-const validateTeam = [
-  body('name')
-    .isString()
-    .notEmpty()
-    .trim()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_REQUIRED)
-    .isLength({ min: constants.TEAM_NAME_MIN_LENGTH, max: constants.TEAM_NAME_MAX_LENGTH })
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_LENGTH),
-  body('description')
-    .optional()
-    .isString()
-    .trim()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.DESCRIPTION_INVALID),
-  validateRequest
-];
 
-const validateTeamIdParam = [
-  param('teamId')
-    .isInt()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TODO.ID_INVALID),
-  validateRequest
-];
 
-const validateMemberRole = [
-  body('role')
-    .optional()
-    .isIn(Object.values(constants.TEAM_MEMBER_ROLES))
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
-  validateRequest
-];
-
-const validateMember = [
-  body('userId')
-    .isInt()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ID_INVALID),
-  body('role')
-    .optional()
-    .isIn(Object.values(constants.TEAM_MEMBER_ROLES))
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
-  validateRequest
-];
-
-const validateInvitation = [
-  param('inviteeId')
-    .isInt()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.INVITEE_ID_INVALID),
-  body('message')
-    .optional()
-    .isString()
-    .trim()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.INVITATION_MESSAGE_INVALID),
-  validateRequest
-];
 
 module.exports = {
   validateTodo,
@@ -171,10 +120,5 @@ module.exports = {
   validateLogin,
   validateUsername,
   validateUserIdParam,
-  validateProfile,
-  validateTeam,
-  validateTeamIdParam,
-  validateMember,
-  validateMemberRole,
-  validateInvitation
+  validateProfile
 };

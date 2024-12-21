@@ -40,21 +40,11 @@ class AuthError extends Error {
     return new AuthError(AUTH_ERROR_MESSAGES.USERNAME_ALREADY_EXISTS, StatusCodes.CONFLICT);
   }
 
-  /**
-   * 유저 또는 팀 권한이 없음 에러
-   * @returns {AuthError} 상태 코드 401 (UNAUTHORIZED)를 가진 AuthError
-   */ 
+
   static invalidUsernameOrPassword() {
     return new AuthError(AUTH_ERROR_MESSAGES.INVALID_USERNAME_OR_PASSWORD, StatusCodes.UNAUTHORIZED);
   }
 
-  /**
-   * 멤버가 아닌 사용자의 초대 제한 에러
-   * @returns {AuthError} 상태 코드 401 (UNAUTHORIZED)를 가진 AuthError
-   */ 
-  static restrictInviteToMembers() {
-    return new AuthError(AUTH_ERROR_MESSAGES.RESTRICT_INVITE_TO_MEMBERS, StatusCodes.UNAUTHORIZED);
-  }
 }
 
 module.exports = AuthError;

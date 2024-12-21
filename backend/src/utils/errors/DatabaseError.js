@@ -41,22 +41,6 @@ class DatabaseError extends Error {
     return new DatabaseError(DATABASE_ERROR_MESSAGES.USER.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
   }
 
-  // Team
-  /**
-   * 팀 업데이트 실패 에러
-   * @returns {DatabaseError} 상태 코드 500 (INTERNAL_SERVER_ERROR)를 가진 DatabaseError
-   */
-  static teamUpdateFailed() {
-    return new DatabaseError(DATABASE_ERROR_MESSAGES.TEAM.UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
-  }
-
-  /**
-   * 팀 삭제 실패 에러
-   * @returns {DatabaseError} 상태 코드 500 (INTERNAL_SERVER_ERROR)를 가진 DatabaseError
-   */
-  static teamDeleteFailed() {
-    return new DatabaseError(DATABASE_ERROR_MESSAGES.TEAM.DELETE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
-  }
 }
 
 module.exports = DatabaseError;
