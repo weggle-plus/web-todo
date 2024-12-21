@@ -14,7 +14,7 @@ const login = async (loginData) => {
 
 const join = async(joinData) => {
   try {
-    const response = await axios.post("http://localhost:4040/join", joinData);
+    const response = await axios.post("http://localhost:4040/signup", joinData);
     return response.data;
   } catch(error) {
     throw error;
