@@ -44,7 +44,7 @@ function Login({ setIsLoggedIn }) {
           navigate("/");
         }
       } catch (error) {
-        alert(error);
+        alert(error.response.data.message);
       }
     }
   };
