@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // 백엔드 API URL
-const BASE_URL = "http://localhost:3001";
+const BASE_URL = "http://localhost:3000";
 
 export interface Todo {
   id: number;
