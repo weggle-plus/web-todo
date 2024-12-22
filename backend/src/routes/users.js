@@ -2,13 +2,21 @@ const express = require('express');
 const router = express.Router();
 const UserController = require('../controllers/UserController');
 const authMiddleware = require('../middleware/auth.middleware');
-const { validateRegister, validateLogin, validateUserIdParam, validateProfile, validateUsername } = require('../middleware/validateRequest');
+const { validateLogin, validateUserIdParam, validateProfile, validateUsername } = require('../middleware/validateRequest');
 
 // 회원가입
 router.post('/register', 
-  validateRegister, 
+  validateProfile, 
   async (req, res, next) => {
     await UserController.register(req, res, next);
+  }
+);
+
+// 유저 이름 중복 체크
+router.get('/check-username', 
+  validateUsername, 
+  async (req, res, next) => {
+    await UserController.checkUsername(req, res, next);
   }
 );
 
@@ -23,7 +31,8 @@ router.post('/login',
 router.use(authMiddleware.authenticate);
 
 // 프로필 조회
-router.get('/', 
+router.get('/:id', 
+  validateUserIdParam,
   async (req, res, next) => {
     await UserController.getProfile(req, res, next);
   }

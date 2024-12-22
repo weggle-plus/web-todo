@@ -1,13 +1,16 @@
 const TodoRepository = require('../interfaces/TodoRepository');
 const Todo = require('./TodoMaria');
 const User = require('./UserMaria');
+const { Team, UserTeam } = require('./TeamMaria');
 
 
 class TodoMariaRepository extends TodoRepository {
-  constructor(TodoModel = Todo, UserModel = User) {
+  constructor(TodoModel = Todo, UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
     super();
     this.Todo = TodoModel;
     this.User = UserModel;
+    this.Team = TeamModel;
+    this.UserTeam = UserTeamModel;
   }
 
   formatTodo(todoData) {
@@ -19,7 +22,8 @@ class TodoMariaRepository extends TodoRepository {
       createdAt: todoData.createdAt,
       createdBy: todoData.createdBy,
       updatedAt: todoData.updatedAt,
-      completedAt: todoData.completedAt
+      completedAt: todoData.completedAt,
+      teamId: todoData.teamId
     };
   }
 
@@ -49,8 +53,16 @@ class TodoMariaRepository extends TodoRepository {
 
   async findByUserId(userId) {
     const todos = await this.Todo.findAll({
-      where: { createdBy: userId },
-      order: [['id', 'DESC']]
+      where: { createdBy: userId, teamId: null },
+      order: [['createdAt', 'DESC']]
+    });
+    return todos.map(todo => this.formatTodo(todo));
+  }
+
+  async findByTeamId(teamId) {
+    const todos = await this.Todo.findAll({
+      where: { teamId: teamId },
+      order: [['createdAt', 'DESC']]
     });
     return todos.map(todo => this.formatTodo(todo));
   }

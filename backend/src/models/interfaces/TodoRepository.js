@@ -11,6 +11,10 @@ class TodoRepository {
     throw new Error('Method not implemented');
   }
 
+  async findByTeamId(teamId) {  // 특정 팀의 할 일 조회
+    throw new Error('Method not implemented');
+  }
+
   async update(todoId, todoData) {  // 할 일 업데이트
     throw new Error('Method not implemented');
   }

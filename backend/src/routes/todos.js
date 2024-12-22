@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const todoController = require('../controllers/TodoController');
 const authMiddleware = require('../middleware/auth.middleware');
-const { validateTodo, validateTodoIdParam } = require('../middleware/validateRequest');
+const { validateTodo, validateTodoIdParam, validateTeamIdParam } = require('../middleware/validateRequest');
 
 router.use(authMiddleware.authenticate);
 
@@ -21,6 +21,21 @@ router.get('/',
   }
 );
 
+// 팀의 TODO 조회
+router.get('/team/:teamId', 
+  validateTeamIdParam, 
+  async (req, res, next) => {
+    await todoController.getTeamTodos(req, res, next);
+  }
+);
+
+// 팀의 TODO 생성
+router.post('/team/:teamId', 
+  validateTeamIdParam, 
+  async (req, res, next) => {
+    await todoController.createTeamTodo(req, res, next);
+  }
+);
 
 // TODO 업데이트
 router.put('/:id', 

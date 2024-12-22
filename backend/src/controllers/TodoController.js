@@ -1,12 +1,13 @@
 const { StatusCodes } = require('http-status-codes');
 const TodoService = require('../services/TodoService');
-const { TodoRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
+const { TodoRepositoryFactory, UserRepositoryFactory, TeamRepositoryFactory } = require('../models/RepositoryFactory');
 
 
 class TodoController {
   static todoService = new TodoService(
     TodoRepositoryFactory.createRepository(),
-    UserRepositoryFactory.createRepository()
+    UserRepositoryFactory.createRepository(),
+    TeamRepositoryFactory.createRepository()
   );
 
   static createTodo = async (req, res, next) => {
@@ -21,17 +22,34 @@ class TodoController {
   static getUserTodos = async (req, res, next) => {
     try {
       const todos = await TodoController.todoService.getUserTodos(req.user.id);
-      res.status(StatusCodes.OK).json(todos);
+      res.json(todos);
     } catch (error) {
       next(error);
     }
   }
 
-
   static updateTodo = async (req, res, next) => {
     try {
       const todo = await TodoController.todoService.updateTodo(req.user.id, req.params.id, req.body);
-      res.status(StatusCodes.OK).json(todo);
+      res.json(todo);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static getTeamTodos = async (req, res, next) => {
+    try {
+      const todos = await TodoController.todoService.getTeamTodos(req.params.teamId);
+      res.json(todos);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static createTeamTodo = async (req, res, next) => {
+    try {
+      const todo = await TodoController.todoService.createTeamTodo(req.params.teamId, req.body);
+      res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       next(error);
     }
@@ -40,7 +58,7 @@ class TodoController {
   static updateTodoStatus = async (req, res, next) => {
     try {
       const todo = await TodoController.todoService.updateTodoStatus(req.user.id, req.params.id);
-      res.status(StatusCodes.OK).json(todo);
+      res.json(todo);
     } catch (error) {
       next(error);
     }

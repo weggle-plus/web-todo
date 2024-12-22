@@ -1,4 +1,5 @@
 // 필요한 외부 모듈 불러오기
+const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -13,6 +14,7 @@ dotenv.config();
 const indexRouter = require('./src/routes/index');
 const usersRouter = require('./src/routes/users');
 const todosRouter = require('./src/routes/todos');
+const teamsRouter = require('./src/routes/teams');
 
 // Express 애플리케이션 생성
 const app = express();
@@ -36,6 +38,7 @@ initializeDatabase().catch(console.error);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/todos', todosRouter);
+app.use('/teams', teamsRouter);
 
 // 404 에러 처리 미들웨어
 // app.use(function(req, res, next) {
