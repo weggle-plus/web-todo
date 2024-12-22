@@ -4,17 +4,22 @@ const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
+const cors = require("cors");
 require("./database/init.js");
 
 const todosRouter = require("./routes/todos");
 const usersRouter = require("./routes/users");
-const loginRouter = require("./routes/login");
-const signupRouter = require("./routes/signup")
-const cors = require("cors");
+const signupRouter = require("./routes/signup");
+const loginRouter = require("./routes/loginRoutes.js");
 
 dotenv.config();
+
 const app = express();
-app.listen(4040);
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`${PORT}번 서버 실행중`);
+});
 
 app.use(
   cors({
@@ -33,17 +38,14 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/todos", todosRouter);
 app.use("/users", usersRouter);
-app.use("/signup", signupRouter)
+app.use("/signup", signupRouter);
 app.use("/", loginRouter);
-
 app.use(function (req, res, next) {
   next(createError(404));
 });
-
 app.use(function (err, req, res, next) {
   res.locals.message = err.message;
   res.locals.error = req.app.get("env") === "development" ? err : {};
-
   res.status(err.status || 500);
   res.render("error");
 });
