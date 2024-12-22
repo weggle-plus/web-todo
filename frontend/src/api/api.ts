@@ -12,19 +12,33 @@ export enum HttpStatus {
     INTERNAL_SERVER_ERROR = 500
 }
 
-export async function fetchData<T>(url?: string, options?: RequestInit): Promise<T | null> {
+export class ErrorData {
+    status: HttpStatus;
+    message: string;
+
+    constructor(status: HttpStatus, message: string){
+        this.status = status;
+        this.message = message;
+    }
+}
+
+export async function fetchData<T>(url?: string, options?: RequestInit): Promise<T | undefined> {
     try {
         const response = await fetch(`${BASE_URL}/${url}`, options);
 
         if (!response.ok) {
-            throw response.status as HttpStatus;
+            //const errorBody = await response.json();
+            console.log(response);
+            //const error = new ErrorData(errorBody.status, errorBody.message);
+
+            throw response.status;
         }
 
-        if (response.status !== HttpStatus.NO_CONTENT) {
-            return await response.json() as T;
+        if (response.status === HttpStatus.NO_CONTENT) {
+            return undefined;
         }
 
-        return null;
+        return await response.json() as T;
     } catch (error) {
         console.error(`Fetch error: ${error}`);
         throw (error);

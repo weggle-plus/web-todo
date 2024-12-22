@@ -1,9 +1,14 @@
-import { fetchData, HttpStatus } from "../api/api";
+import { fetchData, HttpStatus, ErrorData } from "../api/api";
+
+enum Status {
+    IN_PROGRESS = 'in-progress',
+    DONE = 'done'
+}
 
 interface Todo {
     id: number;
     title: string;
-    status: string;
+    status: Status;
 }
 
 interface requestBody {
@@ -41,17 +46,53 @@ function renderTodos() {
     todoList.innerHTML = '';
     doneList.innerHTML = '';
 
-    updateEmptyMessage('todo', todos.filter(todo => todo.status !== 'done').length);
-    updateEmptyMessage('done', todos.filter(todo => todo.status == 'done').length);
+    const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
+    const doneTasks = todos.filter(todo => todo.status === Status.DONE);
 
-    todos.forEach((todo) => {
+    updateEmptyMessage('todo', inProgressTasks.length);
+    updateEmptyMessage('done', doneTasks.length);
+
+    inProgressTasks.forEach(todo => {
         const li = createTodoItem(todo);
-        if (todo.status === 'done') {
-            doneList.appendChild(li);
-        } else {
-            todoList.appendChild(li);
-        }
+        todoList.appendChild(li);
     });
+
+    doneTasks.forEach(todo => {
+        const li = createTodoItem(todo);
+        doneList.appendChild(li);
+    });
+}
+
+function renderTodoItem(todo: Todo) {
+    const li = createTodoItem(todo);
+
+    if (todo.status === Status.DONE)
+        doneList.appendChild(li);
+    else
+        todoList.appendChild(li);
+}
+
+function renderUpdatedTitleTodoItem(todo: Todo) {
+    const li = document.querySelector(`li[data-id="${todo.id}"]`) as HTMLElement;
+
+    if (li) {
+        const updatedLi = createTodoItem(todo);
+        li.replaceWith(updatedLi);
+    }
+}
+
+function renderUpdatedStatusTodoItem(todo: Todo) {
+    const li = document.querySelector(`li[data-id="${todo.id}"]`) as HTMLElement;
+
+    if (li) {
+        const updatedLi = createTodoItem(todo);
+        li.replaceWith(updatedLi);
+    }
+}
+
+function removeTodoItemFromDOM(id: number) {
+    const li = document.querySelector(`li[data-id="${id}"]`) as HTMLElement;
+    li?.remove();
 }
 
 function updateEmptyMessage(type: 'todo' | 'done', count: number) {
@@ -62,6 +103,7 @@ function updateEmptyMessage(type: 'todo' | 'done', count: number) {
 function createTodoItem(todo: Todo) {
     const li = document.createElement('li');
     li.className = 'todo-item';
+    li.setAttribute('data-id', `${todo.id}`);
 
     const itemTitleGroup = document.createElement('div');
     itemTitleGroup.className = 'item-title-group';
@@ -91,7 +133,7 @@ function createTodoItem(todo: Todo) {
 function createCheckbox(todo: Todo): HTMLElement {
     const checkBox = document.createElement('input');
     checkBox.type = 'checkbox';
-    checkBox.checked = todo.status === 'done';
+    checkBox.checked = todo.status === Status.DONE;
 
     checkBox.addEventListener('change', () => {
         updateTodoStatus(todo.id);
@@ -123,7 +165,7 @@ function createButton(className: string, id: string, text: string): HTMLButtonEl
 function createEditButton(todo: Todo): HTMLElement {
     const editButton = createButton('gray-outline-button', 'edit-button', '수정');
 
-    if (todo.status === 'done') {
+    if (todo.status === Status.DONE) {
         editButton.style.display = 'none';
     }
 
@@ -231,11 +273,15 @@ async function getUserTodos() {
             todos = response;
             renderTodos();
         }
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.UNAUTHORIZED)
-            window.location.href = './login.html';
+    } catch (error) {
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.UNAUTHORIZED){
+                window.location.href = './login.html';
+                alert(error.message);
+            }
+        }
         else
-            alert(`unhandled error ${statusCode}`);
+            alert(`unhandled error ${error}`);
     }
 }
 
@@ -258,13 +304,17 @@ async function addUserTodo(title: string) {
             todoInput.value = '';
             const newTodo = { id: response.id, title: response.title, status: response.status }
             todos.push(newTodo);
-            renderTodos();
+            renderTodoItem(newTodo);
         }
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.UNAUTHORIZED)
-            window.location.href = './login.html';
+    } catch (error) {
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.UNAUTHORIZED){
+                window.location.href = './login.html';
+                alert(error.message);
+            }
+        }
         else
-            alert(`unhandled error ${statusCode}`);
+            alert(`unhandled error ${error}`);
     }
 }
 
@@ -279,18 +329,19 @@ async function updateTodoStatus(id: number) {
         });
 
         if (response) {
-            console.log(response.status);
             const index = todos.findIndex(todo => todo.id === response.id);
             if (index !== -1) {
-                todos[index] = { id: response.id, title: response.title, status: response.status };
-                renderTodos();
+                todos[index].status = response.status;
+                renderUpdatedStatusTodoItem(todos[index]);
             }
         }
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.UNAUTHORIZED)
-            window.location.href = './login.html';
+    } catch (error) {
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.UNAUTHORIZED)
+                window.location.href = './login.html';
+        }
         else
-            alert(`unhandled error ${statusCode}`);
+            alert(`unhandled error ${error}`);
     }
 }
 
@@ -313,14 +364,16 @@ async function updateTodoTitle(id: number, title: string) {
             const index = todos.findIndex(todo => todo.id === response.id);
             if (index !== -1) {
                 todos[index] = { id: response.id, title: response.title, status: response.status };
-                renderTodos();
+                renderUpdatedTitleTodoItem(todos[index]);
             }
         }
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.UNAUTHORIZED)
-            window.location.href = './login.html';
+    } catch (error) {
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.UNAUTHORIZED)
+                window.location.href = './login.html';
+        }
         else
-            alert(`unhandled error ${statusCode}`);
+            alert(`unhandled error ${error}`);
     }
 }
 
@@ -335,12 +388,14 @@ async function deleteTodo(id: number) {
         });
 
         todos = todos.filter(todo => todo.id !== id);
-        renderTodos();
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.UNAUTHORIZED)
-            window.location.href = './login.html';
+        removeTodoItemFromDOM(id);
+    } catch (error) {
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.UNAUTHORIZED)
+                window.location.href = './login.html';
+        }
         else
-            alert(`unhandled error ${statusCode}`);
+            alert(`unhandled error ${error}`);
     }
 }
 

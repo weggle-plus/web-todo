@@ -1,4 +1,4 @@
-import { fetchData, HttpStatus } from "../api/api";
+import { ErrorData, fetchData, HttpStatus } from "../api/api";
 
 interface requestBody {
     username: string;
@@ -91,11 +91,13 @@ async function requestJoin(id: string, password: string) {
             alert(`${response.username}님 회원가입 완료!`);
             window.location.href = './login.html';
         }
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.CONFLICT)
-            updateIdErrorState(true, '이미 존재하는 id입니다.');
-        else
-            alert(`unhandled error ${statusCode}`);
+    } catch (error) {
+        // if (error instanceof ErrorData) {
+        //     if (error.status === HttpStatus.CONFLICT)
+        //         updateIdErrorState(true, error.message);
+        // }
+        // else
+        //     alert(`unhandled error ${error}`);
     }
 }
 
