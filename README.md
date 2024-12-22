@@ -99,3 +99,19 @@ backend
    ├─ error.pug
    └─ todos.pug
 ```
+
+### 개선할 여지가 있는 사항
+
+1. 입력한 두 비밀번호가 동일하지 않을 경우
+개발자 도구등을 통해서 FE 비밀번호 검사를 우회할 가능성이 있다.
+FE와 BE 모두 검증하는 것이 보안과 데이터 무결성을 위해 권장된다.
+
+따라서, req에 passwordConfirmation을 추가하여 signup.js안에 아래와 같은 검증을 추가할 수 있다.
+
+```
+if (password !== passwordConfirmation) {
+    return res
+    .status(StatusCodes.BAD_REQUEST)
+    .json({ message: "Passwords do not match" });
+}
+```
