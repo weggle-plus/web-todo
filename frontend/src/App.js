@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
-import Login from "./Login";
-import Join from "./Join";
+import { Route, Routes } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import JoinPage from "./pages/JoinPage";
 import localStorageModule from "./util/localStorage";
 import TodoPage from "./pages/TodoPage";
 
@@ -20,16 +20,16 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+          element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
-        <Route path="/join" element={<Join />} />
+        <Route path="/join" element={<JoinPage />} />
         <Route
           path="/"
           element={
             isLoggedIn ? (
               <TodoPage setIsLoggedIn={setIsLoggedIn} />
             ) : (
-              <Login setIsLoggedIn={setIsLoggedIn} />
+              <LoginPage setIsLoggedIn={setIsLoggedIn} />
             )
           }
         />
