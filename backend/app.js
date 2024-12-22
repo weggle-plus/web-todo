@@ -20,8 +20,8 @@ const teamsRouter = require("./src/routes/teams");
 const app = express();
 
 // 뷰 엔진 설정
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "pug");
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "pug");
 
 // 미들웨어 설정
 app.use(logger("dev")); // 로깅 미들웨어
@@ -45,13 +45,17 @@ app.use("/teams", teamsRouter);
 //   next(createError(404));
 // });
 
-// 에러 처리 미들웨어
-app.use(function (err, req, res, next) {
-  const isDevelopment = process.env.NODE_ENV === "development";
-  const statusCode = err.statusCode || 500;
-  res.status(statusCode).json({
-    message: err.message,
-    ...(isDevelopment && { stack: err.stack }),
+app.use((err, req, res, next) => {
+  // ServiceError나 AuthError 처리
+  if (err.name === "ServiceError" || err.name === "AuthError") {
+    return res.status(err.statusCode).json({
+      message: err.message,
+    });
+  }
+
+  // 기타 에러 처리
+  res.status(500).json({
+    message: "Internal Server Error",
   });
 });
 

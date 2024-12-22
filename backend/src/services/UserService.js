@@ -1,7 +1,7 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const ServiceError = require('../utils/errors/ServiceError');
-const AuthError = require('../utils/errors/AuthError');
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const ServiceError = require("../utils/errors/ServiceError");
+const AuthError = require("../utils/errors/AuthError");
 
 class UserService {
   constructor(userRepository) {
@@ -23,7 +23,8 @@ class UserService {
 
   async register(userData) {
     if (userData.username) {
-      if (await this.isUsernameAvailable(userData.username)) {
+      const isAvailable = await this.isUsernameAvailable(userData.username);
+      if (!isAvailable) {
         throw ServiceError.usernameAlreadyExists();
       }
     }
@@ -46,12 +47,12 @@ class UserService {
     }
 
     await this.userRepository.updateLastLogin(user.id);
-    
+
     const token = this._generateToken(user);
 
     return {
       username: user.username,
-      token
+      token,
     };
   }
 
@@ -70,7 +71,9 @@ class UserService {
     await this.validateUserExists(userId);
 
     if (updateData.username) {
-      const existingUser = await this.userRepository.findByUsername(updateData.username);
+      const existingUser = await this.userRepository.findByUsername(
+        updateData.username
+      );
       if (existingUser) {
         throw ServiceError.usernameAlreadyExists();
       }
@@ -80,7 +83,7 @@ class UserService {
       const token = this._generateToken(user);
       return {
         username: user.username,
-        token
+        token,
       };
     }
     return user;
@@ -88,11 +91,11 @@ class UserService {
 
   _generateToken(user) {
     return jwt.sign(
-      { 
-        username: user.username
+      {
+        username: user.username,
       },
       process.env.JWT_SECRET,
-      { expiresIn: '24h' }
+      { expiresIn: "24h" }
     );
   }
 
