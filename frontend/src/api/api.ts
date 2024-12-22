@@ -27,11 +27,9 @@ export async function fetchData<T>(url?: string, options?: RequestInit): Promise
         const response = await fetch(`${BASE_URL}/${url}`, options);
 
         if (!response.ok) {
-            //const errorBody = await response.json();
-            console.log(response);
-            //const error = new ErrorData(errorBody.status, errorBody.message);
-
-            throw response.status;
+            const errorBody = await response.json();
+            const error = new ErrorData(response.status, errorBody.message);
+            throw error;
         }
 
         if (response.status === HttpStatus.NO_CONTENT) {

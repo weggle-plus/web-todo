@@ -1,4 +1,4 @@
-import { fetchData, HttpStatus } from "../api/api";
+import { ErrorData, fetchData, HttpStatus } from "../api/api";
 
 interface requestBody {
     username: string;
@@ -12,7 +12,7 @@ interface responseBody {
 
 const idInput = document.querySelector('#login-input-id') as HTMLInputElement;
 const pwInput = document.querySelector('#login-input-pw') as HTMLInputElement;
-const span = document.querySelector('span') as HTMLSpanElement;
+const errorMessage = document.querySelector('span') as HTMLSpanElement;
 
 [idInput, pwInput].forEach((input) => {
     input.addEventListener("keydown", (event) => {
@@ -29,19 +29,19 @@ const loginButton = document.querySelector('#login-button') as HTMLButtonElement
 loginButton.addEventListener("click", () => {
     if (idInput.value && pwInput.value) {
         requestLogin(idInput.value, pwInput.value);
-    } 
+    }
 })
 
 idInput.addEventListener('focus', () => {
     idInput.classList.remove('error');
     pwInput.classList.remove('error');
-    span.style.display = 'none';
+    errorMessage.style.display = 'none';
 });
 
 pwInput.addEventListener('focus', () => {
     pwInput.classList.remove('error');
     idInput.classList.remove('error');
-    span.style.display = 'none';
+    errorMessage.style.display = 'none';
 });
 
 async function requestLogin(id: string, password: string) {
@@ -61,13 +61,17 @@ async function requestLogin(id: string, password: string) {
             localStorage.setItem('token', response.token);
             window.location.href = './index.html';
         }
-    } catch (statusCode) {
-        if (statusCode === HttpStatus.UNAUTHORIZED) {
-            span.style.display = 'flex';
-            idInput.classList.add('error');
-            pwInput.classList.add('error');
+    } catch (error) {
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.UNAUTHORIZED) {
+                errorMessage.style.display = 'flex';
+                errorMessage.innerText = error.message;
+                idInput.classList.add('error');
+                pwInput.classList.add('error');
+            } else
+                alert(error.message);
         }
         else
-            alert(`unhandled error ${statusCode}`);
+            alert(`unhandled error ${error}`);
     }
 }

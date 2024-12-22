@@ -275,10 +275,10 @@ async function getUserTodos() {
         }
     } catch (error) {
         if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED){
+            if (error.status === HttpStatus.UNAUTHORIZED)
                 window.location.href = './login.html';
+            else
                 alert(error.message);
-            }
         }
         else
             alert(`unhandled error ${error}`);
@@ -308,10 +308,10 @@ async function addUserTodo(title: string) {
         }
     } catch (error) {
         if (error instanceof ErrorData) {
-            if (error.status === HttpStatus.UNAUTHORIZED){
+            if (error.status === HttpStatus.UNAUTHORIZED)
                 window.location.href = './login.html';
+            else
                 alert(error.message);
-            }
         }
         else
             alert(`unhandled error ${error}`);
@@ -339,6 +339,8 @@ async function updateTodoStatus(id: number) {
         if (error instanceof ErrorData) {
             if (error.status === HttpStatus.UNAUTHORIZED)
                 window.location.href = './login.html';
+            else
+                alert(error.message);
         }
         else
             alert(`unhandled error ${error}`);
@@ -371,6 +373,8 @@ async function updateTodoTitle(id: number, title: string) {
         if (error instanceof ErrorData) {
             if (error.status === HttpStatus.UNAUTHORIZED)
                 window.location.href = './login.html';
+            else
+                alert(error.message);
         }
         else
             alert(`unhandled error ${error}`);
@@ -393,6 +397,8 @@ async function deleteTodo(id: number) {
         if (error instanceof ErrorData) {
             if (error.status === HttpStatus.UNAUTHORIZED)
                 window.location.href = './login.html';
+            else
+                alert(error.message);
         }
         else
             alert(`unhandled error ${error}`);

@@ -92,12 +92,14 @@ async function requestJoin(id: string, password: string) {
             window.location.href = './login.html';
         }
     } catch (error) {
-        // if (error instanceof ErrorData) {
-        //     if (error.status === HttpStatus.CONFLICT)
-        //         updateIdErrorState(true, error.message);
-        // }
-        // else
-        //     alert(`unhandled error ${error}`);
+        if (error instanceof ErrorData) {
+            if (error.status === HttpStatus.CONFLICT)
+                updateIdErrorState(true, error.message);
+            else
+                alert(error.message);
+        }
+        else
+            alert(`unhandled error ${error}`);
     }
 }
 
