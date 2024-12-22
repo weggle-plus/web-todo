@@ -12,7 +12,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [todoList, setTodoList] = useState([]);
   const [doneList, setDoneList] = useState([]);
-  const [deleteModal, setDeleteModal] = useState(false);
+  const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
   const [editingTodoId, setEditingTodoId] = useState(false);
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ function App() {
 
   const deleteTodo = (todoItemId) => {
     setTodoToDelete(todoItemId);
-    setDeleteModal(true);
+    setIsDeleteModalOpened(true);
   };
 
   const onConfirmDelete = async () => {
@@ -64,11 +64,11 @@ function App() {
       console.log("error : ", error);
     }
     getTodoItems();
-    setDeleteModal(false);
+    setIsDeleteModalOpened(false);
     setTodoToDelete(null);
   };
   const onCancelDelete = () => {
-    setDeleteModal(false);
+    setIsDeleteModalOpened(false);
     setTodoToDelete(null);
   };
   const startEditing = (todoItemId) => {
@@ -129,7 +129,7 @@ function App() {
                     toggleCheckbox={toggleCheckbox}
                     deleteTodo={deleteTodo}
                   />
-                  {deleteModal && (
+                  {isDeleteModalOpened && (
                     <DeleteCheckModal
                       onConfirmDelete={onConfirmDelete}
                       onCancelDelete={onCancelDelete}
