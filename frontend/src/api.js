@@ -1,4 +1,5 @@
 import axios from "axios";
+import localStorageModule from "./util/localStorage";
 
 const login = async (loginData) => {
   try {
@@ -19,7 +20,7 @@ const join = async (joinData) => {
 };
 
 const getTodoItems = async () => {
-  const token = localStorage.getItem("token");
+  const token = localStorageModule.get("token");
   try {
     const response = await axios.get("http://localhost:4040/todos", {
       headers: {
@@ -35,7 +36,7 @@ const getTodoItems = async () => {
 
 const addTodoItem = async () => {
   let inputTodoElement = document.getElementById("input_todo");
-  const token = localStorage.getItem("token");
+  const token = localStorageModule.get("token");
   try {
     let todoTitle = inputTodoElement.value;
     await axios.post(
@@ -62,7 +63,7 @@ const addTodoItem = async () => {
 };
 
 const deleteTodoItem = async (clickedItemId) => {
-  const token = localStorage.getItem("token");
+  const token = localStorageModule.get("token");
 
   try {
     await axios.delete(`http://localhost:4040/todos/${clickedItemId}`, {
@@ -77,7 +78,7 @@ const deleteTodoItem = async (clickedItemId) => {
 };
 
 const checkDone = async (todoItem) => {
-  const token = localStorage.getItem("token");
+  const token = localStorageModule.get("token");
   try {
     await axios.patch(
       `http://localhost:4040/todos/${todoItem.id}`,
@@ -97,7 +98,7 @@ const checkDone = async (todoItem) => {
 };
 
 const updateEditing = async (todoItem) => {
-  const token = localStorage.getItem("token");
+  const token = localStorageModule.get("token");
   try {
     await axios.put(
       `http://localhost:4040/todos/${todoItem.id}`,

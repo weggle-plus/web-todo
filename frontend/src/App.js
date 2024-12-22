@@ -7,6 +7,8 @@ import DeleteCheckModal from "./component/DeleteCheckModal";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Login from "./Login";
 import Join from "./Join";
+import localStorageModule from "./util/localStorage";
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -18,8 +20,7 @@ function App() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token =
-      localStorage !== undefined ? localStorage.getItem("token") : null;
+    const token = localStorageModule.get("token");
     if (token) {
       setIsLoggedIn(true);
       getTodoItems();
@@ -87,11 +88,9 @@ function App() {
     }
   };
   const handleClickLogout = () => {
-    if (localStorage !== undefined) {
-      localStorage.removeItem("token");
-      setIsLoggedIn(false);
-      navigate("/login");
-    }
+    localStorageModule.remove("token");
+    setIsLoggedIn(false);
+    navigate("/login");
   };
 
   return (
