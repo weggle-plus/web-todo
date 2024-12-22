@@ -1,153 +1,160 @@
-const { body, param, validationResult } = require('express-validator');
-const { StatusCodes } = require('http-status-codes');
-const { VALIDATION_ERROR_MESSAGES } = require('../constants/messages');
-const constants = require('../constants/constants');
+const { body, param, validationResult } = require("express-validator");
+const { StatusCodes } = require("http-status-codes");
+const { VALIDATION_ERROR_MESSAGES } = require("../constants/messages");
+const constants = require("../constants/constants");
 
 const validateRequest = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(StatusCodes.BAD_REQUEST).json({ errors: errors.array() });
+    const errorMessages = errors
+      .array()
+      .map((err) => err.msg)
+      .join(" ");
+    return res.status(StatusCodes.BAD_REQUEST).json({ message: errorMessages });
   }
   next();
 };
 
-
 const validateTodo = [
-  body('title')
+  body("title")
     .isString()
     .notEmpty()
     .trim()
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.TITLE_REQUIRED)
     .isLength({ max: constants.TODO_TITLE_MAX_LENGTH })
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.TITLE_TOO_LONG),
-  body('content')
+  body("content")
     .optional()
     .isString()
     .trim()
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.CONTENT_INVALID),
-  body('status')
+  body("status")
     .optional()
     .isIn(Object.values(constants.TODO_STATUS))
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.STATUS_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 const validateTodoStatus = [
-  body('status')
+  body("status")
     .notEmpty()
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.STATUS_REQUIRED)
     .isIn(Object.values(constants.TODO_STATUS))
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.STATUS_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 const validateTodoIdParam = [
-  param('id')
-    .isInt()
-    .withMessage(VALIDATION_ERROR_MESSAGES.TODO.ID_INVALID),
-  validateRequest
+  param("id").isInt().withMessage(VALIDATION_ERROR_MESSAGES.TODO.ID_INVALID),
+  validateRequest,
 ];
 
 const validateProfile = [
-  body('username')
+  body("username")
     .optional()
     .isString()
-    .isLength({ min: constants.USERNAME_MIN_LENGTH, max: constants.USERNAME_MAX_LENGTH })
+    .isLength({
+      min: constants.USERNAME_MIN_LENGTH,
+      max: constants.USERNAME_MAX_LENGTH,
+    })
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_LENGTH)
     .trim(),
-  body('password')
+  body("password")
     .optional()
     .isString()
-    .isLength({ min: constants.PASSWORD_MIN_LENGTH, max: constants.PASSWORD_MAX_LENGTH })
+    .isLength({
+      min: constants.PASSWORD_MIN_LENGTH,
+      max: constants.PASSWORD_MAX_LENGTH,
+    })
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
     .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
-  validateRequest
+  validateRequest,
 ];
 
 const validateUsername = [
-  body('username')
+  body("username")
     .isString()
     .notEmpty()
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED),
-  validateRequest
+  validateRequest,
 ];
 
 const validateLogin = [
-  body('username')
+  body("username")
     .isString()
     .notEmpty()
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED),
-  body('password')
+  body("password")
     .isString()
     .notEmpty()
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_REQUIRED),
-  validateRequest
+  validateRequest,
 ];
 
 const validateUserIdParam = [
-  param('id')
+  param("id")
     .isInt()
     .withMessage(VALIDATION_ERROR_MESSAGES.USER.USER_ID_INVALID)
     .toInt(),
-  validateRequest
+  validateRequest,
 ];
 
-
-
-
 const validateTeam = [
-  body('name')
+  body("name")
     .isString()
     .notEmpty()
     .trim()
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_REQUIRED)
-    .isLength({ min: constants.TEAM_NAME_MIN_LENGTH, max: constants.TEAM_NAME_MAX_LENGTH })
+    .isLength({
+      min: constants.TEAM_NAME_MIN_LENGTH,
+      max: constants.TEAM_NAME_MAX_LENGTH,
+    })
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.NAME_LENGTH),
-  body('description')
+  body("description")
     .optional()
     .isString()
     .trim()
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.DESCRIPTION_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 const validateTeamIdParam = [
-  param('teamId')
+  param("teamId")
     .isInt()
     .withMessage(VALIDATION_ERROR_MESSAGES.TODO.ID_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 const validateMemberRole = [
-  body('role')
+  body("role")
     .optional()
     .isIn(Object.values(constants.TEAM_MEMBER_ROLES))
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 const validateMember = [
-  body('userId')
+  body("userId")
     .isInt()
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ID_INVALID),
-  body('role')
+  body("role")
     .optional()
     .isIn(Object.values(constants.TEAM_MEMBER_ROLES))
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.MEMBER_ROLE_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 const validateInvitation = [
-  param('inviteeId')
+  param("inviteeId")
     .isInt()
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.INVITEE_ID_INVALID),
-  body('message')
+  body("message")
     .optional()
     .isString()
     .trim()
     .withMessage(VALIDATION_ERROR_MESSAGES.TEAM.INVITATION_MESSAGE_INVALID),
-  validateRequest
+  validateRequest,
 ];
 
 module.exports = {
@@ -162,5 +169,5 @@ module.exports = {
   validateTeamIdParam,
   validateMember,
   validateMemberRole,
-  validateInvitation
+  validateInvitation,
 };
