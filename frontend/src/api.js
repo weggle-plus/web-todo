@@ -1,8 +1,5 @@
 import axios from "axios";
 
-let clickedItemId = null;
-let todoList = [];
-
 const login = async (loginData) => {
   try {
     const response = await axios.post("http://localhost:4040/login", loginData);
@@ -29,7 +26,7 @@ const getTodoItems = async () => {
         Authorization: `Bearer ${token}`,
       },
     });
-    return (todoList = response.data);
+    return response.data;
   } catch (error) {
     console.log("error : ", error);
     alert("할 일 목록 데이터 가져오기에 실패하였습니다.");
@@ -52,9 +49,7 @@ const addTodoItem = async () => {
         },
       }
     );
-    console.log("todo added : ", todoTitle);
     inputTodoElement.value = "";
-    getTodoItems();
   } catch (error) {
     inputTodoElement.value = "";
     console.log("error : ", error);
@@ -75,8 +70,6 @@ const deleteTodoItem = async (clickedItemId) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    clickedItemId = null;
-    getTodoItems();
   } catch (error) {
     console.log("error : ", error);
     alert("할 일을 삭제할 수 없습니다.");
@@ -101,7 +94,6 @@ const checkDone = async (todoItem) => {
     console.log("error: ", error);
     alert("체크박스 체크 에러입니다.");
   }
-  getTodoItems();
 };
 
 const updateEditing = async (todoItem) => {
@@ -122,7 +114,6 @@ const updateEditing = async (todoItem) => {
     console.log("error : ", error);
     alert("수정에 실패하였습니다.");
   }
-  getTodoItems();
 };
 
 const apiModules = {
@@ -133,8 +124,6 @@ const apiModules = {
   deleteTodoItem,
   checkDone,
   updateEditing,
-  clickedItemId,
-  todoList,
 };
 
 export default apiModules;
