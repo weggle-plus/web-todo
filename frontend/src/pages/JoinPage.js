@@ -43,7 +43,7 @@ function Join() {
   const handleInputIsSameBlur = (e) => {
     const inputPassword = e.target.value;
     setCheckPassword(inputPassword);
-    const isSame = inputs.password === inputPassword ? true : false;
+    const isSame = inputs.password === inputPassword;
     setIsPasswordSame(isSame);
   };
 
@@ -58,6 +58,21 @@ function Join() {
       } catch (error) {
         alert(error.response.data.message);
       }
+    }
+  };
+
+  const getPasswordErrorMessage = (isValidated, isPasswordSame) => {
+    if (!isValidated) {
+      return (
+        <span className="input_warning">
+          "비밀번호는 특수문자/숫자/영문자가 포함된 8자 이상이어야 합니다."
+        </span>
+      );
+    }
+    if (!isPasswordSame) {
+      return (
+        <span className="input_warning">"비밀번호가 일치하지 않습니다."</span>
+      );
     }
   };
 
@@ -83,19 +98,7 @@ function Join() {
           className={isValidated && isPasswordSame ? "" : "input_error"}
           placeholder="비밀번호를 다시 입력해주세요."
         ></input>
-        {!isValidated && !isPasswordSame ? (
-          <span className="input_warning">
-            비밀번호는 특수문자/숫자/영문자가 포함된 8자 이상이어야 합니다.
-          </span>
-        ) : !isValidated ? (
-          <span className="input_warning">
-            비밀번호는 특수문자/숫자/영문자가 포함된 8자 이상이어야 합니다.
-          </span>
-        ) : (
-          !isPasswordSame && (
-            <span className="input_warning">비밀번호가 일치하지 않습니다.</span>
-          )
-        )}
+        {getPasswordErrorMessage(isValidated, isPasswordSame)}
         <button onClick={handleClickJoin}>회원가입</button>
       </div>
     </div>

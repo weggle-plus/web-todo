@@ -44,7 +44,7 @@ function TodoPage({ setIsLoggedIn }) {
     }
   };
 
-  const deleteTodo = (todoItemId) => {
+  const onDeleteTodo = (todoItemId) => {
     setTodoToDelete(todoItemId);
     setIsDeleteModalOpened(true);
   };
@@ -102,7 +102,7 @@ function TodoPage({ setIsLoggedIn }) {
         <TodoList
           todoList={todoList}
           toggleCheckbox={toggleCheckbox}
-          deleteTodo={deleteTodo}
+          onDeleteTodo={onDeleteTodo}
           startEditing={startEditing}
           cancelEditing={cancelEditing}
           editingTodoId={editingTodoId}
@@ -111,7 +111,7 @@ function TodoPage({ setIsLoggedIn }) {
         <DoneList
           doneList={doneList}
           toggleCheckbox={toggleCheckbox}
-          deleteTodo={deleteTodo}
+          onDeleteTodo={onDeleteTodo}
         />
         {isDeleteModalOpened && (
           <DeleteCheckModal

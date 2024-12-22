@@ -3,7 +3,7 @@ import { useState } from "react";
 function TodoList({
   todoList,
   toggleCheckbox,
-  deleteTodo,
+  onDeleteTodo,
   startEditing,
   cancelEditing,
   editingTodoId,
@@ -65,7 +65,7 @@ function TodoList({
                       </button>
                       <button
                         className="btn_delete"
-                        onClick={() => deleteTodo(item.id)}
+                        onClick={() => onDeleteTodo(item.id)}
                       >
                         삭제
                       </button>
