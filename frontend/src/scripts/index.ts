@@ -46,14 +46,15 @@ function renderAllTodos(){
     todoList.innerHTML = '';
     doneList.innerHTML = '';
 
-    const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
-    const doneTasks = todos.filter(todo => todo.status === Status.DONE);
+    const inProgressFragment = document.createDocumentFragment();
+    const doneFragment = document.createDocumentFragment();
 
-    updateEmptyMessage('todo', inProgressTasks.length);
-    updateEmptyMessage('done', doneTasks.length);
+    const {inProgressTasks, doneTasks} = updateTaskStates();
+    inProgressTasks.forEach(todo => inProgressFragment.appendChild(createTodoItem(todo)));
+    doneTasks.forEach(todo => doneFragment.appendChild(createTodoItem(todo)));
 
-    inProgressTasks.forEach(todo => todoList.appendChild(createTodoItem(todo)));
-    doneTasks.forEach(todo => doneList.appendChild(createTodoItem(todo)));
+    todoList.appendChild(inProgressFragment);
+    doneList.appendChild(doneFragment);
 }
 
 function updateTaskStates(){
@@ -62,6 +63,8 @@ function updateTaskStates(){
 
     updateEmptyMessage('todo', inProgressTasks.length);
     updateEmptyMessage('done', doneTasks.length);
+
+    return {inProgressTasks, doneTasks};
 }
 
 function renderTodoItem(todo: Todo) {
