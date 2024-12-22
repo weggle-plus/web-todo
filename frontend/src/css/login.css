@@ -1,0 +1,42 @@
+/* 로그인 */
+.page-login {
+    display: grid;
+    place-items: center;
+    gap: 32px;
+    position: relative;
+    width: 1200px;
+    height: 1024px;
+    margin-left: 142px;
+    padding: 40px 24px 0px;
+}
+
+.container {
+    width: 360px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    gap: 20px;
+    padding-bottom: 40px;
+}
+
+.content {
+    position: relative;
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+}
+
+span{
+    color: #EF4444;
+    font-size: 14px;
+}
+
+#login-input-id {
+    width: 100%;
+}
+
+#login-input-pw {
+    width: 100%;
+}

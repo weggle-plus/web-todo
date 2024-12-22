@@ -1,4 +1,4 @@
-import { fetchData, HttpStatus, errorData } from "./api";
+import { fetchData, HttpStatus } from "../api/api";
 
 interface Todo {
     id: number;
@@ -21,8 +21,16 @@ const doneList = document.getElementById("done-list") as HTMLUListElement;
 const modal = document.getElementById("modal") as HTMLElement;
 const confirmDeleteButton = document.getElementById("confirm-delete") as HTMLButtonElement;
 
+todoInput.addEventListener("change", () => {
+    const title = todoInput.value.trim();
+    if (!title)
+        return;
+
+    addUserTodo(title);
+});
+
 addButton.addEventListener("click", () => {
-    const title = todoInput.value;
+    const title = todoInput.value.trim();
     if (!title)
         return;
 
@@ -223,20 +231,11 @@ async function getUserTodos() {
             todos = response;
             renderTodos();
         }
-    } catch (error) {
-        if (error === HttpStatus.UNAUTHORIZED) {
+    } catch (statusCode) {
+        if (statusCode === HttpStatus.UNAUTHORIZED)
             window.location.href = './login.html';
-        } else {
-            alert(error);
-        }
-        // if (error instanceof errorData){
-        //     if(error.status === HttpStatus.UNAUTHORIZED){
-        //         window.location.href = './login.html';
-        //     }
-        // }
-        //  else{
-        //     alert(error);
-        // }
+        else
+            alert(`unhandled error ${statusCode}`);
     }
 }
 
@@ -261,10 +260,11 @@ async function addUserTodo(title: string) {
             todos.push(newTodo);
             renderTodos();
         }
-    } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+    } catch (statusCode) {
+        if (statusCode === HttpStatus.UNAUTHORIZED)
+            window.location.href = './login.html';
+        else
+            alert(`unhandled error ${statusCode}`);
     }
 }
 
@@ -286,10 +286,11 @@ async function updateTodoStatus(id: number) {
                 renderTodos();
             }
         }
-    } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+    } catch (statusCode) {
+        if (statusCode === HttpStatus.UNAUTHORIZED)
+            window.location.href = './login.html';
+        else
+            alert(`unhandled error ${statusCode}`);
     }
 }
 
@@ -315,11 +316,11 @@ async function updateTodoTitle(id: number, title: string) {
                 renderTodos();
             }
         }
-
-    } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+    } catch (statusCode) {
+        if (statusCode === HttpStatus.UNAUTHORIZED)
+            window.location.href = './login.html';
+        else
+            alert(`unhandled error ${statusCode}`);
     }
 }
 
@@ -335,10 +336,11 @@ async function deleteTodo(id: number) {
 
         todos = todos.filter(todo => todo.id !== id);
         renderTodos();
-    } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+    } catch (statusCode) {
+        if (statusCode === HttpStatus.UNAUTHORIZED)
+            window.location.href = './login.html';
+        else
+            alert(`unhandled error ${statusCode}`);
     }
 }
 

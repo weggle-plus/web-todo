@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" type="text/css"
+        href='https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css'>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    <link rel="stylesheet" href="../css/login.css" />
+</head>
+
+<body>
+    <div class="page-login">
+        <div class="container">
+            <h1>로그인</h1>
+            <div class="content">
+                <input type="text" id="login-input-id" oninput="this.value = this.value.replace(/\s/g, '')"
+                    placeholder="아이디를 입력해주세요." />
+                <input type="password" id="login-input-pw" oninput="this.value = this.value.replace(/\s/g, '')"
+                    placeholder="비밀번호를 입력해주세요." />
+                    <span style="display: none">아이디와 비밀번호를 확인해주세요.</span>
+                <button class="gray-filled-button" id="login-button">로그인</button>
+                <button class="gray-outline-button" id="join-button" onclick="location.href='./join.html'">회원가입</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="module" src="../../dist/login_bundle.js"></script>
+
+</html>

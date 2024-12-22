@@ -2,9 +2,9 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    index: './src/index.ts',
-    login: './src/login.ts',
-    join: './src/join.ts'
+    index: './src/scripts/index.ts',
+    login: './src/scripts/login.ts',
+    join: './src/scripts/join.ts'
   },// 엔트리 파일 (TypeScript 진입점)
   output: {
     filename: '[name]_bundle.js', // 번들 파일 이름

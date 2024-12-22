@@ -7,7 +7,7 @@
     width: 1200px;
     height: 1024px;
     margin-left: 142px;
-    padding: 40px 24px;
+    padding: 40px 24px 0px;
 }
 
 .sidebar {
@@ -78,23 +78,6 @@
     position: relative;
 }
 
-input[type="text"] {
-    width: 855px;
-    height: auto;
-    padding: 8px 16px;
-    border: 1px solid #D4D4D8;
-    border-radius: 4px;
-    font-size: 16px;
-    color: #6B7280;
-    outline: none;
-    background-color: #ffffff;
-}
-
-input[type="text"]:focus {
-    border-color: #0F172A;
-    color: #0F172A;
-}
-
 #add-button {
     height: 40px;
     width: 88px;
@@ -127,6 +110,14 @@ input[type="text"]:focus {
     flex-direction: row;
     gap: 10px;
     flex: 1;
+}
+
+input.error{
+    border-color: #EF4444;
+}
+
+input.error:focus{
+    border-color: #EF4444;
 }
 
 input[type="checkbox"] {
@@ -267,20 +258,4 @@ input[type="checkbox"]:checked {
     background-color: #EF4444;
     color: #FFFFFF;
     transition: 0.2s;
-}
-
-.login-input-group{
-    display: flex;
-    flex-direction: column;
-}
-
-.login-button-group{
-    display: flex;
-    flex-direction: column;
-    width: 150px;
-}
-
-.join-input-group{
-    display: flex;
-    flex-direction: column;
 }
