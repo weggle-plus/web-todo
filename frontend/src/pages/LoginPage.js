@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../login-join.css";
 import { useNavigate } from "react-router-dom";
 import apiModules from "../api";
+import { ROUTES } from "../utils/constants";
 
 function Login({ setIsLoggedIn }) {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ function Login({ setIsLoggedIn }) {
         if (response) {
           setIsLoggedIn(true);
           localStorage.setItem("token", response.token);
-          navigate("/");
+          navigate(ROUTES.TODO);
         }
       } catch (error) {
         alert(error.response.data.message);
@@ -48,7 +49,7 @@ function Login({ setIsLoggedIn }) {
   };
 
   const handleClickJoin = () => {
-    navigate("/join");
+    navigate(ROUTES.JOIN);
   };
 
   return (

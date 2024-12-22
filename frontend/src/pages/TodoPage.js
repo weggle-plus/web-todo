@@ -1,33 +1,38 @@
 import { useEffect, useState } from "react";
-import DeleteCheckModal from "../component/DeleteCheckModal";
-import DoneList from "../component/DoneList";
-import Input from "../component/Input";
-import TodoList from "../component/TodoList";
+import DeleteCheckModal from "../components/DeleteCheckModal";
+import DoneList from "../components/DoneList";
+import Input from "../components/Input";
+import TodoList from "../components/TodoList";
 import { useNavigate } from "react-router-dom";
 import apiModules from "../api";
-import localStorageModule from "../util/localStorage";
+import localStorageModule from "../utils/localStorage";
+import { ROUTES, TOKEN } from "../utils/constants";
 
 function TodoPage({ setIsLoggedIn }) {
-  const [todoList, setTodoList] = useState([]);
-  const [doneList, setDoneList] = useState([]);
+  const [todoList, setTodoList] = useState({
+    inProgress: [],
+    done: [],
+  });
   const [todoToDelete, setTodoToDelete] = useState(null);
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
   const [editingTodoId, setEditingTodoId] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    getTodoItems();
+    refetchTodoItems();
   }, []);
 
-  const getTodoItems = async () => {
+  const refetchTodoItems = async () => {
     try {
       apiModules.getTodoItems().then((items) => {
         if (items !== undefined) {
           const todoItems = items.filter((item) => item.done !== 1);
           const doneItems = items.filter((item) => item.done === 1);
 
-          setTodoList(todoItems);
-          setDoneList(doneItems);
+          setTodoList({
+            inProgress: todoItems,
+            done: doneItems,
+          });
         }
       });
     } catch (error) {
@@ -38,7 +43,7 @@ function TodoPage({ setIsLoggedIn }) {
   const toggleCheckbox = async (todoItem) => {
     try {
       await apiModules.checkDone(todoItem);
-      getTodoItems();
+      refetchTodoItems();
     } catch (error) {
       console.log("error : ", error);
     }
@@ -55,7 +60,7 @@ function TodoPage({ setIsLoggedIn }) {
     } catch (error) {
       console.log("error : ", error);
     }
-    getTodoItems();
+    refetchTodoItems();
     setIsDeleteModalOpened(false);
     setTodoToDelete(null);
   };
@@ -76,17 +81,17 @@ function TodoPage({ setIsLoggedIn }) {
   const updateEditing = async (todoItem) => {
     try {
       await apiModules.updateEditing(todoItem);
-      getTodoItems();
+      refetchTodoItems();
       setEditingTodoId(null);
     } catch (error) {
       console.log("error : ", error);
     }
   };
-  
+
   const handleClickLogout = () => {
-    localStorageModule.remove("token");
+    localStorageModule.remove(TOKEN);
     setIsLoggedIn(false);
-    navigate("/login");
+    navigate(ROUTES.LOGIN);
   };
 
   return (
@@ -98,9 +103,9 @@ function TodoPage({ setIsLoggedIn }) {
         </button>
       </nav>
       <section>
-        <Input getTodoItems={getTodoItems} />
+        <Input getTodoItems={refetchTodoItems} />
         <TodoList
-          todoList={todoList}
+          todoList={todoList.inProgress}
           toggleCheckbox={toggleCheckbox}
           onDeleteTodo={onDeleteTodo}
           startEditing={startEditing}
@@ -109,7 +114,7 @@ function TodoPage({ setIsLoggedIn }) {
           updateEditing={updateEditing}
         />
         <DoneList
-          doneList={doneList}
+          doneList={todoList.done}
           toggleCheckbox={toggleCheckbox}
           onDeleteTodo={onDeleteTodo}
         />

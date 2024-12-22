@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import JoinPage from "./pages/JoinPage";
-import localStorageModule from "./util/localStorage";
+import localStorageModule from "./utils/localStorage";
 import TodoPage from "./pages/TodoPage";
+import { ROUTES } from "./utils/constants";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -19,12 +20,12 @@ function App() {
     <div className="container">
       <Routes>
         <Route
-          path="/login"
+          path={ROUTES.LOGIN}
           element={<LoginPage setIsLoggedIn={setIsLoggedIn} />}
         />
-        <Route path="/join" element={<JoinPage />} />
+        <Route path={ROUTES.JOIN} element={<JoinPage />} />
         <Route
-          path="/"
+          path={ROUTES.TODO}
           element={
             isLoggedIn ? (
               <TodoPage setIsLoggedIn={setIsLoggedIn} />

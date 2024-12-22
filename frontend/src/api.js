@@ -1,5 +1,5 @@
 import axios from "axios";
-import localStorageModule from "./util/localStorage";
+import localStorageModule from "./utils/localStorage";
 
 const login = async (loginData) => {
   try {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import "../login-join.css";
 import { useNavigate } from "react-router-dom";
 import apiModules from "../api";
+import { ROUTES } from "../utils/constants";
 
 function Join() {
   const navigate = useNavigate();
@@ -53,7 +54,7 @@ function Join() {
         const response = await apiModules.join(inputs);
         if (response) {
           alert("회원가입이 완료되었습니다.");
-          navigate("/");
+          navigate(ROUTES.TODO);
         }
       } catch (error) {
         alert(error.response.data.message);
