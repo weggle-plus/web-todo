@@ -50,7 +50,7 @@ class TodoMariaRepository extends TodoRepository {
   async findByUserId(userId) {
     const todos = await this.Todo.findAll({
       where: { createdBy: userId },
-      order: [['createdAt', 'DESC']]
+      order: [['id', 'DESC']]
     });
     return todos.map(todo => this.formatTodo(todo));
   }
