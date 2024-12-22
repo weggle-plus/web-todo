@@ -21,7 +21,7 @@ function Join() {
     }));
   };
 
-  const HandleInputBlur = (e) => {
+  const handleInputBlur = (e) => {
     const inputPassword = e.target.value;
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
@@ -40,14 +40,14 @@ function Join() {
     }
   };
 
-  const HandleInputIsSameBlur = (e) => {
+  const handleInputIsSameBlur = (e) => {
     const inputPassword = e.target.value;
     setCheckPassword(inputPassword);
     const isSame = inputs.password === inputPassword ? true : false;
     setIsPasswordSame(isSame);
   };
 
-  const HandleClickJoin = async () => {
+  const handleClickJoin = async () => {
     if (isValidated && isPasswordSame) {
       try {
         const response = await apiModules.join(inputs);
@@ -73,13 +73,13 @@ function Join() {
         <input
           type="password"
           minLength="8"
-          onBlur={HandleInputBlur}
+          onBlur={handleInputBlur}
           className={isValidated && isPasswordSame ? "" : "input_error"}
           placeholder="비밀번호를 입력해주세요."
         ></input>
         <input
           type="password"
-          onBlur={HandleInputIsSameBlur}
+          onBlur={handleInputIsSameBlur}
           className={isValidated && isPasswordSame ? "" : "input_error"}
           placeholder="비밀번호를 다시 입력해주세요."
         ></input>
@@ -96,7 +96,7 @@ function Join() {
             <span className="input_warning">비밀번호가 일치하지 않습니다.</span>
           )
         )}
-        <button onClick={HandleClickJoin}>회원가입</button>
+        <button onClick={handleClickJoin}>회원가입</button>
       </div>
     </div>
   );

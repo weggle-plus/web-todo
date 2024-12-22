@@ -21,7 +21,7 @@ function Login({ setIsLoggedIn }) {
     }));
   };
 
-  const HandleInputBlur = (e) => {
+  const handleInputBlur = (e) => {
     const inputPassword = e.target.value;
     const passwordRegex =
       /^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{8,15}$/;
@@ -34,7 +34,7 @@ function Login({ setIsLoggedIn }) {
     setIsValidated(validatePassword);
   };
 
-  const HandleClickLogin = async () => {
+  const handleClickLogin = async () => {
     if (isValidated) {
       try {
         const response = await apiModules.login(inputs);
@@ -49,7 +49,7 @@ function Login({ setIsLoggedIn }) {
     }
   };
 
-  const HandleClickJoin = () => {
+  const handleClickJoin = () => {
     navigate("/join");
   };
 
@@ -66,7 +66,7 @@ function Login({ setIsLoggedIn }) {
         <input
           type="password"
           minLength="8"
-          onBlur={HandleInputBlur}
+          onBlur={handleInputBlur}
           className={isValidated ? "" : "input_error"}
           placeholder="비밀번호를 입력해주세요."
         ></input>
@@ -75,8 +75,8 @@ function Login({ setIsLoggedIn }) {
             아이디와 비밀번호를 확인해주세요.
           </span>
         )}
-        <button onClick={HandleClickLogin}>로그인</button>
-        <button className="btn_modify" onClick={HandleClickJoin}>
+        <button onClick={handleClickLogin}>로그인</button>
+        <button className="btn_modify" onClick={handleClickJoin}>
           회원가입
         </button>
       </div>

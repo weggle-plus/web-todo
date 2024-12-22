@@ -22,8 +22,6 @@ function App() {
       localStorage !== undefined ? localStorage.getItem("token") : null;
     if (token) {
       setIsLoggedIn(true);
-    }
-    if (isLoggedIn) {
       getTodoItems();
     }
   }, [isLoggedIn]);
