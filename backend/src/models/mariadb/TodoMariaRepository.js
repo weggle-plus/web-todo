@@ -1,11 +1,15 @@
-const TodoRepository = require('../interfaces/TodoRepository');
-const Todo = require('./TodoMaria');
-const User = require('./UserMaria');
-const { Team, UserTeam } = require('./TeamMaria');
-
+const TodoRepository = require("../interfaces/TodoRepository");
+const Todo = require("./TodoMaria");
+const User = require("./UserMaria");
+const { Team, UserTeam } = require("./TeamMaria");
 
 class TodoMariaRepository extends TodoRepository {
-  constructor(TodoModel = Todo, UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
+  constructor(
+    TodoModel = Todo,
+    UserModel = User,
+    TeamModel = Team,
+    UserTeamModel = UserTeam
+  ) {
     super();
     this.Todo = TodoModel;
     this.User = UserModel;
@@ -23,10 +27,9 @@ class TodoMariaRepository extends TodoRepository {
       createdBy: todoData.createdBy,
       updatedAt: todoData.updatedAt,
       completedAt: todoData.completedAt,
-      teamId: todoData.teamId
+      teamId: todoData.teamId,
     };
   }
-
 
   formatTodoResponse(todoData) {
     return {
@@ -36,7 +39,7 @@ class TodoMariaRepository extends TodoRepository {
       content: todoData.content,
       createdAt: todoData.createdAt,
       updatedAt: todoData.updatedAt,
-      completedAt: todoData.completedAt      
+      completedAt: todoData.completedAt,
     };
   }
 
@@ -54,22 +57,22 @@ class TodoMariaRepository extends TodoRepository {
   async findByUserId(userId) {
     const todos = await this.Todo.findAll({
       where: { createdBy: userId, teamId: null },
-      order: [['createdAt', 'DESC']]
+      order: [["id", "DESC"]],
     });
-    return todos.map(todo => this.formatTodo(todo));
+    return todos.map((todo) => this.formatTodo(todo));
   }
 
   async findByTeamId(teamId) {
     const todos = await this.Todo.findAll({
       where: { teamId: teamId },
-      order: [['createdAt', 'DESC']]
+      order: [["id", "DESC"]],
     });
-    return todos.map(todo => this.formatTodo(todo));
+    return todos.map((todo) => this.formatTodo(todo));
   }
 
   async update(todoId, todoData) {
-    await this.Todo.update(todoData, { 
-      where: { id: todoId } 
+    await this.Todo.update(todoData, {
+      where: { id: todoId },
     });
     return await this.findById(todoId);
   }
@@ -78,8 +81,6 @@ class TodoMariaRepository extends TodoRepository {
     const result = await this.Todo.destroy({ where: { id: todoId } });
     return result === 1;
   }
-
-
 }
 
-module.exports = TodoMariaRepository; 
+module.exports = TodoMariaRepository;
