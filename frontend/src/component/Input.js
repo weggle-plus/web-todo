@@ -1,6 +1,7 @@
 import { useState } from "react";
+import apiModules from "../api";
 
-function Input({ addTodoItem, getTodoItems }) {
+function Input({ getTodoItems }) {
   const [inputValue, setInputValue] = useState("");
 
   const inputHandler = (e) => {
@@ -10,7 +11,7 @@ function Input({ addTodoItem, getTodoItems }) {
   const submitHandler = async () => {
     const inputTrimmed = inputValue.trim();
     if (inputTrimmed) {
-      await addTodoItem(inputTrimmed);
+      await apiModules.addTodoItem(inputTrimmed);
       getTodoItems();
     } else {
       alert("입력 값은 공백이 아니어야 합니다.");

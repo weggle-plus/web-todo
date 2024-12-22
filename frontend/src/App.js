@@ -26,16 +26,20 @@ function App() {
     }
   }, [isLoggedIn]);
 
-  const getTodoItems = () => {
-    apiModules.getTodoItems().then((items) => {
-      if (items !== undefined) {
-        const todoItems = items.filter((item) => item.done !== 1);
-        const doneItems = items.filter((item) => item.done === 1);
+  const getTodoItems = async () => {
+    try {
+      apiModules.getTodoItems().then((items) => {
+        if (items !== undefined) {
+          const todoItems = items.filter((item) => item.done !== 1);
+          const doneItems = items.filter((item) => item.done === 1);
 
-        setTodoList(todoItems);
-        setDoneList(doneItems);
-      }
-    });
+          setTodoList(todoItems);
+          setDoneList(doneItems);
+        }
+      });
+    } catch (error) {
+      console.log("error : ", error);
+    }
   };
 
   const toggleCheckbox = async (todoItem) => {
@@ -110,10 +114,7 @@ function App() {
                   </button>
                 </nav>
                 <section>
-                  <Input
-                    addTodoItem={apiModules.addTodoItem}
-                    getTodoItems={getTodoItems}
-                  />
+                  <Input getTodoItems={getTodoItems} />
                   <TodoList
                     todoList={todoList}
                     toggleCheckbox={toggleCheckbox}
