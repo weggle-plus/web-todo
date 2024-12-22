@@ -42,7 +42,7 @@ addButton.addEventListener("click", () => {
     addUserTodo(title);
 });
 
-function renderTodos() {
+function renderAllTodos(){
     todoList.innerHTML = '';
     doneList.innerHTML = '';
 
@@ -52,15 +52,16 @@ function renderTodos() {
     updateEmptyMessage('todo', inProgressTasks.length);
     updateEmptyMessage('done', doneTasks.length);
 
-    inProgressTasks.forEach(todo => {
-        const li = createTodoItem(todo);
-        todoList.appendChild(li);
-    });
+    inProgressTasks.forEach(todo => todoList.appendChild(createTodoItem(todo)));
+    doneTasks.forEach(todo => doneList.appendChild(createTodoItem(todo)));
+}
 
-    doneTasks.forEach(todo => {
-        const li = createTodoItem(todo);
-        doneList.appendChild(li);
-    });
+function updateTaskStates(){
+    const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
+    const doneTasks = todos.filter(todo => todo.status === Status.DONE);
+
+    updateEmptyMessage('todo', inProgressTasks.length);
+    updateEmptyMessage('done', doneTasks.length);
 }
 
 function renderTodoItem(todo: Todo) {
@@ -70,14 +71,16 @@ function renderTodoItem(todo: Todo) {
         doneList.appendChild(li);
     else
         todoList.appendChild(li);
+
+    updateTaskStates();
 }
 
 function renderUpdatedTitleTodoItem(todo: Todo) {
     const li = document.querySelector(`li[data-id="${todo.id}"]`) as HTMLElement;
 
     if (li) {
-        const updatedLi = createTodoItem(todo);
-        li.replaceWith(updatedLi);
+        const titleSpan = li.querySelector('.item-title-group span') as HTMLSpanElement;
+        titleSpan.textContent = todo.title;
     }
 }
 
@@ -85,14 +88,28 @@ function renderUpdatedStatusTodoItem(todo: Todo) {
     const li = document.querySelector(`li[data-id="${todo.id}"]`) as HTMLElement;
 
     if (li) {
-        const updatedLi = createTodoItem(todo);
-        li.replaceWith(updatedLi);
+        const checkBox = li.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        if (checkBox) checkBox.checked = todo.status === Status.DONE;
+
+        const editButton = li.querySelector('#edit-button') as HTMLInputElement;
+        if (todo.status === Status.DONE){
+            doneList.appendChild(li);
+            editButton.style.display = 'none';
+        }
+        else{
+            todoList.appendChild(li);
+            editButton.style.display = 'flex';
+        }
     }
+
+    updateTaskStates();
 }
 
 function removeTodoItemFromDOM(id: number) {
     const li = document.querySelector(`li[data-id="${id}"]`) as HTMLElement;
     li?.remove();
+
+    updateTaskStates();
 }
 
 function updateEmptyMessage(type: 'todo' | 'done', count: number) {
@@ -271,7 +288,7 @@ async function getUserTodos() {
 
         if (response) {
             todos = response;
-            renderTodos();
+            renderAllTodos();
         }
     } catch (error) {
         if (error instanceof ErrorData) {
