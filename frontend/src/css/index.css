@@ -1,0 +1,216 @@
+.page {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    gap: 32px;
+    position: relative;
+    width: 1200px;
+    height: 1024px;
+    margin-left: 142px;
+    padding: 40px 24px 0px;
+}
+
+.sidebar {
+    display: flex;
+    align-items: left;
+    align-self: stretch;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 24px;
+    position: relative;
+    width: 265px;
+    min-height: 0;
+}
+
+.divider {
+    width: 1px;
+    background: #E2E8F0;
+}
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 8px;
+    position: relative;
+    height: 100%;
+    width: auto;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 240px;
+    height: auto;
+    padding: 8px 16px;
+    cursor: pointer;
+    background-color: #E2E8F0;
+    color: #0F172A;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.main-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex-wrap: nowrap;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: 0;
+    gap: 20px;
+    position: relative;
+    min-width: 0;
+}
+
+.input-area {
+    display: flex;
+    align-items: center;
+    align-self: stretch;
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+    gap: 20px;
+    position: relative;
+}
+
+#add-button {
+    height: 40px;
+    width: 88px;
+}
+
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    width: 100%;
+}
+
+#todo-list,
+#done-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.todo-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.item-title-group {
+    display: flex;
+    align-items: left;
+    flex-direction: row;
+    gap: 10px;
+    flex: 1;
+}
+
+input[type="checkbox"] {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    outline: 2px solid #475569;
+    outline-offset: -2px;
+    border-radius: 6px;
+}
+
+input[type="checkbox"]:hover {
+    background: url('../../images/hover.png') no-repeat center center;
+    background-color: #4755694D;
+}
+
+input[type="checkbox"]:checked {
+    background: url('../../images/checked.png') no-repeat center center;
+}
+
+.todo-item span {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.todo-item input[type="text"] {
+    width: 715px;
+}
+
+#done-list .todo-item span {
+    text-decoration: line-through;
+}
+
+.item-button-group {
+    display: flex;
+    gap: 4px;
+}
+
+#edit-button {
+    height: 40px;
+    width: 60px;
+}
+
+#delete-button {
+    height: 40px;
+    width: 60px;
+}
+
+.section-title {
+    height: 36px;
+    color: #1E293B;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 36px;
+}
+
+.empty-message {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    color: #9CA3AF;
+    font-size: 16px;
+    text-align: left;
+}
+
+#modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #00000026;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background-color: #FFFFFF;
+    padding: 24px 20px;
+    border-radius: 8px;
+    min-width: 360px;
+    height: auto;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 60px;
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #0F172A;
+    text-align: left;
+}
+
+.delete-button-group {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+}

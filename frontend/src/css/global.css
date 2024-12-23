@@ -1,0 +1,44 @@
+input.error{
+    border-color: #EF4444;
+}
+
+input.error:focus{
+    border-color: #EF4444;
+}
+
+.gray-filled-button {
+    border: none;
+    background-color: #0F172A;
+    color: #FFFFFF;
+}
+
+.gray-filled-button:hover {
+    background-color: #0F172ACC;
+    transition: 0.2s;
+}
+
+.gray-outline-button {
+    border: 1px solid #94A3B8;
+    border-width: 1px;
+    background-color: transparent;
+    color: #0F172A;
+    padding: 8px, 16px;
+}
+
+.gray-outline-button:hover {
+    background-color: #94A3B8;
+    color: #FFFFFF;
+    transition: 0.2s;
+}
+
+.red-outline-button {
+    border: 1px solid #EF4444;
+    background-color: transparent;
+    color: #EF4444;
+}
+
+.red-outline-button:hover {
+    background-color: #EF4444;
+    color: #FFFFFF;
+    transition: 0.2s;
+}

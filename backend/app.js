@@ -1,41 +1,63 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+// 필요한 외부 모듈 불러오기
+const express = require("express");
+const path = require("path");
+const cookieParser = require("cookie-parser");
+const logger = require("morgan");
+const { initializeDatabase } = require("./src/config/database");
+const ServiceError = require("./src/utils/errors/ServiceError");
+const AuthError = require("./src/utils/errors/AuthError");
+const { StatusCodes } = require("http-status-codes");
+const cors = require("cors");
+// 환경변수 설정 로드
+const dotenv = require("dotenv");
+dotenv.config();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+// 라우터 모듈 불러오기
+const indexRouter = require("./src/routes/index");
+const usersRouter = require("./src/routes/users");
+const todosRouter = require("./src/routes/todos");
+const teamsRouter = require("./src/routes/teams");
 
-var app = express();
+// Express 애플리케이션 생성
+const app = express();
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'pug');
+// 뷰 엔진 설정
+// app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "pug");
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+// 미들웨어 설정
+app.use(logger("dev")); // 로깅 미들웨어
+app.use(express.json()); // JSON 파싱 미들웨어
+app.use(express.urlencoded({ extended: false })); // URL 인코딩 미들웨어
+app.use(cookieParser()); // 쿠키 파싱 미들웨어
+app.use(express.static(path.join(__dirname, "public"))); // 정적 파일 제공
+app.use(cors()); // TODO: 프로덕션 환경에서는 수정
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// 데이터베이스 초기화
+initializeDatabase().catch(console.error);
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
-});
+// 라우터 설정
+app.use("/", indexRouter);
+app.use("/users", usersRouter);
+app.use("/todos", todosRouter);
+app.use("/teams", teamsRouter);
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// 404 에러 처리 미들웨어
+// app.use(function(req, res, next) {
+//   next(createError(404));
+// });
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.use((err, req, res, next) => {
+  // ServiceError나 AuthError 처리
+  if (err instanceof ServiceError || err instanceof AuthError) {
+    return res.status(err.statusCode).json({
+      message: err.message,
+    });
+  }
+  // 기타 에러 처리
+  return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    message: "서버 오류",
+  });
 });
 
 module.exports = app;
