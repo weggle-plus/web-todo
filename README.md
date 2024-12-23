@@ -57,7 +57,7 @@ npm install
 npm run build
 ```
 
-- frountend/src/pages/index.html을 실행
+- frontend/src/pages/index.html을 실행
 
 # 참여자
 
