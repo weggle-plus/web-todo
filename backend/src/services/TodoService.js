@@ -218,7 +218,6 @@ class TodoService {
 
     const newStatus = updates.status || todo.status;
     if (newStatus === constants.TODO_STATUS.DONE) {
-    if (newStatus === constants.TODO_STATUS.DONE) {
       if (!todo.completedAt) {
         updatedTodo.completedAt = new Date();
       }
