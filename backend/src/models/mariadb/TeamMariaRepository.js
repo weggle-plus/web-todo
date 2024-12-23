@@ -1,8 +1,7 @@
-const { Team, UserTeam } = require('./TeamMaria');
-const User = require('./UserMaria');
-const { TEAM_MEMBER_ROLES } = require('../interfaces/TeamSchema');
-const TeamRepository = require('../interfaces/TeamRepository');
-
+const { Team, UserTeam } = require("./TeamMaria");
+const User = require("./UserMaria");
+const { TEAM_MEMBER_ROLES } = require("../interfaces/TeamSchema");
+const TeamRepository = require("../interfaces/TeamRepository");
 
 class TeamMariaRepository extends TeamRepository {
   constructor(UserModel = User, TeamModel = Team, UserTeamModel = UserTeam) {
@@ -11,28 +10,30 @@ class TeamMariaRepository extends TeamRepository {
     this.Team = TeamModel;
     this.UserTeam = UserTeamModel;
     this.teamOptions = {
-      include: [{
-        model: this.User,
-        as: 'members',
-        attributes: ['id', 'username', 'createdAt', 'updatedAt'],
-        through: {
-          attributes: ['role', 'joinedAt']
+      include: [
+        {
+          model: this.User,
+          as: "members",
+          attributes: ["id", "username", "createdAt", "updatedAt"],
+          through: {
+            attributes: ["role", "joinedAt"],
+          },
+          order: [["members", "joinedAt", "ASC"]],
         },
-        order: [['members', 'joinedAt', 'ASC']]
-      }]
+      ],
     };
   }
 
   formatTeamResponse(teamData) {
     const response = {
       name: teamData.name,
-      description: teamData.description
+      description: teamData.description,
     };
     if (teamData.members) {
-      response.members = teamData.members.map(member => ({
+      response.members = teamData.members.map((member) => ({
         username: member.username,
         role: member.role,
-        joinedAt: member.joinedAt
+        joinedAt: member.joinedAt,
       }));
     }
     return response;
@@ -46,13 +47,13 @@ class TeamMariaRepository extends TeamRepository {
       createdBy: teamData.createdBy,
       createdAt: teamData.createdAt,
       updatedAt: teamData.updatedAt,
-      updatedBy: teamData.updatedBy
+      updatedBy: teamData.updatedBy,
     };
     if (teamData.members) {
-      team.members = teamData.members.map(member => ({
+      team.members = teamData.members.map((member) => ({
         username: member.username,
         role: member.role,
-        joinedAt: member.joinedAt
+        joinedAt: member.joinedAt,
       }));
     }
     return team;
@@ -66,7 +67,7 @@ class TeamMariaRepository extends TeamRepository {
       inviteeId: invitation.inviteeId,
       invitationMessage: invitation.invitationMessage,
       invitationStatus: invitation.invitationStatus,
-      respondedAt: invitation.respondedAt
+      respondedAt: invitation.respondedAt,
     };
   }
 
@@ -101,21 +102,24 @@ class TeamMariaRepository extends TeamRepository {
 
   async findByUserId(userId) {
     const teams = await this.Team.findAll({
-      include: [{
-        model: this.UserTeam,
-        where: { userId },
-        required: true
-      }, {
-        model: this.User,
-        as: 'members',
-        attributes: ['id', 'username'],
-        through: {
-          attributes: ['role', 'joinedAt']
-        }
-      }]
+      include: [
+        {
+          model: this.UserTeam,
+          where: { userId },
+          required: true,
+        },
+        {
+          model: this.User,
+          as: "members",
+          attributes: ["id", "username"],
+          through: {
+            attributes: ["role", "joinedAt"],
+          },
+        },
+      ],
     });
-    
-    return teams.map(team => this.formatTeamResponse(team));
+
+    return teams.map((team) => this.formatTeamResponse(team));
   }
 
   async update(userId, teamId, updateData) {
@@ -125,72 +129,89 @@ class TeamMariaRepository extends TeamRepository {
 
   async delete(teamId) {
     await this.Team.sequelize.transaction(async (t) => {
-      await this.UserTeam.destroy({ 
-        where: { teamId }, 
-        transaction: t 
+      await this.UserTeam.destroy({
+        where: { teamId },
+        transaction: t,
       });
-      await this.Team.destroy({ 
-        where: { id: teamId }, 
-        transaction: t 
+      await this.Team.destroy({
+        where: { id: teamId },
+        transaction: t,
       });
     });
   }
 
-  async findInvitationRecord(teamId, inviteeId) {
-    return await this.TeamInvitation.findOne({ 
-      where: { 
-        teamId, 
-        inviteeId
-      } 
-    });
-  }
-
-  async inviteMember(teamId, inviterId, inviteeId, invitationMessage = '') {
+  async inviteMember(teamId, inviterId, inviteeId, invitationMessage = "") {
     await this.TeamInvitation.create({
       teamId,
       inviterId,
       inviteeId,
       invitationMessage,
-      invitationStatus: 'pending'
+      invitationStatus: "pending",
     });
-  } 
+  }
 
-  async acceptInvitation(teamId, inviteeId) {
-    await this.addMember(teamId, inviteeId);
-    await this.TeamInvitation.update({
-      invitationStatus: 'accepted',
-      respondedAt: new Date()
-    }, {
-      where: { teamId, inviteeId }
+  async findInvitationRecord(teamId, inviteeId) {
+    return await this.TeamInvitation.findOne({
+      where: {
+        teamId,
+        inviteeId,
+      },
+    });
+  }
+
+  async acceptInvitation(teamId, inviteeId, role = TEAM_MEMBER_ROLES.MEMBER) {
+    await this.Team.sequelize.transaction(async (t) => {
+      await this.addMember(teamId, inviteeId, role, { transaction: t });
+      await this.TeamInvitation.update(
+        {
+          invitationStatus: "accepted",
+          respondedAt: new Date(),
+        },
+        {
+          where: { teamId, inviteeId },
+          transaction: t,
+        }
+      );
     });
   }
 
   async rejectInvitation(teamId, inviteeId) {
-    await this.TeamInvitation.update({
-      invitationStatus: 'rejected',
-      respondedAt: new Date()
-    }, {
-      where: { teamId, inviteeId }
-    });
+    await this.TeamInvitation.update(
+      {
+        invitationStatus: "rejected",
+        respondedAt: new Date(),
+      },
+      {
+        where: { teamId, inviteeId },
+      }
+    );
   }
 
   async leaveTeam(teamId, userId) {
     await this.UserTeam.destroy({
-      where: { teamId, userId }
+      where: { teamId, userId },
     });
   }
 
-  async addMember(teamId, userId, role = TEAM_MEMBER_ROLES.MEMBER) {
-    await this.UserTeam.create({
-      teamId,
-      userId,
-      role
-    });
+  async addMember(
+    teamId,
+    userId,
+    role = TEAM_MEMBER_ROLES.MEMBER,
+    options = {}
+  ) {
+    await this.UserTeam.create(
+      {
+        teamId,
+        userId,
+        role,
+      },
+      options
+    );
   }
 
   async isMember(teamId, userId) {
     const userTeam = await this.UserTeam.findOne({
-      where: { teamId, userId }
+      where: { teamId, userId },
     });
     return userTeam ? true : false;
   }
@@ -202,23 +223,20 @@ class TeamMariaRepository extends TeamRepository {
 
   async getMemberRole(teamId, userId) {
     const userTeam = await this.UserTeam.findOne({
-      where: { teamId, userId }
+      where: { teamId, userId },
     });
     return userTeam ? userTeam.role : null;
   }
 
   async updateMemberRole(teamId, userId, role) {
-    return await this.UserTeam.update(
-      { role },
-      { where: { teamId, userId } }
-    );
+    return await this.UserTeam.update({ role }, { where: { teamId, userId } });
   }
 
   async removeMember(teamId, userId) {
     return await this.UserTeam.destroy({
-      where: { teamId, userId }
+      where: { teamId, userId },
     });
   }
 }
 
-module.exports = TeamMariaRepository; 
+module.exports = TeamMariaRepository;

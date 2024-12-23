@@ -49,6 +49,25 @@ const validateTodoIdParam = [
   validateRequest,
 ];
 
+const validateRegister = [
+  body("username")
+    .isString()
+    .notEmpty()
+    .withMessage(VALIDATION_ERROR_MESSAGES.USER.USERNAME_REQUIRED),
+  body("password")
+    .isString()
+    .notEmpty()
+    .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_REQUIRED)
+    .isLength({
+      min: constants.PASSWORD_MIN_LENGTH,
+      max: constants.PASSWORD_MAX_LENGTH,
+    })
+    .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_LENGTH)
+    .matches(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]/)
+    .withMessage(VALIDATION_ERROR_MESSAGES.USER.PASSWORD_PATTERN),
+  validateRequest,
+];
+
 const validateProfile = [
   body("username")
     .optional()
@@ -160,6 +179,7 @@ const validateInvitation = [
 module.exports = {
   validateTodo,
   validateTodoStatus,
+  validateRegister,
   validateTodoIdParam,
   validateLogin,
   validateUsername,

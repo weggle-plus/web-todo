@@ -1,7 +1,6 @@
-const User = require('./UserMaria');
-const bcrypt = require('bcrypt');
-const UserRepository = require('../interfaces/UserRepository');
-const DatabaseError = require('../../utils/errors/DatabaseError');
+const User = require("./UserMaria");
+const bcrypt = require("bcrypt");
+const UserRepository = require("../interfaces/UserRepository");
 
 class UserMariaRepository extends UserRepository {
   constructor(UserModel = User) {
@@ -22,7 +21,7 @@ class UserMariaRepository extends UserRepository {
       username: user.username,
       lastLogin: user.lastLogin,
       createdAt: user.createdAt,
-      updatedAt: user.updatedAt
+      updatedAt: user.updatedAt,
     };
   }
 
@@ -30,14 +29,14 @@ class UserMariaRepository extends UserRepository {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
     const user = await this.User.create({
       ...userData,
-      password: hashedPassword
+      password: hashedPassword,
     });
     return this.formatUser(user.toJSON());
   }
 
   async findAll() {
     const users = await this.User.findAll();
-    return users.map(user => this.formatUser(user.toJSON()));
+    return users.map((user) => this.formatUser(user.toJSON()));
   }
 
   async findById(userId) {
@@ -54,10 +53,9 @@ class UserMariaRepository extends UserRepository {
     if (updateData.password) {
       updateData.password = await bcrypt.hash(updateData.password, 10);
     }
-    const result = await this.User.update(updateData, { 
-      where: { id: userId } 
+    await this.User.update(updateData, {
+      where: { id: userId },
     });
-    if (result[0] === 0) throw DatabaseError.userUpdateFailed();
     const updatedUser = await this.findById(userId);
     return this.formatUserResponse(updatedUser);
   }
@@ -75,4 +73,4 @@ class UserMariaRepository extends UserRepository {
   }
 }
 
-module.exports = UserMariaRepository; 
+module.exports = UserMariaRepository;

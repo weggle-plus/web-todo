@@ -3,6 +3,7 @@ const constants = require("./constants");
 // 유효성 검사 관련 에러 메시지
 const VALIDATION_ERROR_MESSAGES = {
   TODO: {
+    ID_INVALID: "유효하지 않은 할 일 ID입니다.",
     TITLE_REQUIRED: "할 일의 제목은 필수이며 문자열이어야 합니다",
     TITLE_TOO_LONG: `할 일 제목은 ${constants.TODO_TITLE_MAX_LENGTH}자를 초과할 수 없습니다.`,
     CONTENT_INVALID: "할 일 내용은 문자열이어야 합니다.",
@@ -11,6 +12,7 @@ const VALIDATION_ERROR_MESSAGES = {
       '잘못된 상태값입니다. "in-progress" 또는 "done"만 가능합니다',
   },
   USER: {
+    ID_INVALID: "유효하지 않은 사용자 ID입니다.",
     USERNAME_REQUIRED: "사용자 이름을 입력해주세요.",
     PASSWORD_REQUIRED: "비밀번호를 입력해주세요.",
     PASSWORD_LENGTH: `비밀번호는 ${constants.PASSWORD_MIN_LENGTH}자 이상 ${constants.PASSWORD_MAX_LENGTH}자 이하여야 합니다.`,
@@ -37,8 +39,6 @@ const SERVICE_ERROR_MESSAGES = {
   USER: {
     NOT_FOUND: "사용자를 찾을 수 없습니다.",
     USERNAME_ALREADY_EXISTS: "이미 등록된 사용자 이름입니다.",
-    INVALID_USERNAME_OR_PASSWORD:
-      "사용자 이름 또는 비밀번호가 올바르지 않습니다.",
   },
   TEAM: {
     NOT_FOUND: "팀을 찾을 수 없습니다.",
@@ -59,8 +59,12 @@ const SERVICE_ERROR_MESSAGES = {
 // 인증 관련 에러 메시지
 const AUTH_ERROR_MESSAGES = {
   UNAUTHORIZED: "인증이 필요합니다.",
+  INVALID_USERNAME_OR_PASSWORD:
+    "사용자 이름 또는 비밀번호가 올바르지 않습니다.",
   INVALID_TOKEN: "유효하지 않은 토큰입니다.",
+  EXPIRED_TOKEN: "만료된 토큰입니다.",
   FORBIDDEN: "권한이 없습니다.",
+  NOT_TEAM_MEMBER: "팀 멤버가 아닙니다.",
 };
 
 // 데이터베이스 관련 에러 메시지

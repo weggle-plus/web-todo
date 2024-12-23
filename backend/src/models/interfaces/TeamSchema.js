@@ -1,132 +1,132 @@
-const constants = require('../../constants/constants');
+const constants = require("../../constants/constants");
 
 const TeamSchema = {
   id: {
-    type: 'integer',
+    type: "integer",
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   name: {
-    type: 'string',
+    type: "string",
     required: true,
     unique: true,
-    trim: true
+    trim: true,
   },
   description: {
-    type: 'text',
+    type: "text",
     required: false,
-    trim: true
+    trim: true,
   },
   createdAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: true,
-    default: 'CURRENT_TIMESTAMP'
+    default: "CURRENT_TIMESTAMP",
   },
   createdBy: {
-    type: 'integer',
+    type: "integer",
     required: true,
-    references: 'users.id'
+    references: "users.id",
   },
   updatedAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: true,
-    default: 'CURRENT_TIMESTAMP'
+    default: "CURRENT_TIMESTAMP",
   },
   updatedBy: {
-    type: 'integer',
+    type: "integer",
     required: false,
-    references: 'users.id'
-  }
+    references: "users.id",
+  },
 };
 
 const UserTeamSchema = {
   userId: {
-    type: 'integer',
+    type: "integer",
     required: true,
-    references: 'users.id'
+    references: "users.id",
   },
   teamId: {
-    type: 'integer',
+    type: "integer",
     required: true,
-    references: 'teams.id'
+    references: "teams.id",
   },
   role: {
-    type: 'enum',
+    type: "enum",
     values: Object.values(constants.TEAM_MEMBER_ROLES),
-    default: constants.TEAM_MEMBER_ROLES.MANAGER
+    default: constants.TEAM_MEMBER_ROLES.MANAGER,
   },
   joinedAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: true,
-    default: 'CURRENT_TIMESTAMP'
+    default: "CURRENT_TIMESTAMP",
   },
   __options: {
     underscored: true,
     indexes: [
       {
-        name: 'idx_user_team_unique',
+        name: "idx_user_team_unique",
         unique: true,
-        fields: ['user_id', 'team_id']
-      }
-    ]
-  }
+        fields: ["user_id", "team_id"],
+      },
+    ],
+  },
 };
 
 const TeamInvitationSchema = {
   id: {
-    type: 'integer',
+    type: "integer",
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   teamId: {
-    type: 'integer',
+    type: "integer",
     required: true,
-    references: 'teams.id'
+    references: "teams.id",
   },
   inviterId: {
-    type: 'integer',
+    type: "integer",
     required: true,
-    references: 'users.id'
+    references: "users.id",
   },
   inviteeId: {
-    type: 'integer',
+    type: "integer",
     required: true,
-    references: 'users.id'
+    references: "users.id",
   },
   invitationMessage: {
-    type: 'text',
+    type: "text",
     required: false,
-    trim: true
+    trim: true,
   },
   invitationStatus: {
-    type: 'enum',
+    type: "enum",
     values: Object.values(constants.TEAM_INVITATION_STATUS),
     required: true,
-    default: constants.TEAM_INVITATION_STATUS.PENDING
+    default: constants.TEAM_INVITATION_STATUS.PENDING,
   },
   invitedAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: true,
-    default: 'CURRENT_TIMESTAMP'
+    default: "CURRENT_TIMESTAMP",
   },
   respondedAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: false,
-    default: null
+    default: null,
   },
   __options: {
     indexes: [
       {
-        name: 'idx_team_invitation_unique',
+        name: "idx_team_invitation_unique",
         unique: true,
-        fields: ['teamId', 'inviteeId', 'invitationStatus']
-      }
-    ]
-  }
+        fields: ["teamId", "inviteeId", "invitationStatus"],
+      },
+    ],
+  },
 };
 
 module.exports = {
   TeamSchema,
   UserTeamSchema,
-  TeamInvitationSchema
+  TeamInvitationSchema,
 };

@@ -1,7 +1,9 @@
-const { StatusCodes } = require('http-status-codes');
-const TeamService = require('../services/TeamService');
-const { TeamRepositoryFactory, UserRepositoryFactory } = require('../models/RepositoryFactory');
-
+const { StatusCodes } = require("http-status-codes");
+const TeamService = require("../services/TeamService");
+const {
+  TeamRepositoryFactory,
+  UserRepositoryFactory,
+} = require("../models/RepositoryFactory");
 
 class TeamController {
   static teamService = new TeamService(
@@ -9,16 +11,17 @@ class TeamController {
     UserRepositoryFactory.createRepository()
   );
 
-
-
   static createTeam = async (req, res, next) => {
     try {
-      const team = await TeamController.teamService.createTeam(req.user.id, req.body);
+      const team = await TeamController.teamService.createTeam(
+        req.user.id,
+        req.body
+      );
       res.status(StatusCodes.CREATED).json(team);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static getTeam = async (req, res, next) => {
     try {
@@ -27,7 +30,7 @@ class TeamController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static getUserTeams = async (req, res, next) => {
     try {
@@ -36,7 +39,7 @@ class TeamController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static updateTeam = async (req, res, next) => {
     try {
@@ -49,34 +52,46 @@ class TeamController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static deleteTeam = async (req, res, next) => {
     try {
-      await TeamController.teamService.deleteTeam(req.user.username, req.params.teamId);
+      await TeamController.teamService.deleteTeam(
+        req.user.username,
+        req.params.teamId
+      );
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static inviteMember = async (req, res, next) => {
     try {
-      await TeamController.teamService.inviteMember(req.params.teamId, req.params.inviteeId, req.user.id, req.body.message);
+      await TeamController.teamService.inviteMember(
+        req.params.teamId,
+        req.params.inviteeId,
+        req.user.id,
+        req.body.message
+      );
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static handleTeamMemberAction = async (req, res, next) => {
     try {
-      await TeamController.teamService.handleTeamMemberAction(req.params.teamId, req.user.id, req.body.action);
+      await TeamController.teamService.handleTeamMemberAction(
+        req.params.teamId,
+        req.user.id,
+        req.body.action
+      );
       res.status(StatusCodes.NO_CONTENT).end();
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
-module.exports = TeamController; 
+module.exports = TeamController;

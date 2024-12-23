@@ -1,62 +1,62 @@
-const constants = require('../../constants/constants');
+const constants = require("../../constants/constants");
 
 const UserSchema = {
   id: {
-    type: 'integer',
+    type: "integer",
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   username: {
-    type: 'string',
+    type: "string",
     required: true,
-    unique: true
+    unique: true,
   },
   password: {
-    type: 'string',
-    required: true
+    type: "string",
+    required: true,
   },
   // TODO: failedLoginAttempts
   role: {
-    type: 'enum',
+    type: "enum",
     values: Object.values(constants.USER_ROLES),
-    default: constants.USER_ROLES.USER
+    default: constants.USER_ROLES.USER,
   },
   profileImage: {
-    type: 'string',
+    type: "string",
     required: false,
-    default: ''
+    default: "",
   },
   isActive: {
-    type: 'boolean',
+    type: "boolean",
     required: true,
-    default: true
+    default: true,
   },
   lastLoginAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: false,
-    default: null
+    default: null,
   },
   createdAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: true,
-    default: 'CURRENT_TIMESTAMP'
+    default: "CURRENT_TIMESTAMP",
   },
   updatedAt: {
-    type: 'timestamp',
+    type: "timestamp",
     required: true,
-    default: 'CURRENT_TIMESTAMP'
+    default: "CURRENT_TIMESTAMP",
   },
   __options: {
     underscored: true,
     indexes: [
       {
-        name: 'idx_users_username',  // 로그인 쿼리 최적화
-        fields: ['username', 'password']
-      }
-    ]
-  }
+        name: "idx_users_username", // 로그인 쿼리 최적화
+        fields: ["username", "password"],
+      },
+    ],
+  },
 };
 
 module.exports = {
-  UserSchema
-}; 
+  UserSchema,
+};
