@@ -42,14 +42,14 @@ addButton.addEventListener("click", () => {
     addUserTodo(title);
 });
 
-function renderAllTodos(){
+function renderAllTodos() {
     todoList.innerHTML = '';
     doneList.innerHTML = '';
 
     const inProgressFragment = document.createDocumentFragment();
     const doneFragment = document.createDocumentFragment();
 
-    const {inProgressTasks, doneTasks} = updateTaskStates();
+    const { inProgressTasks, doneTasks } = updateTaskStates();
     inProgressTasks.forEach(todo => inProgressFragment.appendChild(createTodoItem(todo)));
     doneTasks.forEach(todo => doneFragment.appendChild(createTodoItem(todo)));
 
@@ -85,11 +85,11 @@ function renderUpdatedStatusTodoItem(todo: Todo) {
         if (checkBox) checkBox.checked = todo.status === Status.DONE;
 
         const editButton = li.querySelector('#edit-button') as HTMLInputElement;
-        if (todo.status === Status.DONE){
+        if (todo.status === Status.DONE) {
             doneList.appendChild(li);
             editButton.style.display = 'none';
         }
-        else{
+        else {
             todoList.appendChild(li);
             editButton.style.display = 'flex';
         }
@@ -105,14 +105,14 @@ function removeTodoItemFromDOM(id: number) {
     updateTaskStates();
 }
 
-function updateTaskStates(){
+function updateTaskStates() {
     const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
     const doneTasks = todos.filter(todo => todo.status === Status.DONE);
 
     updateEmptyMessage('todo', inProgressTasks.length);
     updateEmptyMessage('done', doneTasks.length);
 
-    return {inProgressTasks, doneTasks};
+    return { inProgressTasks, doneTasks };
 }
 
 function updateEmptyMessage(type: 'todo' | 'done', count: number) {
@@ -284,9 +284,7 @@ function closeDeleteModal() {
 async function getUserTodos() {
     try {
         const response = await fetchData<Todo[]>('todos', {
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            credentials: 'include'
         });
 
         if (response) {
@@ -315,8 +313,8 @@ async function addUserTodo(title: string) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
+            credentials: 'include',
             body: JSON.stringify(request)
         });
 
@@ -343,9 +341,7 @@ async function updateTodoStatus(id: number) {
     try {
         let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            credentials: 'include'
         });
 
         if (response) {
@@ -377,8 +373,8 @@ async function updateTodoTitle(id: number, title: string) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
+            credentials: 'include',
             body: JSON.stringify(request)
         });
 
@@ -406,9 +402,7 @@ async function deleteTodo(id: number) {
     try {
         await fetchData(`todos/${id}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            }
+            credentials: 'include'
         });
 
         todos = todos.filter(todo => todo.id !== id);
