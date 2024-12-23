@@ -1,9 +1,14 @@
-import { fetchData } from "./api";
+import { fetchData, HttpStatus, ErrorData } from "../api/api";
+
+enum Status {
+    IN_PROGRESS = 'in-progress',
+    DONE = 'done'
+}
 
 interface Todo {
     id: number;
     title: string;
-    status: string;
+    status: Status;
 }
 
 interface requestBody {
@@ -21,29 +26,93 @@ const doneList = document.getElementById("done-list") as HTMLUListElement;
 const modal = document.getElementById("modal") as HTMLElement;
 const confirmDeleteButton = document.getElementById("confirm-delete") as HTMLButtonElement;
 
-addButton.addEventListener("click", () => {
-    const title = todoInput.value;
+todoInput.addEventListener("change", () => {
+    const title = todoInput.value.trim();
     if (!title)
         return;
 
     addUserTodo(title);
 });
 
-function renderTodos() {
+addButton.addEventListener("click", () => {
+    const title = todoInput.value.trim();
+    if (!title)
+        return;
+
+    addUserTodo(title);
+});
+
+function renderAllTodos() {
     todoList.innerHTML = '';
     doneList.innerHTML = '';
 
-    updateEmptyMessage('todo', todos.filter(todo => todo.status !== 'done').length);
-    updateEmptyMessage('done', todos.filter(todo => todo.status == 'done').length);
+    const inProgressFragment = document.createDocumentFragment();
+    const doneFragment = document.createDocumentFragment();
 
-    todos.forEach((todo) => {
-        const li = createTodoItem(todo);
-        if (todo.status === 'done') {
+    const { inProgressTasks, doneTasks } = updateTaskStates();
+    inProgressTasks.forEach(todo => inProgressFragment.appendChild(createTodoItem(todo)));
+    doneTasks.forEach(todo => doneFragment.appendChild(createTodoItem(todo)));
+
+    todoList.appendChild(inProgressFragment);
+    doneList.appendChild(doneFragment);
+}
+
+function renderTodoItem(todo: Todo) {
+    const li = createTodoItem(todo);
+
+    if (todo.status === Status.DONE)
+        doneList.appendChild(li);
+    else
+        todoList.appendChild(li);
+
+    updateTaskStates();
+}
+
+function renderUpdatedTitleTodoItem(todo: Todo) {
+    const li = document.querySelector(`li[data-id="${todo.id}"]`) as HTMLElement;
+
+    if (li) {
+        const titleSpan = li.querySelector('.item-title-group span') as HTMLSpanElement;
+        titleSpan.textContent = todo.title;
+    }
+}
+
+function renderUpdatedStatusTodoItem(todo: Todo) {
+    const li = document.querySelector(`li[data-id="${todo.id}"]`) as HTMLElement;
+
+    if (li) {
+        const checkBox = li.querySelector('input[type="checkbox"]') as HTMLInputElement;
+        if (checkBox) checkBox.checked = todo.status === Status.DONE;
+
+        const editButton = li.querySelector('#edit-button') as HTMLInputElement;
+        if (todo.status === Status.DONE) {
             doneList.appendChild(li);
-        } else {
-            todoList.appendChild(li);
+            editButton.style.display = 'none';
         }
-    });
+        else {
+            todoList.appendChild(li);
+            editButton.style.display = 'flex';
+        }
+    }
+
+    updateTaskStates();
+}
+
+function removeTodoItemFromDOM(id: number) {
+    const li = document.querySelector(`li[data-id="${id}"]`) as HTMLElement;
+    li?.remove();
+
+    updateTaskStates();
+}
+
+function updateTaskStates() {
+    const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
+    const doneTasks = todos.filter(todo => todo.status === Status.DONE);
+
+    updateEmptyMessage('todo', inProgressTasks.length);
+    updateEmptyMessage('done', doneTasks.length);
+
+    return { inProgressTasks, doneTasks };
 }
 
 function updateEmptyMessage(type: 'todo' | 'done', count: number) {
@@ -54,6 +123,7 @@ function updateEmptyMessage(type: 'todo' | 'done', count: number) {
 function createTodoItem(todo: Todo) {
     const li = document.createElement('li');
     li.className = 'todo-item';
+    li.setAttribute('data-id', `${todo.id}`);
 
     const itemTitleGroup = document.createElement('div');
     itemTitleGroup.className = 'item-title-group';
@@ -83,7 +153,7 @@ function createTodoItem(todo: Todo) {
 function createCheckbox(todo: Todo): HTMLElement {
     const checkBox = document.createElement('input');
     checkBox.type = 'checkbox';
-    checkBox.checked = todo.status === 'done';
+    checkBox.checked = todo.status === Status.DONE;
 
     checkBox.addEventListener('change', () => {
         updateTodoStatus(todo.id);
@@ -115,7 +185,7 @@ function createButton(className: string, id: string, text: string): HTMLButtonEl
 function createEditButton(todo: Todo): HTMLElement {
     const editButton = createButton('gray-outline-button', 'edit-button', '수정');
 
-    if (todo.status === 'done') {
+    if (todo.status === Status.DONE) {
         editButton.style.display = 'none';
     }
 
@@ -213,15 +283,14 @@ function closeDeleteModal() {
 // 유저 할일목록 받기
 async function getUserTodos() {
     try {
-        const response = await fetchData<Todo[]>('');
+        const response = await fetchData<Todo[]>('todos', {}, true);
+
         if (response) {
             todos = response;
-            renderTodos();
+            renderAllTodos();
         }
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+        handleError(error);
     }
 }
 
@@ -231,49 +300,38 @@ async function addUserTodo(title: string) {
     request = { title: title };
 
     try {
-        const response = await fetchData<Todo>('', {
+        const response = await fetchData<Todo>('todos', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(request)
-        });
+        }, true);
 
         if (response) {
             todoInput.value = '';
             const newTodo = { id: response.id, title: response.title, status: response.status }
             todos.push(newTodo);
-            renderTodos();
+            renderTodoItem(newTodo);
         }
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+        handleError(error);
     }
 }
 
 // 할 일 상태 변경
 async function updateTodoStatus(id: number) {
     try {
-        let response = await fetchData<Todo>(`${id}`, {
+        let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        }, true);
 
         if (response) {
-            console.log(response.status);
             const index = todos.findIndex(todo => todo.id === response.id);
             if (index !== -1) {
-                todos[index] = { id: response.id, title: response.title, status: response.status };
-                renderTodos();
+                todos[index].status = response.status;
+                renderUpdatedStatusTodoItem(todos[index]);
             }
         }
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+        handleError(error);
     }
 }
 
@@ -283,43 +341,46 @@ async function updateTodoTitle(id: number, title: string) {
     request = { title: title };
 
     try {
-        let response = await fetchData<Todo>(`${id}`, {
+        let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
             body: JSON.stringify(request)
-        });
+        }, true);
 
         if (response) {
             const index = todos.findIndex(todo => todo.id === response.id);
             if (index !== -1) {
                 todos[index] = { id: response.id, title: response.title, status: response.status };
-                renderTodos();
+                renderUpdatedTitleTodoItem(todos[index]);
             }
         }
-
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+        handleError(error);
     }
 }
 
 // 할 일 삭제
 async function deleteTodo(id: number) {
     try {
-        await fetchData(`${id}`, {
-            method: 'DELETE'
-        });
+        await fetchData(`todos/${id}`, {
+            method: 'DELETE',
+        }, true);
 
         todos = todos.filter(todo => todo.id !== id);
-        renderTodos();
+        removeTodoItemFromDOM(id);
     } catch (error) {
-        if (error instanceof Error) {
-            alert(error.message);
-        }
+        handleError(error);
     }
+}
+
+function handleError(error: unknown) {
+    if (error instanceof ErrorData) {
+        if (error.status === HttpStatus.UNAUTHORIZED)
+            window.location.href = './login.html';
+        else
+            alert(error.message);
+    }
+    else
+        alert(`unhandled error ${error}`);
 }
 
 getUserTodos();

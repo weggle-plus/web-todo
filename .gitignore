@@ -1,5 +1,7 @@
+dist/
 .idea
 node_modules
 .env
 .vscode
+.gitconfig
 coverage

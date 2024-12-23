@@ -1,40 +1,53 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const todoController = require('../controllers/TodoController');
+const todoController = require("../controllers/TodoController");
+const authMiddleware = require("../middleware/auth.middleware");
+const {
+  validateTodo,
+  validateTodoIdParam,
+  validateTeamIdParam,
+} = require("../middleware/validateRequest");
 
-// TODO 생성
-router.post('/', 
-  async (req, res) => {
-    await todoController.createTodo(req, res);
-  }
-);
+router.use(authMiddleware.authenticate);
 
-// TODO 조회
-router.get('/', 
-  async (req, res) => {
-    await todoController.getTodos(req, res);
-  }
-);
+// 유저의 TODO 생성
+router.post("/", validateTodo, async (req, res, next) => {
+  await todoController.createTodo(req, res, next);
+});
+
+// 유저의 TODO 조회
+router.get("/", async (req, res, next) => {
+  await todoController.getUserTodos(req, res, next);
+});
+
+// 팀의 TODO 조회
+router.get("/team/:teamId", validateTeamIdParam, async (req, res, next) => {
+  await todoController.getTeamTodos(req, res, next);
+});
+
+// 팀의 TODO 생성
+router.post("/team/:teamId", validateTeamIdParam, async (req, res, next) => {
+  await todoController.createTeamTodo(req, res, next);
+});
 
 // TODO 업데이트
-router.put('/:id', 
-  async (req, res) => {
-    await todoController.updateTodo(req, res);
+router.put(
+  "/:id",
+  validateTodo,
+  validateTodoIdParam,
+  async (req, res, next) => {
+    await todoController.updateTodo(req, res, next);
   }
 );
 
 // TODO 상태 업데이트
-router.patch('/:id', 
-  async (req, res) => {
-    await todoController.updateTodoStatus(req, res);
-  }
-);
+router.patch("/:id", validateTodoIdParam, async (req, res, next) => {
+  await todoController.updateTodoStatus(req, res, next);
+});
 
 // TODO 삭제
-router.delete('/:id', 
-  async (req, res) => {
-    await todoController.deleteTodo(req, res);
-  }
-);
+router.delete("/:id", validateTodoIdParam, async (req, res, next) => {
+  await todoController.deleteTodo(req, res, next);
+});
 
 module.exports = router;

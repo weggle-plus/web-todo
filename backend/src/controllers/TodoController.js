@@ -1,64 +1,95 @@
-const { StatusCodes } = require('http-status-codes');
-const TodoService = require('../services/TodoService');
-const { TodoRepositoryFactory } = require('../models/RepositoryFactory');
+const { StatusCodes } = require("http-status-codes");
+const TodoService = require("../services/TodoService");
+const {
+  TodoRepositoryFactory,
+  UserRepositoryFactory,
+  TeamRepositoryFactory,
+} = require("../models/RepositoryFactory");
 
 class TodoController {
-  constructor() {
-    this.todoService = new TodoService(TodoRepositoryFactory.createRepository());
-  }
-  async createTodo(req, res) {
+  static todoService = new TodoService(
+    TodoRepositoryFactory.createRepository(),
+    UserRepositoryFactory.createRepository(),
+    TeamRepositoryFactory.createRepository()
+  );
+
+  static createTodo = async (req, res, next) => {
     try {
-      const todo = await this.todoService.createTodo(req.body);
+      const todo = await TodoController.todoService.createTodo(
+        req.user.id,
+        req.body
+      );
       res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 생성하는 중 오류가 발생했습니다.', error: error.message });
+      next(error);
     }
-  }
+  };
 
-  async getTodos(req, res) {
+  static getUserTodos = async (req, res, next) => {
     try {
-      const todos = await this.todoService.getTodos();
+      const todos = await TodoController.todoService.getUserTodos(req.user.id);
       res.json(todos);
     } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일들을 조회하는 중 오류가 발생했습니다.', error: error.message });
+      next(error);
     }
-  } 
+  };
 
-  async getTodoById(req, res) {
+  static updateTodo = async (req, res, next) => {
     try {
-      const todo = await this.todoService.getTodoById(req.params.id);
+      const todo = await TodoController.todoService.updateTodo(
+        req.user.id,
+        req.params.id,
+        req.body
+      );
       res.json(todo);
     } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 조회하는 중 오류가 발생했습니다.', error: error.message });
+      next(error);
     }
-  }
+  };
 
-  async updateTodo(req, res) {
+  static getTeamTodos = async (req, res, next) => {
     try {
-      const todo = await this.todoService.updateTodo(req.params.id, req.body);
+      const todos = await TodoController.todoService.getTeamTodos(
+        req.params.teamId
+      );
+      res.json(todos);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static createTeamTodo = async (req, res, next) => {
+    try {
+      const todo = await TodoController.todoService.createTeamTodo(
+        req.params.teamId,
+        req.body
+      );
+      res.status(StatusCodes.CREATED).json(todo);
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  static updateTodoStatus = async (req, res, next) => {
+    try {
+      const todo = await TodoController.todoService.updateTodoStatus(
+        req.user.id,
+        req.params.id
+      );
       res.json(todo);
     } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 업데이트하는 중 오류가 발생했습니다.', error: error.message });
+      next(error);
     }
-  }
+  };
 
-  async updateTodoStatus(req, res) {
+  static deleteTodo = async (req, res, next) => {
     try {
-      const todo = await this.todoService.updateTodoStatus(req.params.id, req.body.status);
-      res.json(todo);
-    } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일의 상태를 업데이트하는 중 오류가 발생했습니다.', error: error.message });
-    }
-  }
-
-  async deleteTodo(req, res) {
-    try {
-      await this.todoService.deleteTodo(req.params.id);
+      await TodoController.todoService.deleteTodo(req.user.id, req.params.id);
       res.status(StatusCodes.NO_CONTENT).send();
     } catch (error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ message: '할 일을 삭제하는 중 오류가 발생했습니다.', error: error.message });
+      next(error);
     }
-  }
+  };
 }
 
-module.exports = new TodoController();
+module.exports = TodoController;

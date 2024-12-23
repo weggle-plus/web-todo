@@ -7,7 +7,7 @@
     width: 1200px;
     height: 1024px;
     margin-left: 142px;
-    padding: 40px 24px;
+    padding: 40px 24px 0px;
 }
 
 .sidebar {
@@ -36,7 +36,8 @@
     flex-shrink: 0;
     gap: 8px;
     position: relative;
-    width: 240px;
+    height: 100%;
+    width: auto;
 }
 
 .menu-item {
@@ -44,6 +45,7 @@
     align-items: center;
     position: relative;
     width: 240px;
+    height: auto;
     padding: 8px 16px;
     cursor: pointer;
     background-color: #E2E8F0;
@@ -74,23 +76,6 @@
     flex-shrink: 0;
     gap: 20px;
     position: relative;
-}
-
-input[type="text"] {
-    width: 100%;
-    height: 40px;
-    padding: 8px 16px;
-    border: 1px solid #D4D4D8;
-    border-radius: 4px;
-    font-size: 16px;
-    color: #6B7280;
-    outline: none;
-    background-color: #ffffff;
-}
-
-input[type="text"]:focus {
-    border-color: #0F172A;
-    color: #0F172A;
 }
 
 #add-button {
@@ -137,12 +122,12 @@ input[type="checkbox"] {
 }
 
 input[type="checkbox"]:hover {
-    background: url('../images/hover.png') no-repeat center center;
+    background: url('../../images/hover.png') no-repeat center center;
     background-color: #4755694D;
 }
 
 input[type="checkbox"]:checked {
-    background: url('../images/checked.png') no-repeat center center;
+    background: url('../../images/checked.png') no-repeat center center;
 }
 
 .todo-item span {
@@ -228,41 +213,4 @@ input[type="checkbox"]:checked {
     display: flex;
     justify-content: flex-end;
     gap: 4px;
-}
-
-.gray-filled-button {
-    border: none;
-    background-color: #0F172A;
-    color: #FFFFFF;
-}
-
-.gray-filled-button:hover {
-    background-color: #0F172ACC;
-    transition: 0.2s;
-}
-
-.gray-outline-button {
-    border: 1px solid #94A3B8;
-    border-width: 1px;
-    background-color: transparent;
-    color: #0F172A;
-    padding: 8px, 16px;
-}
-
-.gray-outline-button:hover {
-    background-color: #94A3B8;
-    color: #FFFFFF;
-    transition: 0.2s;
-}
-
-.red-outline-button {
-    border: 1px solid #EF4444;
-    background-color: transparent;
-    color: #EF4444;
-}
-
-.red-outline-button:hover {
-    background-color: #EF4444;
-    color: #FFFFFF;
-    transition: 0.2s;
 }
