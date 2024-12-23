@@ -1,10 +1,11 @@
-const { StatusCodes } = require('http-status-codes');
-const UserService = require('../services/UserService');
-const { UserRepositoryFactory } = require('../models/RepositoryFactory');
-
+const { StatusCodes } = require("http-status-codes");
+const UserService = require("../services/UserService");
+const { UserRepositoryFactory } = require("../models/RepositoryFactory");
 
 class UserController {
-  static userService = new UserService(UserRepositoryFactory.createRepository());
+  static userService = new UserService(
+    UserRepositoryFactory.createRepository()
+  );
 
   static register = async (req, res, next) => {
     try {
@@ -13,44 +14,61 @@ class UserController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static checkUsername = async (req, res, next) => {
     try {
-      const isAvailable = await UserController.userService.isUsernameAvailable(req.body.username);
+      const isAvailable = await UserController.userService.isUsernameAvailable(
+        req.body.username
+      );
       res.json({ isAvailable });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static login = async (req, res, next) => {
     try {
       const { username, password } = req.body;
       const result = await UserController.userService.login(username, password);
+
+      res.cookie("token", result.token, {
+        httpOnly: process.env.NODE_ENV === "production",
+        secure: process.env.NODE_ENV === "production",
+        maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      });
+
+      delete result.token;
+
       res.json(result);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static getProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.getProfile(req.user.id, req.params.id);
+      const user = await UserController.userService.getProfile(
+        req.user.id,
+        req.params.id
+      );
       res.json(user);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static updateProfile = async (req, res, next) => {
     try {
-      const user = await UserController.userService.updateProfile(req.user.id, req.body);
+      const user = await UserController.userService.updateProfile(
+        req.user.id,
+        req.body
+      );
       res.json(user);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static logout = async (req, res, next) => {
     try {
@@ -59,7 +77,7 @@ class UserController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static deleteProfile = async (req, res, next) => {
     try {
@@ -68,7 +86,7 @@ class UserController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
-module.exports = UserController; 
+module.exports = UserController;
