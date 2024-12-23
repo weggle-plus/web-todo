@@ -7,7 +7,6 @@ interface requestBody {
 
 interface responseBody {
     username: string;
-    token: string;
 }
 
 const idInput = document.querySelector('#join-input-id') as HTMLInputElement;

@@ -284,7 +284,9 @@ function closeDeleteModal() {
 async function getUserTodos() {
     try {
         const response = await fetchData<Todo[]>('todos', {
-            credentials: 'include'
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
 
         if (response) {
@@ -313,8 +315,8 @@ async function addUserTodo(title: string) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
-            credentials: 'include',
             body: JSON.stringify(request)
         });
 
@@ -341,7 +343,9 @@ async function updateTodoStatus(id: number) {
     try {
         let response = await fetchData<Todo>(`todos/${id}`, {
             method: 'PATCH',
-            credentials: 'include'
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
 
         if (response) {
@@ -373,8 +377,8 @@ async function updateTodoTitle(id: number, title: string) {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
             },
-            credentials: 'include',
             body: JSON.stringify(request)
         });
 
@@ -402,7 +406,9 @@ async function deleteTodo(id: number) {
     try {
         await fetchData(`todos/${id}`, {
             method: 'DELETE',
-            credentials: 'include'
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
         });
 
         todos = todos.filter(todo => todo.id !== id);

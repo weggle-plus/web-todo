@@ -7,6 +7,7 @@ interface requestBody {
 
 interface responseBody {
     username: string;
+    token: string;
 }
 
 const idInput = document.querySelector('#login-input-id') as HTMLInputElement;
@@ -57,6 +58,7 @@ async function requestLogin(id: string, password: string) {
 
         if (response) {
             alert(`${response.username}님 환영합니다!`);
+            localStorage.setItem('token', response.token);
             window.location.href = './index.html';
         }
     } catch (error) {
