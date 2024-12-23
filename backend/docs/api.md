@@ -295,11 +295,11 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 ```
 
 - **성공 응답: 200 OK**
+- 토큰은 쿠키에 저장됩니다.
 
 ```json
 {
-  "username": "user_name",
-  "token": "JWT 토큰"
+  "username": "user_name"
 }
 ```
 
