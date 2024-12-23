@@ -57,16 +57,6 @@ function renderAllTodos(){
     doneList.appendChild(doneFragment);
 }
 
-function updateTaskStates(){
-    const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
-    const doneTasks = todos.filter(todo => todo.status === Status.DONE);
-
-    updateEmptyMessage('todo', inProgressTasks.length);
-    updateEmptyMessage('done', doneTasks.length);
-
-    return {inProgressTasks, doneTasks};
-}
-
 function renderTodoItem(todo: Todo) {
     const li = createTodoItem(todo);
 
@@ -113,6 +103,16 @@ function removeTodoItemFromDOM(id: number) {
     li?.remove();
 
     updateTaskStates();
+}
+
+function updateTaskStates(){
+    const inProgressTasks = todos.filter(todo => todo.status === Status.IN_PROGRESS);
+    const doneTasks = todos.filter(todo => todo.status === Status.DONE);
+
+    updateEmptyMessage('todo', inProgressTasks.length);
+    updateEmptyMessage('done', doneTasks.length);
+
+    return {inProgressTasks, doneTasks};
 }
 
 function updateEmptyMessage(type: 'todo' | 'done', count: number) {
