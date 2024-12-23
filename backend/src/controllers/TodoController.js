@@ -1,7 +1,10 @@
-const { StatusCodes } = require('http-status-codes');
-const TodoService = require('../services/TodoService');
-const { TodoRepositoryFactory, UserRepositoryFactory, TeamRepositoryFactory } = require('../models/RepositoryFactory');
-
+const { StatusCodes } = require("http-status-codes");
+const TodoService = require("../services/TodoService");
+const {
+  TodoRepositoryFactory,
+  UserRepositoryFactory,
+  TeamRepositoryFactory,
+} = require("../models/RepositoryFactory");
 
 class TodoController {
   static todoService = new TodoService(
@@ -12,12 +15,15 @@ class TodoController {
 
   static createTodo = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.createTodo(req.user.id, req.body);
+      const todo = await TodoController.todoService.createTodo(
+        req.user.id,
+        req.body
+      );
       res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static getUserTodos = async (req, res, next) => {
     try {
@@ -26,43 +32,55 @@ class TodoController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static updateTodo = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.updateTodo(req.user.id, req.params.id, req.body);
+      const todo = await TodoController.todoService.updateTodo(
+        req.user.id,
+        req.params.id,
+        req.body
+      );
       res.json(todo);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static getTeamTodos = async (req, res, next) => {
     try {
-      const todos = await TodoController.todoService.getTeamTodos(req.params.teamId);
+      const todos = await TodoController.todoService.getTeamTodos(
+        req.params.teamId
+      );
       res.json(todos);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static createTeamTodo = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.createTeamTodo(req.params.teamId, req.body);
+      const todo = await TodoController.todoService.createTeamTodo(
+        req.params.teamId,
+        req.body
+      );
       res.status(StatusCodes.CREATED).json(todo);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static updateTodoStatus = async (req, res, next) => {
     try {
-      const todo = await TodoController.todoService.updateTodoStatus(req.user.id, req.params.id);
+      const todo = await TodoController.todoService.updateTodoStatus(
+        req.user.id,
+        req.params.id
+      );
       res.json(todo);
     } catch (error) {
       next(error);
     }
-  }
+  };
 
   static deleteTodo = async (req, res, next) => {
     try {
@@ -71,7 +89,7 @@ class TodoController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }
 
 module.exports = TodoController;

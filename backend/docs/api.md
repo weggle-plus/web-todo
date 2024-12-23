@@ -8,6 +8,10 @@ https://dbdiagram.io/d/TODO-LIST-675f8c57e763df1f0004415a
 
 ### TODO
 
+#### TODO 생성
+
+새로운 TODO 항목을 생성합니다.
+
 #### 유저의 TODO 생성
 
 - **URL:** `/todos`
