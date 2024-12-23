@@ -16,8 +16,8 @@ router.post("/", validateTodo, async (req, res, next) => {
 });
 
 // 유저의 TODO 조회
-router.get("/", async (req, res) => {
-  await todoController.getUserTodos(req, res);
+router.get("/", async (req, res, next) => {
+  await todoController.getUserTodos(req, res, next);
 });
 
 // 팀의 TODO 조회

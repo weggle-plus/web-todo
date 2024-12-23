@@ -152,7 +152,7 @@ class TodoService {
    * @param {string} todoId - TODO의 ID
    * @param {Object} updateData - 업데이트할 데이터
    * @returns {Promise<Object>} 업데이트된 TODO 객체
-   * @throws {ServiceError} (404 Not Found, 403 Forbidden)
+   * @throws {ServiceError | AuthError} (404 Not Found, 403 Forbidden)
    */
   async updateTodo(userId, todoId, updateData) {
     await this.validateUserExists(userId);
@@ -161,13 +161,12 @@ class TodoService {
       await this.validateTeamExists(todo.teamId);
       await this.validateMember(todo.teamId, userId);
     } else {
-      console.log(todo.createdBy, userId);
       if (todo.createdBy !== userId) {
-        throw ServiceError.todoNotBelongToUser();
+        throw AuthError.forbidden();
       }
     }
-    const updatedTodo = this._processUpdate(todo, updateData);
-    return this.todoRepository.formatTodoResponse(updatedTodo);
+    const updatedTodo = await this._processUpdate(todo, updateData);
+    return updatedTodo;
   }
 
   /**
@@ -175,24 +174,25 @@ class TodoService {
    * @param {string} userId - 유저의 ID
    * @param {string} todoId - TODO의 ID
    * @returns {Promise<Object>} 업데이트된 TODO 객체
-   * @throws {ServiceError} (404 Not Found, 403 Forbidden)
+   * @throws {ServiceError | AuthError} (404 Not Found, 403 Forbidden)
    */
   async updateTodoStatus(userId, todoId) {
     await this.validateUserExists(userId);
     const todo = await this.validateTodoExists(todoId);
     if (todo.teamId) {
+      await this.validateTeamExists(todo.teamId);
       await this.validateMember(todo.teamId, userId);
     } else {
       if (todo.createdBy !== userId) {
-        throw ServiceError.todoNotBelongToUser();
+        throw AuthError.forbidden();
       }
     }
     const status =
-      todo.status === constants.TODO_STATUS.Done
-        ? constants.TODO_STATUS.InProgress
-        : constants.TODO_STATUS.Done;
-    const updatedTodo = this._processUpdate(todo, { status });
-    return this.todoRepository.formatTodoResponse(updatedTodo);
+      todo.status === constants.TODO_STATUS.DONE
+        ? constants.TODO_STATUS.IN_PROGRESS
+        : constants.TODO_STATUS.DONE;
+    const updatedTodo = await this._processUpdate(todo, { status });
+    return updatedTodo;
   }
 
   /**
@@ -217,7 +217,7 @@ class TodoService {
     };
 
     const newStatus = updates.status || todo.status;
-    if (newStatus === constants.TODO_STATUS.Done) {
+    if (newStatus === constants.TODO_STATUS.DONE) {
       if (!todo.completedAt) {
         updatedTodo.completedAt = new Date();
       }
@@ -232,7 +232,7 @@ class TodoService {
    * @param {string} userId - 유저의 ID
    * @param {string} todoId - TODO의 ID
    * @returns {Promise<Object>} 삭제된 TODO 객체
-   * @throws {ServiceError} (404 Not Found, 403 Forbidden)
+   * @throws {ServiceError | AuthError} (404 Not Found, 403 Forbidden)
    */
   async deleteTodo(userId, todoId) {
     const todo = await this.validateTodoExists(todoId);
@@ -240,7 +240,7 @@ class TodoService {
       await this.validateMember(todo.teamId, userId);
     } else {
       if (todo.createdBy !== userId) {
-        throw ServiceError.todoNotBelongToUser();
+        throw AuthError.forbidden();
       }
     }
 

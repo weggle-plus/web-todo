@@ -54,7 +54,6 @@ app.use((err, req, res, next) => {
       message: err.message,
     });
   }
-  console.log(err);
   // 기타 에러 처리
   return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     message: "서버 오류",
