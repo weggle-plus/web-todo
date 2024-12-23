@@ -1,19 +1,19 @@
 // 환경변수 설정 로드
-const dotenv = require('dotenv');
+const dotenv = require("dotenv");
 dotenv.config();
 
 const config = {
-  type: process.env.DB_TYPE || 'mariadb',
+  type: process.env.DB_TYPE || "mariadb",
   mongodb: {
-    url: process.env.MONGODB_URL || 'mongodb://localhost:27017/todo-app'
+    url: process.env.MONGODB_URL || "mongodb://localhost:27017/todo-app",
   },
   mariadb: {
-    host: process.env.DB_HOST || 'localhost',
+    host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT || 3306,
-    username: process.env.DB_USERNAME || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_DATABASE || 'todo_app'
-  }
+    username: process.env.DB_USERNAME || "root",
+    password: process.env.DB_PASSWORD || "",
+    database: process.env.DB_DATABASE || "todo_app",
+  },
 };
 
 /**
@@ -26,28 +26,25 @@ async function initializeDatabase() {
   const dbType = config.type;
 
   try {
-    if (dbType === 'mongodb') {
-      const mongoose = require('mongoose');
+    if (dbType === "mongodb") {
+      const mongoose = require("mongoose");
       await mongoose.connect(config.mongodb.url);
-      console.log('MongoDB 연결 성공');
-    } 
-    else if (dbType === 'mariadb') {
-      const sequelize = require('./mariadb');
+      console.log("MongoDB 연결 성공");
+    } else if (dbType === "mariadb") {
+      const sequelize = require("./mariadb");
       await sequelize.authenticate(); // DB 연결 확인
 
-      await sequelize.sync({ 
-        alter: true,      // 기존 테이블 구조 변경 허용
-        force: false,     // 테이블 강제 삭제 방지
-        logging: console.log // 변경사항 로깅
+      await sequelize.sync({
+        force: true,
       });
-      console.log('MariaDB 연결 성공');
+      console.log("MariaDB 연결 성공");
     }
   } catch (error) {
     // 데이터베이스 연결 실패 시 에러 처리
-    if (dbType === 'mongodb') {
-      console.error('MongoDB 연결 실패:', error);
+    if (dbType === "mongodb") {
+      console.error("MongoDB 연결 실패:", error);
     } else {
-      console.error('MariaDB 연결 실패:', error);
+      console.error("MariaDB 연결 실패:", error);
     }
     // 심각한 오류이므로 애플리케이션 종료
     process.exit(1);
@@ -56,5 +53,5 @@ async function initializeDatabase() {
 
 module.exports = {
   config,
-  initializeDatabase
+  initializeDatabase,
 };
