@@ -1,2 +1,9 @@
-.idea
-node_modules
+# 빌드 파일 및 디렉토리
+dist/
+build/
+
+# 의존성 파일
+node_modules/
+
+# 환경 파일
+.env
